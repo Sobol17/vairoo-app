@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:ai_note/src/features/disclaimer/domain/entities/disclaimer_type.dart';
+import 'package:ai_note/src/features/disclaimer/presentation/controllers/disclaimer_controller.dart';
+import 'package:ai_note/src/features/disclaimer/presentation/widgets/chat_disclaimer_dialog.dart';
+import 'package:ai_note/src/features/disclaimer/presentation/widgets/main_disclaimer_dialog.dart';
 import 'package:ai_note/src/features/home/domain/entities/note.dart';
 import 'package:ai_note/src/features/home/domain/repositories/note_repository.dart';
 import 'package:ai_note/src/features/home/presentation/controllers/home_controller.dart';
@@ -20,14 +24,34 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class _HomeView extends StatelessWidget {
+class _HomeView extends StatefulWidget {
   const _HomeView();
+
+  @override
+  State<_HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<_HomeView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _ensureMainDisclaimer();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('AI Note'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.forum_outlined),
+            tooltip: 'Чат',
+            onPressed: _handleChatTap,
+          ),
+        ],
       ),
       body: Consumer<HomeController>(
         builder: (context, controller, _) {
@@ -53,6 +77,59 @@ class _HomeView extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showNewNoteDialog(context),
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Future<void> _ensureMainDisclaimer() async {
+    final controller = context.read<DisclaimerController>();
+    final accepted = await controller.isAccepted(DisclaimerType.main);
+    if (!mounted || accepted) {
+      return;
+    }
+    final shouldMarkAccepted = await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const MainDisclaimerDialog(),
+        ) ??
+        false;
+    if (shouldMarkAccepted && mounted) {
+      await controller.markAccepted(DisclaimerType.main);
+    } else if (mounted) {
+      // If user somehow dismissed, schedule dialog again on next frame.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _ensureMainDisclaimer();
+        }
+      });
+    }
+  }
+
+  Future<void> _handleChatTap() async {
+    final controller = context.read<DisclaimerController>();
+    var accepted = await controller.isAccepted(DisclaimerType.chat);
+    if (!mounted) {
+      return;
+    }
+    if (!accepted) {
+      accepted = await showDialog<bool>(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => const ChatDisclaimerDialog(),
+          ) ??
+          false;
+      if (accepted && mounted) {
+        await controller.markAccepted(DisclaimerType.chat);
+      }
+    }
+    if (!mounted || !accepted) {
+      return;
+    }
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      const SnackBar(
+        content: Text('Раздел «Чат» скоро появится в приложении.'),
       ),
     );
   }

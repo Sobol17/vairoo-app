@@ -1,0 +1,4 @@
+enum DisclaimerType {
+  main,
+  chat,
+}

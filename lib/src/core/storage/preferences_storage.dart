@@ -18,5 +18,9 @@ class PreferencesStorage {
   Future<bool> setStringList(String key, List<String> values) =>
       _prefs.setStringList(key, values);
 
+  bool? getBool(String key) => _prefs.getBool(key);
+
+  Future<bool> setBool(String key, bool value) => _prefs.setBool(key, value);
+
   Future<bool> remove(String key) => _prefs.remove(key);
 }

@@ -12,6 +12,10 @@ import 'package:ai_note/src/features/auth/data/repositories/auth_repository_impl
 import 'package:ai_note/src/features/auth/domain/repositories/auth_repository.dart';
 import 'package:ai_note/src/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:ai_note/src/features/auth/presentation/pages/auth_page.dart';
+import 'package:ai_note/src/features/disclaimer/data/datasources/disclaimer_local_data_source.dart';
+import 'package:ai_note/src/features/disclaimer/data/repositories/disclaimer_repository_impl.dart';
+import 'package:ai_note/src/features/disclaimer/domain/repositories/disclaimer_repository.dart';
+import 'package:ai_note/src/features/disclaimer/presentation/controllers/disclaimer_controller.dart';
 import 'package:ai_note/src/features/home/data/datasources/note_local_data_source.dart';
 import 'package:ai_note/src/features/home/data/repositories/note_repository_impl.dart';
 import 'package:ai_note/src/features/home/domain/repositories/note_repository.dart';
@@ -58,6 +62,17 @@ class App extends StatelessWidget {
         ),
         ProxyProvider<NoteLocalDataSource, NoteRepository>(
           update: (_, dataSource, __) => NoteRepositoryImpl(dataSource),
+        ),
+        ProxyProvider<PreferencesStorage, DisclaimerLocalDataSource>(
+          update: (_, storage, __) => DisclaimerLocalDataSource(storage),
+        ),
+        ProxyProvider<DisclaimerLocalDataSource, DisclaimerRepository>(
+          update: (_, dataSource, __) => DisclaimerRepositoryImpl(dataSource),
+        ),
+        ChangeNotifierProvider<DisclaimerController>(
+          create: (context) => DisclaimerController(
+            repository: context.read<DisclaimerRepository>(),
+          ),
         ),
       ],
       child: MaterialApp(
