@@ -24,10 +24,5 @@ Future<void> bootstrap() async {
   final apiClient = ApiClient(dio);
   final storage = PreferencesStorage(sharedPreferences);
 
-  runApp(
-    App(
-      apiClient: apiClient,
-      preferencesStorage: storage,
-    ),
-  );
+  runApp(App(apiClient: apiClient, preferencesStorage: storage));
 }
