@@ -1,14 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import 'package:ai_note/src/features/disclaimer/domain/entities/disclaimer_type.dart';
 import 'package:ai_note/src/features/disclaimer/presentation/controllers/disclaimer_controller.dart';
-import 'package:ai_note/src/features/disclaimer/presentation/widgets/chat_disclaimer_dialog.dart';
+import 'package:ai_note/src/features/disclaimer/presentation/screens/disclaimer_screen.dart';
 import 'package:ai_note/src/features/disclaimer/presentation/widgets/main_disclaimer_dialog.dart';
 import 'package:ai_note/src/features/home/domain/entities/note.dart';
 import 'package:ai_note/src/features/home/domain/repositories/note_repository.dart';
 import 'package:ai_note/src/features/home/presentation/controllers/home_controller.dart';
 import 'package:ai_note/src/features/home/presentation/widgets/home_empty_state.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -16,9 +15,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HomeController>(
-      create: (context) => HomeController(
-        repository: context.read<NoteRepository>(),
-      )..loadNotes(),
+      create: (context) =>
+          HomeController(repository: context.read<NoteRepository>())
+            ..loadNotes(),
       child: const _HomeView(),
     );
   }
@@ -87,7 +86,8 @@ class _HomeViewState extends State<_HomeView> {
     if (!mounted || accepted) {
       return;
     }
-    final shouldMarkAccepted = await showDialog<bool>(
+    final shouldMarkAccepted =
+        await showDialog<bool>(
           context: context,
           barrierDismissible: false,
           builder: (_) => const MainDisclaimerDialog(),
@@ -108,38 +108,20 @@ class _HomeViewState extends State<_HomeView> {
   Future<void> _handleChatTap() async {
     final controller = context.read<DisclaimerController>();
     var accepted = await controller.isAccepted(DisclaimerType.chat);
-    if (!mounted) {
-      return;
-    }
     if (!accepted) {
-      accepted = await showDialog<bool>(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) => const ChatDisclaimerDialog(),
-          ) ??
-          false;
-      if (accepted && mounted) {
-        await controller.markAccepted(DisclaimerType.chat);
-      }
+      await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => DisclaimerScreen(
+          onAcknowledged: () => controller.markAccepted(DisclaimerType.chat),
+        ),
+      );
     }
-    if (!mounted || !accepted) {
-      return;
-    }
-    final messenger = ScaffoldMessenger.of(context);
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      const SnackBar(
-        content: Text('Раздел «Чат» скоро появится в приложении.'),
-      ),
-    );
   }
 }
 
 class _NoteTile extends StatelessWidget {
-  const _NoteTile({
-    required this.note,
-    required this.onDelete,
-  });
+  const _NoteTile({required this.note, required this.onDelete});
 
   final Note note;
   final VoidCallback onDelete;
@@ -179,18 +161,14 @@ Future<void> _showNewNoteDialog(BuildContext context) async {
           children: [
             TextField(
               controller: titleController,
-              decoration: const InputDecoration(
-                labelText: 'Заголовок',
-              ),
+              decoration: const InputDecoration(labelText: 'Заголовок'),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: contentController,
               minLines: 3,
               maxLines: 5,
-              decoration: const InputDecoration(
-                labelText: 'Содержание',
-              ),
+              decoration: const InputDecoration(labelText: 'Содержание'),
             ),
           ],
         ),
