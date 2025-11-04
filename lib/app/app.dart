@@ -15,10 +15,15 @@ import 'package:ai_note/src/features/home/data/datasources/note_local_data_sourc
 import 'package:ai_note/src/features/home/data/repositories/note_repository_impl.dart';
 import 'package:ai_note/src/features/home/domain/repositories/note_repository.dart';
 import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
+import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:ai_note/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'app_shell.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -78,28 +83,99 @@ class App extends StatelessWidget {
           ),
         ),
       ],
-      child: MaterialApp(
-        title: 'AI Note',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light(),
-        home: const _RootPage(),
-      ),
+      child: const _AppRouterHost(),
     );
   }
 }
 
-class _RootPage extends StatelessWidget {
-  const _RootPage();
+class _AppRouterHost extends StatefulWidget {
+  const _AppRouterHost();
+
+  @override
+  State<_AppRouterHost> createState() => _AppRouterHostState();
+}
+
+class _AppRouterHostState extends State<_AppRouterHost> {
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    final authController = context.read<AuthController>();
+    _router = GoRouter(
+      initialLocation: '/journey',
+      debugLogDiagnostics: false,
+      refreshListenable: authController,
+      routes: [
+        GoRoute(
+          path: '/auth',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: AuthPage()),
+        ),
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) =>
+              AppShell(navigationShell: navigationShell),
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/notifications',
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: NotificationsPage()),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/journey',
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: HomePage()),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/calendar',
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: HomePage()),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/profile',
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: ProfilePage()),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+      redirect: (context, state) {
+        final isAuthenticated = authController.isAuthenticated;
+        final loggingIn = state.matchedLocation == '/auth';
+        if (!isAuthenticated && !loggingIn) {
+          return '/auth';
+        }
+        if (isAuthenticated && loggingIn) {
+          return '/journey';
+        }
+        return null;
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthController>(
-      builder: (context, auth, _) {
-        if (auth.isAuthenticated) {
-          return const HomePage();
-        }
-        return const AuthPage();
-      },
+    return MaterialApp.router(
+      title: 'AI Note',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light(),
+      routerConfig: _router,
     );
   }
 }
