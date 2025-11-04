@@ -91,7 +91,11 @@ class _ProfileView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SvgPicture.asset('assets/icons/avatar.svg'),
+                      CircleAvatar(
+                        radius: 56,
+                        backgroundColor: AppColors.bgGray,
+                        child: Image.asset('assets/icons/avatar.png'),
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         controller.displayName,
