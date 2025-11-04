@@ -15,40 +15,98 @@ class CustomBottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      unselectedItemColor: AppColors.secondary,
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.white,
+      elevation: 0,
       selectedItemColor: AppColors.secondary,
+      unselectedItemColor: AppColors.secondary.withOpacity(0.6),
       showUnselectedLabels: true,
       currentIndex: currentIndex,
-      elevation: 1,
       onTap: onDestinationSelected,
-      items: [
+      items: const [
         BottomNavigationBarItem(
-          activeIcon: SvgPicture.asset('assets/icons/navigation/home_fill.svg'),
-          icon: SvgPicture.asset('assets/icons/navigation/home.svg'),
+          icon: _NavIcon(
+            asset: 'assets/icons/navigation/home.svg',
+            activeAsset: 'assets/icons/navigation/home_fill.svg',
+          ),
+          activeIcon: _NavIcon(
+            asset: 'assets/icons/navigation/home.svg',
+            activeAsset: 'assets/icons/navigation/home_fill.svg',
+            isActive: true,
+          ),
           label: 'Главная',
         ),
         BottomNavigationBarItem(
-          activeIcon: SvgPicture.asset(
-            'assets/icons/navigation/cloud_fill.svg',
+          icon: _NavIcon(
+            asset: 'assets/icons/navigation/cloud.svg',
+            activeAsset: 'assets/icons/navigation/cloud_fill.svg',
           ),
-          icon: SvgPicture.asset('assets/icons/navigation/cloud.svg'),
+          activeIcon: _NavIcon(
+            asset: 'assets/icons/navigation/cloud.svg',
+            activeAsset: 'assets/icons/navigation/cloud_fill.svg',
+            isActive: true,
+          ),
           label: 'Практика',
         ),
         BottomNavigationBarItem(
-          activeIcon: SvgPicture.asset(
-            'assets/icons/navigation/calendar_fill.svg',
+          icon: _NavIcon(
+            asset: 'assets/icons/navigation/calendar.svg',
+            activeAsset: 'assets/icons/navigation/calendar_fill.svg',
           ),
-          icon: SvgPicture.asset('assets/icons/navigation/calendar.svg'),
+          activeIcon: _NavIcon(
+            asset: 'assets/icons/navigation/calendar.svg',
+            activeAsset: 'assets/icons/navigation/calendar_fill.svg',
+            isActive: true,
+          ),
           label: 'Календарь',
         ),
         BottomNavigationBarItem(
-          activeIcon: SvgPicture.asset(
-            'assets/icons/navigation/profile_fill.svg',
+          icon: _NavIcon(
+            asset: 'assets/icons/navigation/profile.svg',
+            activeAsset: 'assets/icons/navigation/profile_fill.svg',
           ),
-          icon: SvgPicture.asset('assets/icons/navigation/profile.svg'),
+          activeIcon: _NavIcon(
+            asset: 'assets/icons/navigation/profile.svg',
+            activeAsset: 'assets/icons/navigation/profile_fill.svg',
+            isActive: true,
+          ),
           label: 'Профиль',
         ),
       ],
+    );
+  }
+}
+
+class _NavIcon extends StatelessWidget {
+  const _NavIcon({
+    required this.asset,
+    required this.activeAsset,
+    this.isActive = false,
+  });
+
+  final String asset;
+  final String activeAsset;
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    final iconColor = IconTheme.of(context).color ?? AppColors.secondary;
+    final icon = SvgPicture.asset(
+      isActive ? activeAsset : asset,
+      colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+    );
+
+    if (!isActive) {
+      return icon;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.secondary.withOpacity(0.16),
+        borderRadius: BorderRadius.circular(32),
+      ),
+      child: icon,
     );
   }
 }

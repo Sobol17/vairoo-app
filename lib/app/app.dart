@@ -14,9 +14,13 @@ import 'package:ai_note/src/features/disclaimer/presentation/controllers/disclai
 import 'package:ai_note/src/features/home/data/datasources/note_local_data_source.dart';
 import 'package:ai_note/src/features/home/data/repositories/note_repository_impl.dart';
 import 'package:ai_note/src/features/home/domain/repositories/note_repository.dart';
+import 'package:ai_note/src/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
-import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:ai_note/src/features/profile/data/datasources/profile_local_data_source.dart';
+import 'package:ai_note/src/features/profile/data/repositories/profile_repository_impl.dart';
+import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
 import 'package:ai_note/src/features/profile/presentation/pages/profile_page.dart';
+import 'package:ai_note/src/features/practice/presentation/pages/practice_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -71,6 +75,13 @@ class App extends StatelessWidget {
         ProxyProvider<NoteLocalDataSource, NoteRepository>(
           update: (_, dataSource, __) => NoteRepositoryImpl(dataSource),
         ),
+        ProxyProvider<PreferencesStorage, ProfileLocalDataSource>(
+          update: (_, storage, __) => ProfileLocalDataSource(storage),
+        ),
+        ProxyProvider<ProfileLocalDataSource, ProfileRepository>(
+          update: (_, dataSource, __) =>
+              ProfileRepositoryImpl(localDataSource: dataSource),
+        ),
         ProxyProvider<PreferencesStorage, DisclaimerLocalDataSource>(
           update: (_, storage, __) => DisclaimerLocalDataSource(storage),
         ),
@@ -103,7 +114,7 @@ class _AppRouterHostState extends State<_AppRouterHost> {
     super.initState();
     final authController = context.read<AuthController>();
     _router = GoRouter(
-      initialLocation: '/journey',
+      initialLocation: '/home',
       debugLogDiagnostics: false,
       refreshListenable: authController,
       routes: [
@@ -119,18 +130,18 @@ class _AppRouterHostState extends State<_AppRouterHost> {
             StatefulShellBranch(
               routes: [
                 GoRoute(
-                  path: '/notifications',
+                  path: '/home',
                   pageBuilder: (context, state) =>
-                      const NoTransitionPage(child: NotificationsPage()),
+                      const NoTransitionPage(child: HomePage()),
                 ),
               ],
             ),
             StatefulShellBranch(
               routes: [
                 GoRoute(
-                  path: '/journey',
+                  path: '/practice',
                   pageBuilder: (context, state) =>
-                      const NoTransitionPage(child: HomePage()),
+                      const NoTransitionPage(child: PracticePage()),
                 ),
               ],
             ),
@@ -139,7 +150,7 @@ class _AppRouterHostState extends State<_AppRouterHost> {
                 GoRoute(
                   path: '/calendar',
                   pageBuilder: (context, state) =>
-                      const NoTransitionPage(child: HomePage()),
+                      const NoTransitionPage(child: CalendarPage()),
                 ),
               ],
             ),
@@ -162,7 +173,7 @@ class _AppRouterHostState extends State<_AppRouterHost> {
           return '/auth';
         }
         if (isAuthenticated && loggingIn) {
-          return '/journey';
+          return '/home';
         }
         return null;
       },
