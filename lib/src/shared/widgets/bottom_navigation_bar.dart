@@ -14,12 +14,34 @@ class CustomBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
+    final theme = Theme.of(context);
+    final labelStyle =
+        theme.textTheme.labelMedium?.copyWith(
+          fontSize: 12,
+          color: AppColors.secondary,
+          fontWeight: FontWeight.w500,
+        ) ??
+        const TextStyle(
+          fontSize: 12,
+          color: AppColors.secondary,
+          fontWeight: FontWeight.w500,
+        );
+
+    final bar = BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       backgroundColor: Colors.white,
       elevation: 0,
       selectedItemColor: AppColors.secondary,
-      unselectedItemColor: AppColors.secondary.withOpacity(0.6),
+      unselectedItemColor: AppColors.secondary,
+      selectedIconTheme: const IconThemeData(color: AppColors.secondary),
+      unselectedIconTheme: IconThemeData(
+        color: AppColors.secondary.withValues(alpha: 0.6),
+      ),
+      selectedLabelStyle: labelStyle,
+      unselectedLabelStyle: labelStyle,
+      showUnselectedLabels: true,
+      selectedFontSize: labelStyle.fontSize ?? 12,
+      unselectedFontSize: labelStyle.fontSize ?? 12,
       currentIndex: currentIndex,
       onTap: onDestinationSelected,
       items: const [
@@ -73,6 +95,17 @@ class CustomBottomNavigation extends StatelessWidget {
         ),
       ],
     );
+
+    return Theme(
+      data: theme.copyWith(
+        splashFactory: NoSplash.splashFactory,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+      ),
+      child: bar,
+    );
   }
 }
 
@@ -95,14 +128,12 @@ class _NavIcon extends StatelessWidget {
       colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
     );
 
-    if (!isActive) {
-      return icon;
-    }
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.secondary.withOpacity(0.16),
+        color: !isActive
+            ? AppColors.surface
+            : AppColors.secondary.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(32),
       ),
       child: icon,
