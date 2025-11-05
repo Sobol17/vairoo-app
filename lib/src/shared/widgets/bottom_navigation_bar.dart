@@ -20,7 +20,6 @@ class CustomBottomNavigation extends StatelessWidget {
       elevation: 0,
       selectedItemColor: AppColors.secondary,
       unselectedItemColor: AppColors.secondary.withOpacity(0.6),
-      showUnselectedLabels: true,
       currentIndex: currentIndex,
       onTap: onDestinationSelected,
       items: const [

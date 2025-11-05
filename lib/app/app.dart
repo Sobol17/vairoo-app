@@ -6,7 +6,8 @@ import 'package:ai_note/src/features/auth/data/datasources/auth_remote_data_sour
 import 'package:ai_note/src/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:ai_note/src/features/auth/domain/repositories/auth_repository.dart';
 import 'package:ai_note/src/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:ai_note/src/features/auth/presentation/screens/auth_page.dart';
+import 'package:ai_note/src/features/auth/presentation/pages/auth_page.dart';
+import 'package:ai_note/src/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:ai_note/src/features/disclaimer/data/datasources/disclaimer_local_data_source.dart';
 import 'package:ai_note/src/features/disclaimer/data/repositories/disclaimer_repository_impl.dart';
 import 'package:ai_note/src/features/disclaimer/domain/repositories/disclaimer_repository.dart';
@@ -14,13 +15,16 @@ import 'package:ai_note/src/features/disclaimer/presentation/controllers/disclai
 import 'package:ai_note/src/features/home/data/datasources/note_local_data_source.dart';
 import 'package:ai_note/src/features/home/data/repositories/note_repository_impl.dart';
 import 'package:ai_note/src/features/home/domain/repositories/note_repository.dart';
-import 'package:ai_note/src/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
+import 'package:ai_note/src/features/notifications/data/datasources/notification_local_data_source.dart';
+import 'package:ai_note/src/features/notifications/data/repositories/notification_repository_impl.dart';
+import 'package:ai_note/src/features/notifications/domain/repositories/notification_repository.dart';
+import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:ai_note/src/features/practice/presentation/pages/practice_page.dart';
 import 'package:ai_note/src/features/profile/data/datasources/profile_local_data_source.dart';
 import 'package:ai_note/src/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
 import 'package:ai_note/src/features/profile/presentation/pages/profile_page.dart';
-import 'package:ai_note/src/features/practice/presentation/pages/practice_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -74,6 +78,12 @@ class App extends StatelessWidget {
         ),
         ProxyProvider<NoteLocalDataSource, NoteRepository>(
           update: (_, dataSource, __) => NoteRepositoryImpl(dataSource),
+        ),
+        ProxyProvider<PreferencesStorage, NotificationLocalDataSource>(
+          update: (_, storage, __) => NotificationLocalDataSource(storage),
+        ),
+        ProxyProvider<NotificationLocalDataSource, NotificationRepository>(
+          update: (_, dataSource, __) => NotificationRepositoryImpl(dataSource),
         ),
         ProxyProvider<PreferencesStorage, ProfileLocalDataSource>(
           update: (_, storage, __) => ProfileLocalDataSource(storage),
@@ -133,6 +143,13 @@ class _AppRouterHostState extends State<_AppRouterHost> {
                   path: '/home',
                   pageBuilder: (context, state) =>
                       const NoTransitionPage(child: HomePage()),
+                  routes: [
+                    GoRoute(
+                      path: 'notifications',
+                      pageBuilder: (context, state) =>
+                          const NoTransitionPage(child: NotificationsPage()),
+                    ),
+                  ],
                 ),
               ],
             ),

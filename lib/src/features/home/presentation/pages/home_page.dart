@@ -1,12 +1,12 @@
 import 'package:ai_note/src/features/disclaimer/domain/entities/disclaimer_type.dart';
 import 'package:ai_note/src/features/disclaimer/presentation/controllers/disclaimer_controller.dart';
-import 'package:ai_note/src/features/disclaimer/presentation/screens/disclaimer_screen.dart';
+import 'package:ai_note/src/features/disclaimer/presentation/pages/disclaimer_screen.dart';
 import 'package:ai_note/src/features/disclaimer/presentation/widgets/main_disclaimer_dialog.dart';
 import 'package:ai_note/src/features/home/domain/entities/note.dart';
 import 'package:ai_note/src/features/home/domain/repositories/note_repository.dart';
 import 'package:ai_note/src/features/home/presentation/controllers/home_controller.dart';
-import 'package:ai_note/src/features/home/presentation/widgets/home_empty_state.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -43,8 +43,13 @@ class _HomeViewState extends State<_HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI Note'),
+        title: const Text('Главный экран'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_none_outlined),
+            tooltip: 'Уведомления',
+            onPressed: _openNotifications,
+          ),
           IconButton(
             icon: const Icon(Icons.forum_outlined),
             tooltip: 'Чат',
@@ -54,28 +59,8 @@ class _HomeViewState extends State<_HomeView> {
       ),
       body: Consumer<HomeController>(
         builder: (context, controller, _) {
-          if (controller.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (controller.notes.isEmpty) {
-            return const HomeEmptyState();
-          }
-
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemBuilder: (context, index) => _NoteTile(
-              note: controller.notes[index],
-              onDelete: () => controller.removeNote(controller.notes[index].id),
-            ),
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemCount: controller.notes.length,
-          );
+          return Center(child: Text('Главный экран в разработке'));
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showNewNoteDialog(context),
-        child: const Icon(Icons.add),
       ),
     );
   }
@@ -117,6 +102,10 @@ class _HomeViewState extends State<_HomeView> {
         ),
       );
     }
+  }
+
+  void _openNotifications() {
+    context.push('/home/notifications');
   }
 }
 
@@ -176,17 +165,6 @@ Future<void> _showNewNoteDialog(BuildContext context) async {
           TextButton(
             onPressed: () => navigator.pop(),
             child: const Text('Отмена'),
-          ),
-          FilledButton(
-            onPressed: () async {
-              final title = titleController.text.trim();
-              final content = contentController.text.trim();
-              if (title.isNotEmpty || content.isNotEmpty) {
-                await controller.addNote(title: title, content: content);
-              }
-              navigator.pop();
-            },
-            child: const Text('Сохранить'),
           ),
         ],
       );

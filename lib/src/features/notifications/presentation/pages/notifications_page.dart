@@ -1,10 +1,167 @@
+import 'package:ai_note/src/core/theme/app_colors.dart';
+import 'package:ai_note/src/features/notifications/domain/entities/notification_samples.dart';
+import 'package:ai_note/src/features/notifications/domain/repositories/notification_repository.dart';
+import 'package:ai_note/src/features/notifications/presentation/controllers/notifications_controller.dart';
+import 'package:ai_note/src/features/notifications/presentation/widgets/category_switcher.dart';
+import 'package:ai_note/src/features/notifications/presentation/widgets/nofitications_body.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class NotificationsPage extends StatelessWidget {
   const NotificationsPage({super.key});
 
+  static Future<void> _handleDeletePressed(
+    BuildContext context,
+    NotificationsController controller,
+  ) async {
+    final hasSelection = controller.hasSelection;
+    final message = hasSelection
+        ? 'Удалить выбранные уведомления?'
+        : 'Удалить все уведомления в разделе "${controller.selectedCategory.label}"?';
+    final confirm =
+        await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: const Text('Подтверждение'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: const Text('Отмена'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: const Text('Удалить'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+    if (!confirm) {
+      return;
+    }
+
+    if (hasSelection) {
+      await controller.deleteSelected();
+    } else {
+      await controller.deleteCurrentCategory();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Уведомлений пока нет')));
+    return ChangeNotifierProvider<NotificationsController>(
+      create: (context) => NotificationsController(
+        repository: context.read<NotificationRepository>(),
+        seed: defaultNotificationsSeed(),
+      )..loadNotifications(allowSeed: true),
+      child: Consumer<NotificationsController>(
+        builder: (context, controller, _) {
+          final theme = Theme.of(context);
+
+          return Scaffold(
+            backgroundColor: AppColors.bgGray,
+            appBar: AppBar(
+              backgroundColor: AppColors.bgGray,
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+              leadingWidth: 120,
+              titleSpacing: 0,
+              actionsPadding: EdgeInsets.only(right: 16),
+              leading: Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: () => context.pop(),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    foregroundColor: AppColors.primary,
+                    textStyle: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 16),
+                  label: const Text('Назад'),
+                ),
+              ),
+              actions: [
+                if (controller.hasNotifications)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: AppColors.secondaryLight,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        child: InkWell(
+                          child: Text(
+                            controller.areAllSelected
+                                ? 'Снять выбор'
+                                : 'Выбрать все',
+                            style: TextStyle(
+                              color: AppColors.secondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: IconButton(
+                    tooltip: controller.hasSelection
+                        ? 'Удалить выбранные'
+                        : 'Очистить список',
+                    onPressed:
+                        (controller.hasSelection || controller.hasNotifications)
+                        ? () => _handleDeletePressed(context, controller)
+                        : null,
+                    icon: SvgPicture.asset('assets/icons/backet.svg'),
+                  ),
+                ),
+              ],
+            ),
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: controller.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Уведомления',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          CategorySwitcher(
+                            selected: controller.selectedCategory,
+                            onCategorySelected: controller.selectCategory,
+                          ),
+                          const SizedBox(height: 24),
+                          Expanded(
+                            child: NotificationsBody(controller: controller),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }

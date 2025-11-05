@@ -4,6 +4,7 @@ import 'package:ai_note/src/features/profile/presentation/controllers/profile_co
 import 'package:ai_note/src/features/profile/presentation/widgets/profile_stats_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -50,7 +51,9 @@ class _ProfileView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.push('/home/notifications');
+                  },
                   icon: SvgPicture.asset(
                     'assets/icons/chat.svg',
                     colorFilter: const ColorFilter.mode(
