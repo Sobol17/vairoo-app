@@ -136,6 +136,29 @@ class _ProfileView extends StatelessWidget {
                           child: const Text('Начать общаться'),
                         ),
                       ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton(
+                          onPressed: () => context.push('/profile/edit'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.secondary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(32),
+                            ),
+                            textStyle: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          child: Text(
+                            controller.isProfileComplete
+                                ? 'Изменить данные'
+                                : 'Заполнить данные',
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         'Заполните недостающие данные своего профиля перед использованием чата!',

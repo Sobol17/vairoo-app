@@ -1,8 +1,8 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
 import 'package:ai_note/src/shared/helpers/formatter.dart';
+import 'package:ai_note/src/shared/helpers/phone_mask.dart';
 import 'package:ai_note/src/shared/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class PhoneStep extends StatefulWidget {
@@ -129,7 +129,7 @@ class _PhoneStepState extends State<PhoneStep> {
           textInputAction: TextInputAction.done,
           decoration: const InputDecoration(hintText: 'Номер телефона'),
           onSubmitted: (_) => _handleSubmit(),
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          inputFormatters: [phoneMask],
         ),
         if (widget.errorText != null) ...[
           const SizedBox(height: 12),

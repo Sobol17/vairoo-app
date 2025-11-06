@@ -24,6 +24,7 @@ import 'package:ai_note/src/features/practice/presentation/pages/practice_page.d
 import 'package:ai_note/src/features/profile/data/datasources/profile_local_data_source.dart';
 import 'package:ai_note/src/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
+import 'package:ai_note/src/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:ai_note/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -177,6 +178,13 @@ class _AppRouterHostState extends State<_AppRouterHost> {
                   path: '/profile',
                   pageBuilder: (context, state) =>
                       const NoTransitionPage(child: ProfilePage()),
+                  routes: [
+                    GoRoute(
+                      path: 'edit',
+                      pageBuilder: (context, state) =>
+                          const NoTransitionPage(child: ProfileEditPage()),
+                    ),
+                  ],
                 ),
               ],
             ),

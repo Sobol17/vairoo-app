@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class BrandLogo extends StatelessWidget {
-  const BrandLogo({super.key});
+  const BrandLogo({this.color, super.key});
+
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class BrandLogo extends StatelessWidget {
           height: 25,
           fit: BoxFit.contain,
           colorFilter: ColorFilter.mode(
-            theme.colorScheme.primary,
+            color ?? theme.colorScheme.primary,
             BlendMode.srcIn,
           ),
         ),
