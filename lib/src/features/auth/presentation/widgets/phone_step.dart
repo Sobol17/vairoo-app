@@ -1,9 +1,9 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/shared/helpers/formatter.dart';
 import 'package:ai_note/src/shared/helpers/phone_mask.dart';
 import 'package:ai_note/src/shared/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class PhoneStep extends StatefulWidget {
   const PhoneStep({
@@ -24,14 +24,17 @@ class PhoneStep extends StatefulWidget {
 }
 
 class _PhoneStepState extends State<PhoneStep> {
-  final formatter = Formatter();
+  late final MaskTextInputFormatter _mask;
   late final TextEditingController _controller;
 
   @override
   void initState() {
     super.initState();
+    _mask = MaskTextInputFormatter(
+      mask: phoneMask.getMask(),
+      type: phoneMask.type,
+    );
     _controller = TextEditingController();
-    _controller.addListener(_handleTextChanged);
     _syncWithInitialPhone();
   }
 
@@ -45,49 +48,24 @@ class _PhoneStepState extends State<PhoneStep> {
 
   @override
   void dispose() {
-    _controller.removeListener(_handleTextChanged);
     _controller.dispose();
     super.dispose();
   }
 
-  void _handleTextChanged() {
-    final digits = _extractDigits(_controller.text);
-    final formatted = formatter.applyPhoneMask(digits);
-    if (_controller.text != formatted) {
-      _controller.value = TextEditingValue(
-        text: formatted,
-        selection: TextSelection.collapsed(offset: formatted.length),
-      );
-    }
-  }
-
   void _syncWithInitialPhone() {
-    final digits = _extractDigits(widget.initialPhone);
-    final formatted = formatter.applyPhoneMask(digits);
-    _controller.value = TextEditingValue(
-      text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
-    );
+    final value = _formatInitialValue(widget.initialPhone);
+    _controller.value = value;
   }
 
   String _composePhone() {
-    var digits = _extractDigits(_controller.text);
+    final digits = _mask.getUnmaskedText();
     if (digits.isEmpty) {
       return '';
-    }
-    if (digits.length > 11) {
-      digits = digits.substring(0, 11);
     }
     if (digits.length < 10) {
       return digits;
     }
-    if (digits.length == 10) {
-      return '+7$digits';
-    }
-    if (digits.startsWith('8') || digits.startsWith('7')) {
-      return '+7${digits.substring(1)}';
-    }
-    return '+$digits';
+    return '+7$digits';
   }
 
   void _handleSubmit() {
@@ -129,7 +107,7 @@ class _PhoneStepState extends State<PhoneStep> {
           textInputAction: TextInputAction.done,
           decoration: const InputDecoration(hintText: 'Номер телефона'),
           onSubmitted: (_) => _handleSubmit(),
-          inputFormatters: [phoneMask],
+          inputFormatters: [_mask],
         ),
         if (widget.errorText != null) ...[
           const SizedBox(height: 12),
@@ -163,4 +141,53 @@ class _PhoneStepState extends State<PhoneStep> {
 
   String _extractDigits(String input) =>
       input.replaceAll(RegExp(r'[^0-9]'), '');
+
+  TextEditingValue _formatInitialValue(String phone) {
+    final digits = _prepareDigitsForMask(phone);
+    if (digits.isEmpty) {
+      _mask.clear();
+      return const TextEditingValue(
+        text: '',
+        selection: TextSelection.collapsed(offset: 0),
+      );
+    }
+
+    _mask.clear();
+    final value = _mask.formatEditUpdate(
+      TextEditingValue.empty,
+      TextEditingValue(
+        text: digits,
+        selection: TextSelection.collapsed(offset: digits.length),
+      ),
+    );
+
+    return value.copyWith(
+      selection: TextSelection.collapsed(offset: value.text.length),
+    );
+  }
+
+  String _prepareDigitsForMask(String phone) {
+    var digits = _extractDigits(phone);
+    if (digits.isEmpty) {
+      return '';
+    }
+
+    if (digits.length > 11) {
+      digits = digits.substring(0, 11);
+    }
+
+    if (digits.length == 11 && (digits.startsWith('7') || digits.startsWith('8'))) {
+      return digits.substring(1);
+    }
+
+    if (digits.length == 10) {
+      return digits;
+    }
+
+    if (digits.length > 10) {
+      return digits.substring(digits.length - 10);
+    }
+
+    return digits;
+  }
 }

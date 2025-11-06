@@ -19,6 +19,7 @@ import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
 import 'package:ai_note/src/features/notifications/data/datasources/notification_local_data_source.dart';
 import 'package:ai_note/src/features/notifications/data/repositories/notification_repository_impl.dart';
 import 'package:ai_note/src/features/notifications/domain/repositories/notification_repository.dart';
+import 'package:ai_note/src/features/notifications/presentation/pages/chat_detail_page.dart';
 import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:ai_note/src/features/practice/presentation/pages/practice_page.dart';
 import 'package:ai_note/src/features/profile/data/datasources/profile_local_data_source.dart';
@@ -145,6 +146,17 @@ class _AppRouterHostState extends State<_AppRouterHost> {
                   pageBuilder: (context, state) =>
                       const NoTransitionPage(child: HomePage()),
                   routes: [
+                    GoRoute(
+                      path: 'chat',
+                      pageBuilder: (context, state) {
+                        final data = state.extra is ChatDetailData
+                            ? state.extra as ChatDetailData
+                            : const ChatDetailData.sample();
+                        return NoTransitionPage(
+                          child: ChatDetailPage(data: data),
+                        );
+                      },
+                    ),
                     GoRoute(
                       path: 'notifications',
                       pageBuilder: (context, state) =>
