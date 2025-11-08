@@ -39,6 +39,31 @@ class ProfileController extends ChangeNotifier {
     return _formatter.formatFullDate(start);
   }
 
+  String get birthDateLabel {
+    final birth = _profile.birthDate;
+    if (birth == null) {
+      return 'Добавить';
+    }
+    return _formatter.formatFullDate(birth);
+  }
+
+  String get phoneLabel =>
+      _profile.phone?.isNotEmpty == true ? _profile.phone! : 'Добавить';
+
+  String get emailLabel =>
+      _profile.email?.isNotEmpty == true ? _profile.email! : 'Добавить';
+
+  String get dailyExpensesLabel => _profile.dailyExpenses != null
+      ? '${_profile.dailyExpenses!.toStringAsFixed(0)} руб.'
+      : 'Добавить';
+
+  String get dailyCaloriesLabel => _profile.dailyCalories != null
+      ? _profile.dailyCalories!.toStringAsFixed(0)
+      : 'Добавить';
+
+  bool get pushEnabled => _profile.pushNotificationsEnabled;
+  bool get emailEnabled => _profile.emailNotificationsEnabled;
+
   bool get isProfileComplete => _profile.isComplete;
 
   Future<void> loadProfile() async {
@@ -55,6 +80,16 @@ class ProfileController extends ChangeNotifier {
     _profile = profile;
     notifyListeners();
     await _repository.saveProfile(profile);
+  }
+
+  Future<void> togglePushNotifications(bool value) async {
+    final updated = _profile.copyWith(pushNotificationsEnabled: value);
+    await updateProfile(updated);
+  }
+
+  Future<void> toggleEmailNotifications(bool value) async {
+    final updated = _profile.copyWith(emailNotificationsEnabled: value);
+    await updateProfile(updated);
   }
 
   void _setLoading(bool value) {

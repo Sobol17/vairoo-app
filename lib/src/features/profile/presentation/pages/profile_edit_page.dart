@@ -294,7 +294,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                               left: -15,
                               top: -8,
                               child: TextButton.icon(
-                                onPressed: () => {},
+                                onPressed: () => context.push('/profile'),
                                 icon: const Icon(Icons.chevron_left_rounded),
                                 label: const Text('Назад'),
                                 style: TextButton.styleFrom(
