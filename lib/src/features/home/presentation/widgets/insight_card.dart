@@ -1,13 +1,28 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/articles/presentation/widgets/chevron_badge.dart';
 import 'package:ai_note/src/features/home/domain/entities/home_insight.dart';
 import 'package:flutter/material.dart';
 
-class InsightCard extends StatelessWidget {
+class InsightCard extends StatefulWidget {
   const InsightCard({required this.data, this.onTap, super.key});
 
   final HomeInsightCardData data;
   final VoidCallback? onTap;
+
+  @override
+  State<InsightCard> createState() => _InsightCardState();
+}
+
+class _InsightCardState extends State<InsightCard>
+    with SingleTickerProviderStateMixin {
+  bool _expanded = false;
+
+  void _handleAction() {
+    if (!widget.data.hasAchievements) {
+      widget.onTap?.call();
+      return;
+    }
+    setState(() => _expanded = !_expanded);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,85 +30,155 @@ class InsightCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              data.title,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.primary,
-                fontSize: 16,
-              ),
-            ),
-            const Spacer(),
-            if (data.actionLabel != null)
-              Text(
-                data.actionLabel!,
-                style: theme.textTheme.labelLarge?.copyWith(
-                  color: AppColors.secondary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            if (data.actionLabel != null) const SizedBox(width: 8),
-            if (data.actionLabel != null) const ChevronBadge(),
-          ],
+        _InsightHeader(
+          title: widget.data.title,
+          actionLabel: widget.data.actionLabel,
+          isExpanded: _expanded,
+          showAction:
+              widget.data.hasAchievements || widget.data.actionLabel != null,
+          onPressed: _handleAction,
         ),
         const SizedBox(height: 8),
-        Material(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(6),
-          child: Ink(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(6),
-              onTap: onTap,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
-                child: Row(
-                  children: [
-                    data.icon,
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            data.value,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.primary,
+        _AchievementTile(
+          icon: widget.data.icon,
+          title: widget.data.value,
+          subtitle: widget.data.subtitle,
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeInOut,
+          child: _expanded && widget.data.hasAchievements
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Column(
+                    children: widget.data.achievements!
+                        .map(
+                          (achievement) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _AchievementTile(
+                              icon: achievement.icon,
+                              title: achievement.title,
+                              subtitle: achievement.subtitle,
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            data.subtitle,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (data.actionLabel == null) const ChevronBadge(),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+                        )
+                        .toList(),
+                  ),
+                )
+              : const SizedBox.shrink(),
         ),
       ],
+    );
+  }
+}
+
+class _InsightHeader extends StatelessWidget {
+  const _InsightHeader({
+    required this.title,
+    required this.showAction,
+    required this.isExpanded,
+    required this.onPressed,
+    this.actionLabel,
+  });
+
+  final String title;
+  final String? actionLabel;
+  final bool showAction;
+  final bool isExpanded;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppColors.primary,
+            fontSize: 16,
+          ),
+        ),
+        const Spacer(),
+        if (showAction)
+          InkWell(
+            onTap: onPressed,
+            borderRadius: BorderRadius.circular(16),
+            child: Row(
+              children: [
+                Text(
+                  isExpanded ? 'Скрыть' : (actionLabel ?? 'Подробнее'),
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: AppColors.secondary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                AnimatedRotation(
+                  turns: isExpanded ? 0.5 : 0,
+                  duration: const Duration(milliseconds: 220),
+                  child: const Icon(
+                    Icons.expand_more,
+                    color: AppColors.secondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _AchievementTile extends StatelessWidget {
+  const _AchievementTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final Widget icon;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: 48, height: 48, child: icon),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

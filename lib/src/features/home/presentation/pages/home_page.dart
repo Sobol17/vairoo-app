@@ -142,6 +142,8 @@ class _HomeViewState extends State<_HomeView> {
           onAcknowledged: () => controller.markAccepted(DisclaimerType.chat),
         ),
       );
+    } else {
+      context.push('/home/notifications');
     }
   }
 
@@ -179,6 +181,28 @@ class _HomeViewState extends State<_HomeView> {
         value: 'Начало пути',
         subtitle: 'Вы начали свой путь улучшения',
         actionLabel: 'Раскрыть',
+        achievements: [
+          HomeAchievementDetail(
+            icon: Image.asset('assets/icons/top.png'),
+            title: 'Начало пути',
+            subtitle: 'Вы начали свой путь улучшения',
+          ),
+          HomeAchievementDetail(
+            icon: Image.asset('assets/icons/avatar.png'),
+            title: 'Намеченный путь',
+            subtitle: '7 дней позади',
+          ),
+          HomeAchievementDetail(
+            icon: Image.asset('assets/icons/money_save.png'),
+            title: 'Свободный человек',
+            subtitle: '20 дней трезвости',
+          ),
+          HomeAchievementDetail(
+            icon: Image.asset('assets/icons/articles.png'),
+            title: 'Товарищ на пути',
+            subtitle: 'Начали общаться в сообществе',
+          ),
+        ],
       ),
       HomeInsightCardData(
         icon: Image.asset('assets/icons/articles.png'),
