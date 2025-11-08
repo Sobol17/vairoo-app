@@ -3,7 +3,6 @@ import 'package:ai_note/src/features/notifications/domain/entities/chat_detail_d
 import 'package:ai_note/src/features/notifications/presentation/widgets/chat_header.dart';
 import 'package:ai_note/src/features/notifications/presentation/widgets/chat_input_bar.dart';
 import 'package:ai_note/src/features/notifications/presentation/widgets/chat_message.dart';
-import 'package:ai_note/src/features/notifications/presentation/widgets/invite_button.dart';
 import 'package:ai_note/src/features/notifications/presentation/widgets/report_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -119,33 +118,66 @@ Future<void> _showReportBottomSheet(BuildContext context) async {
     ),
   ];
 
+  int? selectedIndex;
   await showModalBottomSheet<void>(
     context: context,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
     builder: (_) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 48,
-            height: 4,
-            margin: const EdgeInsets.only(bottom: 12),
-            decoration: BoxDecoration(
+      return StatefulBuilder(
+        builder: (context, setModalState) {
+          return Container(
+            decoration: const BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(2),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
             ),
-          ),
-          ...reasons.map(
-            (reason) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              child: ReportCard(title: reason.$1, description: reason.$2),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewPadding.bottom,
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 6),
-            child: const InviteToChatButton(label: "Пожаловаться"),
-          ),
-        ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 48,
+                  height: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.gray,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                ...reasons.asMap().entries.map(
+                  (entry) => Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    child: ReportCard(
+                      title: entry.value.$1,
+                      description: entry.value.$2,
+                      isSelected: selectedIndex == entry.key,
+                      onTap: () => setModalState(() {
+                        selectedIndex = entry.key;
+                      }),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: selectedIndex == null
+                          ? null
+                          : () => Navigator.of(context).pop(),
+                      child: const Text('Пожаловаться'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       );
     },
   );

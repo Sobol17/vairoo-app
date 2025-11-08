@@ -56,7 +56,7 @@ class _ArticlesViewState extends State<_ArticlesView> {
   Future<void> _onRefresh() => _loadArticles(forceRefresh: true);
 
   void _openArticleDetail(Article article) {
-    context.push('/practice/article/${article.id}', extra: article);
+    context.push('/articles/article/${article.id}', extra: article);
   }
 
   @override

@@ -70,7 +70,7 @@ GoRouter createAppRouter(AuthController authController) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/practice',
+                path: '/articles',
                 pageBuilder: (context, state) =>
                     _buildTransitionPage(state, const ArticlesPage()),
                 routes: [

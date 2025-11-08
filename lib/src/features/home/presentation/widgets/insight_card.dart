@@ -43,6 +43,7 @@ class _InsightCardState extends State<InsightCard>
           icon: widget.data.icon,
           title: widget.data.value,
           subtitle: widget.data.subtitle,
+          onTap: _handleAction,
         ),
         AnimatedSize(
           duration: const Duration(milliseconds: 220),
@@ -59,6 +60,7 @@ class _InsightCardState extends State<InsightCard>
                               icon: achievement.icon,
                               title: achievement.title,
                               subtitle: achievement.subtitle,
+                              onTap: _handleAction,
                             ),
                           ),
                         )
@@ -136,48 +138,53 @@ class _AchievementTile extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
+    required this.onTap,
   });
 
   final Widget icon;
   final String title;
   final String subtitle;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(width: 48, height: 48, child: icon),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(width: 48, height: 48, child: icon),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
