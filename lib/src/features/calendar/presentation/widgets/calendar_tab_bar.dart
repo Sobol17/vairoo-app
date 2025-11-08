@@ -1,8 +1,8 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
-class PracticeTabBar extends StatelessWidget {
-  const PracticeTabBar({required this.theme, super.key});
+class CalendarTabBar extends StatelessWidget {
+  const CalendarTabBar({required this.theme, super.key});
 
   final ThemeData theme;
 
@@ -35,8 +35,8 @@ class PracticeTabBar extends StatelessWidget {
           labelStyle: labelStyle,
           unselectedLabelStyle: labelStyle?.copyWith(color: AppColors.textGray),
           tabs: const [
-            Tab(text: 'Дыхание'),
-            Tab(text: 'Игры'),
+            Tab(text: 'Сегодня'),
+            Tab(text: 'Всего'),
           ],
         ),
       ],
