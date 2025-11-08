@@ -9,14 +9,14 @@ const sampleDayPlan = DailyPlan(
       title: 'Гидратация',
       description:
           'Носите с собой бутылку воды. Пейте регулярно. Иногда жажду путают с тягой.',
-      primaryActionLabel: 'Записать в дневник',
+      primaryActionLabel: 'Смотреть',
       secondaryActionLabel: 'Отметить',
       icon: Icons.water_drop_outlined,
     ),
     PlanActivity(
       title: 'Здоровые перекусы',
       description: 'Фрукты/овощи, йогурт и т.д.',
-      primaryActionLabel: 'Смотреть список',
+      primaryActionLabel: 'Смотреть',
       secondaryActionLabel: 'Отметить',
       icon: Icons.restaurant_outlined,
     ),
@@ -24,7 +24,7 @@ const sampleDayPlan = DailyPlan(
       title: 'Осознанность в стрессовых ситуациях',
       description:
           'Если возникает стресс: сделайте 3 глубоких вдоха и задайте себе вопросы поддержки.',
-      primaryActionLabel: 'На страницу ритуалов',
+      primaryActionLabel: 'Смотреть',
       secondaryActionLabel: 'Отметить',
       icon: Icons.self_improvement_outlined,
     ),
@@ -32,7 +32,7 @@ const sampleDayPlan = DailyPlan(
       title: 'Физическая активность',
       description:
           'Даже 10-15 минут прогулки помогают снять напряжение и улучшить настроение.',
-      primaryActionLabel: 'Тренировки',
+      primaryActionLabel: 'Смотреть',
       secondaryActionLabel: 'Отметить',
       icon: Icons.fitness_center_outlined,
     ),
