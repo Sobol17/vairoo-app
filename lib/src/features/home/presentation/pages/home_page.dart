@@ -10,6 +10,7 @@ import 'package:ai_note/src/features/home/presentation/widgets/home_daily_plan_s
 import 'package:ai_note/src/features/home/presentation/widgets/home_insights_section.dart';
 import 'package:ai_note/src/features/home/presentation/widgets/home_motivation_card.dart';
 import 'package:ai_note/src/features/home/presentation/widgets/home_top_header.dart';
+import 'package:ai_note/src/features/plan/data/plan_samples.dart';
 import 'package:ai_note/src/shared/widgets/secondary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -162,9 +163,7 @@ class _HomeViewState extends State<_HomeView> {
   }
 
   void _handleStartDayTap() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Отличное начало дня!')));
+    context.push('/home/plan', extra: sampleDayPlan);
   }
 
   List<HomeInsightCardData> _buildInsights() {

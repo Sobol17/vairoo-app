@@ -10,6 +10,8 @@ import 'package:ai_note/src/features/notifications/domain/entities/chat_detail_d
 import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
 import 'package:ai_note/src/features/notifications/presentation/pages/chat_detail_page.dart';
 import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
+import 'package:ai_note/src/features/plan/presentation/pages/plan_page.dart';
 import 'package:ai_note/src/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:ai_note/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +64,15 @@ GoRouter createAppRouter(AuthController authController) {
                         initialCategory: NotificationCategory.chat,
                       ),
                     ),
+                  ),
+                  GoRoute(
+                    path: 'plan',
+                    pageBuilder: (context, state) {
+                      final plan = state.extra is DailyPlan
+                          ? state.extra as DailyPlan
+                          : null;
+                      return _buildTransitionPage(state, PlanPage(plan: plan));
+                    },
                   ),
                 ],
               ),
