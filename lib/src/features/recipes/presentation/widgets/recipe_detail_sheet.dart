@@ -90,14 +90,7 @@ class RecipeDetailSheet extends StatelessWidget {
                         ),
                       ],
                       const SizedBox(height: 20),
-                      Text(
-                        'Ингредиенты:',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
+
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
@@ -106,46 +99,61 @@ class RecipeDetailSheet extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
-                          children: recipe.ingredients
-                              .map(
-                                (ingredient) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 6,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          ingredient.name,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Ингредиенты:',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            ...List.generate(recipe.ingredients.length, (
+                              index,
+                            ) {
+                              final ingredient = recipe.ingredients[index];
+                              final isLast =
+                                  index == recipe.ingredients.length - 1;
+                              return Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 6,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            ingredient.name,
+                                            style: theme.textTheme.bodyMedium
+                                                ?.copyWith(
+                                                  color: AppColors.textPrimary,
+                                                ),
+                                          ),
+                                        ),
+                                        Text(
+                                          ingredient.amount,
                                           style: theme.textTheme.bodyMedium
                                               ?.copyWith(
-                                                color: AppColors.textPrimary,
+                                                color: AppColors.textSecondary,
                                               ),
                                         ),
-                                      ),
-                                      Text(
-                                        ingredient.amount,
-                                        style: theme.textTheme.bodyMedium
-                                            ?.copyWith(
-                                              color: AppColors.textSecondary,
-                                            ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              )
-                              .toList(),
+                                  if (!isLast)
+                                    const Divider(
+                                      height: 1,
+                                      color: AppColors.textGray,
+                                    ),
+                                ],
+                              );
+                            }),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Text(
-                        'Приготовление',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
@@ -160,12 +168,25 @@ class RecipeDetailSheet extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: Text(
-                          recipe.instructions,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary,
-                            height: 1.5,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Приготовление',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              recipe.instructions,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.textSecondary,
+                                height: 1.5,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

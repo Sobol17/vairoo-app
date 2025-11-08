@@ -16,7 +16,7 @@ const sampleDayPlan = DailyPlan(
     PlanActivity(
       title: 'Здоровые перекусы',
       description: 'Фрукты/овощи, йогурт и т.д.',
-      primaryActionLabel: 'Смотреть список',
+      primaryActionLabel: 'Смотреть',
       secondaryActionLabel: 'Отметить',
       icon: Icons.restaurant_outlined,
       route: '/home/recipes',

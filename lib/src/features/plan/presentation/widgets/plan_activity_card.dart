@@ -81,11 +81,15 @@ class PlanActivityCard extends StatelessWidget {
                   ),
                   child: Text(
                     activity.primaryActionLabel,
-                    style: const TextStyle(fontSize: 12),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    softWrap: false,
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {},

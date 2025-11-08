@@ -7,7 +7,6 @@ import 'package:ai_note/src/features/plan/presentation/widgets/reality_check_car
 import 'package:ai_note/src/shared/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/go_router.dart';
 
 class PlanPage extends StatelessWidget {
   const PlanPage({super.key, this.plan});
@@ -79,17 +78,11 @@ class PlanPage extends StatelessWidget {
                       ),
                       actions: [
                         Padding(
-                          padding: const EdgeInsets.only(right: 12),
-                          child: CircularNavButton(
-                            icon: Icons.menu_book_outlined,
-                            onPressed: () => context.push('/home/recipes'),
-                          ),
-                        ),
-                        Padding(
                           padding: const EdgeInsets.only(right: 16),
                           child: CircularNavButton(
                             icon: Icons.notifications_none,
-                            onPressed: () {},
+                            onPressed: () =>
+                                context.push('/home/notifications'),
                           ),
                         ),
                       ],
