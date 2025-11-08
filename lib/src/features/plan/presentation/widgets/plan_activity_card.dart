@@ -1,6 +1,7 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
 import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class PlanActivityCard extends StatelessWidget {
   const PlanActivityCard({required this.activity, super.key});
@@ -70,7 +71,9 @@ class PlanActivityCard extends StatelessWidget {
             children: [
               Expanded(
                 child: FilledButton(
-                  onPressed: () {},
+                  onPressed: activity.route == null
+                      ? null
+                      : () => context.push(activity.route!),
                   style: FilledButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
@@ -78,7 +81,7 @@ class PlanActivityCard extends StatelessWidget {
                   ),
                   child: Text(
                     activity.primaryActionLabel,
-                    style: TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 12),
                   ),
                 ),
               ),

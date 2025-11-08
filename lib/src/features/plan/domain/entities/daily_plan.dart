@@ -21,6 +21,7 @@ class PlanActivity {
     required this.primaryActionLabel,
     required this.secondaryActionLabel,
     this.icon,
+    this.route,
   });
 
   final String title;
@@ -28,6 +29,7 @@ class PlanActivity {
   final String primaryActionLabel;
   final String secondaryActionLabel;
   final IconData? icon;
+  final String? route;
 }
 
 class RealityCheck {

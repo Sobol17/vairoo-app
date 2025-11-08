@@ -16,9 +16,10 @@ const sampleDayPlan = DailyPlan(
     PlanActivity(
       title: 'Здоровые перекусы',
       description: 'Фрукты/овощи, йогурт и т.д.',
-      primaryActionLabel: 'Смотреть',
+      primaryActionLabel: 'Смотреть список',
       secondaryActionLabel: 'Отметить',
       icon: Icons.restaurant_outlined,
+      route: '/home/recipes',
     ),
     PlanActivity(
       title: 'Осознанность в стрессовых ситуациях',

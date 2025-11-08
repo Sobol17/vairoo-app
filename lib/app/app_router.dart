@@ -8,10 +8,12 @@ import 'package:ai_note/src/features/calendar/presentation/pages/calendar_page.d
 import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
 import 'package:ai_note/src/features/notifications/domain/entities/chat_detail_data.dart';
 import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
+import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
 import 'package:ai_note/src/features/notifications/presentation/pages/chat_detail_page.dart';
 import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
 import 'package:ai_note/src/features/plan/presentation/pages/plan_page.dart';
+import 'package:ai_note/src/features/recipes/presentation/pages/recipes_page.dart';
 import 'package:ai_note/src/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:ai_note/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +75,11 @@ GoRouter createAppRouter(AuthController authController) {
                           : null;
                       return _buildTransitionPage(state, PlanPage(plan: plan));
                     },
+                  ),
+                  GoRoute(
+                    path: 'recipes',
+                    pageBuilder: (context, state) =>
+                        _buildTransitionPage(state, const RecipesPage()),
                   ),
                 ],
               ),

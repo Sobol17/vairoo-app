@@ -6,6 +6,8 @@ import 'package:ai_note/src/features/plan/presentation/widgets/plan_activity_car
 import 'package:ai_note/src/features/plan/presentation/widgets/reality_check_card.dart';
 import 'package:ai_note/src/shared/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:go_router/go_router.dart';
 
 class PlanPage extends StatelessWidget {
   const PlanPage({super.key, this.plan});
@@ -68,21 +70,26 @@ class PlanPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      leading: Transform.translate(
-                        offset: Offset(16, 0),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: CircularNavButton(
-                            icon: Icons.chevron_left,
-                            onPressed: () => Navigator.of(context).maybePop(),
-                          ),
+                      leading: Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: CircularNavButton(
+                          icon: Icons.chevron_left,
+                          onPressed: () => Navigator.of(context).maybePop(),
                         ),
                       ),
-                      actions: const [
+                      actions: [
                         Padding(
-                          padding: EdgeInsets.only(right: 16),
+                          padding: const EdgeInsets.only(right: 12),
+                          child: CircularNavButton(
+                            icon: Icons.menu_book_outlined,
+                            onPressed: () => context.push('/home/recipes'),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 16),
                           child: CircularNavButton(
                             icon: Icons.notifications_none,
+                            onPressed: () {},
                           ),
                         ),
                       ],

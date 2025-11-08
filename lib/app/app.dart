@@ -22,6 +22,9 @@ import 'package:ai_note/src/features/notifications/domain/repositories/notificat
 import 'package:ai_note/src/features/profile/data/datasources/profile_local_data_source.dart';
 import 'package:ai_note/src/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
+import 'package:ai_note/src/features/recipes/data/datasources/recipes_local_data_source.dart';
+import 'package:ai_note/src/features/recipes/data/repositories/recipes_repository_impl.dart';
+import 'package:ai_note/src/features/recipes/domain/repositories/recipes_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -106,6 +109,13 @@ class App extends StatelessWidget {
           create: (context) => DisclaimerController(
             repository: context.read<DisclaimerRepository>(),
           ),
+        ),
+        Provider<RecipesLocalDataSource>(
+          create: (_) => const RecipesLocalDataSource(),
+        ),
+        ProxyProvider<RecipesLocalDataSource, RecipesRepository>(
+          update: (_, dataSource, __) =>
+              RecipesRepositoryImpl(localDataSource: dataSource),
         ),
       ],
       child: const _AppRouterHost(),
