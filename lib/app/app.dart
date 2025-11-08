@@ -1,13 +1,14 @@
 import 'package:ai_note/src/core/network/api_client.dart';
 import 'package:ai_note/src/core/storage/preferences_storage.dart';
 import 'package:ai_note/src/core/theme/app_theme.dart';
+import 'package:ai_note/src/features/articles/data/datasources/articles_remote_data_source.dart';
+import 'package:ai_note/src/features/articles/data/repositories/articles_repository_impl.dart';
+import 'package:ai_note/src/features/articles/domain/repositories/articles_repository.dart';
 import 'package:ai_note/src/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:ai_note/src/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:ai_note/src/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:ai_note/src/features/auth/domain/repositories/auth_repository.dart';
 import 'package:ai_note/src/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:ai_note/src/features/auth/presentation/pages/auth_page.dart';
-import 'package:ai_note/src/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:ai_note/src/features/disclaimer/data/datasources/disclaimer_local_data_source.dart';
 import 'package:ai_note/src/features/disclaimer/data/repositories/disclaimer_repository_impl.dart';
 import 'package:ai_note/src/features/disclaimer/domain/repositories/disclaimer_repository.dart';
@@ -15,25 +16,19 @@ import 'package:ai_note/src/features/disclaimer/presentation/controllers/disclai
 import 'package:ai_note/src/features/home/data/datasources/note_local_data_source.dart';
 import 'package:ai_note/src/features/home/data/repositories/note_repository_impl.dart';
 import 'package:ai_note/src/features/home/domain/repositories/note_repository.dart';
-import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
 import 'package:ai_note/src/features/notifications/data/datasources/notification_local_data_source.dart';
 import 'package:ai_note/src/features/notifications/data/repositories/notification_repository_impl.dart';
 import 'package:ai_note/src/features/notifications/domain/repositories/notification_repository.dart';
-import 'package:ai_note/src/features/notifications/presentation/pages/chat_detail_page.dart';
-import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
-import 'package:ai_note/src/features/practice/presentation/pages/practice_page.dart';
 import 'package:ai_note/src/features/profile/data/datasources/profile_local_data_source.dart';
 import 'package:ai_note/src/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
-import 'package:ai_note/src/features/profile/presentation/pages/profile_edit_page.dart';
-import 'package:ai_note/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'app_shell.dart';
+import 'app_router.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -87,6 +82,13 @@ class App extends StatelessWidget {
         ProxyProvider<NotificationLocalDataSource, NotificationRepository>(
           update: (_, dataSource, __) => NotificationRepositoryImpl(dataSource),
         ),
+        ProxyProvider<ApiClient, ArticlesRemoteDataSource>(
+          update: (_, client, __) => ArticlesRemoteDataSource(client),
+        ),
+        ProxyProvider<ArticlesRemoteDataSource, ArticlesRepository>(
+          update: (_, dataSource, __) =>
+              ArticlesRepositoryImpl(remoteDataSource: dataSource),
+        ),
         ProxyProvider<PreferencesStorage, ProfileLocalDataSource>(
           update: (_, storage, __) => ProfileLocalDataSource(storage),
         ),
@@ -125,96 +127,7 @@ class _AppRouterHostState extends State<_AppRouterHost> {
   void initState() {
     super.initState();
     final authController = context.read<AuthController>();
-    _router = GoRouter(
-      initialLocation: '/home',
-      debugLogDiagnostics: false,
-      refreshListenable: authController,
-      routes: [
-        GoRoute(
-          path: '/auth',
-          pageBuilder: (context, state) =>
-              const NoTransitionPage(child: AuthPage()),
-        ),
-        StatefulShellRoute.indexedStack(
-          builder: (context, state, navigationShell) =>
-              AppShell(navigationShell: navigationShell),
-          branches: [
-            StatefulShellBranch(
-              routes: [
-                GoRoute(
-                  path: '/home',
-                  pageBuilder: (context, state) =>
-                      const NoTransitionPage(child: HomePage()),
-                  routes: [
-                    GoRoute(
-                      path: 'chat',
-                      pageBuilder: (context, state) {
-                        final data = state.extra is ChatDetailData
-                            ? state.extra as ChatDetailData
-                            : const ChatDetailData.sample();
-                        return NoTransitionPage(
-                          child: ChatDetailPage(data: data),
-                        );
-                      },
-                    ),
-                    GoRoute(
-                      path: 'notifications',
-                      pageBuilder: (context, state) =>
-                          const NoTransitionPage(child: NotificationsPage()),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            StatefulShellBranch(
-              routes: [
-                GoRoute(
-                  path: '/practice',
-                  pageBuilder: (context, state) =>
-                      const NoTransitionPage(child: PracticePage()),
-                ),
-              ],
-            ),
-            StatefulShellBranch(
-              routes: [
-                GoRoute(
-                  path: '/calendar',
-                  pageBuilder: (context, state) =>
-                      const NoTransitionPage(child: CalendarPage()),
-                ),
-              ],
-            ),
-            StatefulShellBranch(
-              routes: [
-                GoRoute(
-                  path: '/profile',
-                  pageBuilder: (context, state) =>
-                      const NoTransitionPage(child: ProfilePage()),
-                  routes: [
-                    GoRoute(
-                      path: 'edit',
-                      pageBuilder: (context, state) =>
-                          const NoTransitionPage(child: ProfileEditPage()),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-      redirect: (context, state) {
-        final isAuthenticated = authController.isAuthenticated;
-        final loggingIn = state.matchedLocation == '/auth';
-        if (!isAuthenticated && !loggingIn) {
-          return '/auth';
-        }
-        if (isAuthenticated && loggingIn) {
-          return '/home';
-        }
-        return null;
-      },
-    );
+    _router = createAppRouter(authController);
   }
 
   @override

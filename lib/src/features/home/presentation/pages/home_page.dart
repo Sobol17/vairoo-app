@@ -53,7 +53,7 @@ class _HomeViewState extends State<_HomeView> {
           IconButton(
             icon: const Icon(Icons.forum_outlined),
             tooltip: 'Чат',
-            onPressed: _handleChatTap,
+            onPressed: _openArticles,
           ),
         ],
       ),
@@ -106,6 +106,10 @@ class _HomeViewState extends State<_HomeView> {
 
   void _openNotifications() {
     context.push('/home/notifications');
+  }
+
+  void _openArticles() {
+    context.push('/articles');
   }
 }
 
