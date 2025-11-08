@@ -16,6 +16,7 @@ class HomeHeaderRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         HeaderCircleButton(
           icon: SvgPicture.asset(

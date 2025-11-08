@@ -8,6 +8,7 @@ import 'package:ai_note/src/features/home/domain/entities/home_insight.dart';
 import 'package:ai_note/src/features/home/domain/entities/home_plan.dart';
 import 'package:ai_note/src/features/home/presentation/widgets/home_daily_plan_section.dart';
 import 'package:ai_note/src/features/home/presentation/widgets/home_insights_section.dart';
+import 'package:ai_note/src/features/home/presentation/widgets/home_motivation_card.dart';
 import 'package:ai_note/src/features/home/presentation/widgets/home_top_header.dart';
 import 'package:ai_note/src/shared/widgets/secondary_button.dart';
 import 'package:flutter/material.dart';
@@ -51,14 +52,24 @@ class _HomeViewState extends State<_HomeView> {
           parent: AlwaysScrollableScrollPhysics(),
         ),
         slivers: [
-          SliverToBoxAdapter(
-            child: HomeTopHeader(
-              quote:
-                  'Сложнее всего начать действовать, все остальное зависит только от упорства',
-              sobrietyCounter: '1д 5ч 36мин',
-              sobrietyStartDate: 'Дата начала 26 июня 2025 года',
-              onChatTap: _handleChatTap,
-              onNotificationsTap: _openNotifications,
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _HomeHeaderDelegate(
+              child: HomeTopHeader(
+                onChatTap: _handleChatTap,
+                onNotificationsTap: _openNotifications,
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.only(top: 24, bottom: 12),
+            sliver: SliverToBoxAdapter(
+              child: HomeMotivationCard(
+                quote:
+                    'Сложнее всего начать действовать, все остальное зависит только от упорства',
+                sobrietyCounter: '1д 5ч 36мин',
+                sobrietyStartDate: 'Дата начала 26 июня 2025 года',
+              ),
             ),
           ),
           SliverPadding(
@@ -170,7 +181,7 @@ class _HomeViewState extends State<_HomeView> {
         actionLabel: 'Раскрыть',
       ),
       HomeInsightCardData(
-        icon: Image.asset('assets/icons/avatar.png'),
+        icon: Image.asset('assets/icons/articles.png'),
         title: 'Библиотека знаний',
         value: 'Статьи и лайфхаки',
         subtitle: 'Узнавайте много нового',
@@ -187,5 +198,32 @@ class _HomeViewState extends State<_HomeView> {
         subtitle: 'Держите себя в тонусе',
       ),
     ];
+  }
+}
+
+class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
+  const _HomeHeaderDelegate({required this.child});
+
+  final Widget child;
+  static const double _height = 140;
+
+  @override
+  double get minExtent => _height;
+
+  @override
+  double get maxExtent => _height;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return SizedBox.expand(child: child);
+  }
+
+  @override
+  bool shouldRebuild(covariant _HomeHeaderDelegate oldDelegate) {
+    return oldDelegate.child != child;
   }
 }
