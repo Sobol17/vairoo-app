@@ -11,7 +11,13 @@ class BreathingTab extends StatelessWidget {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      child: Column(children: [Expanded(child: BreathingPracticeCard())]),
+      child: Column(
+        children: [
+          Expanded(
+            child: BreathingPracticeCard(onStartPressed: onStartPressed),
+          ),
+        ],
+      ),
     );
   }
 }

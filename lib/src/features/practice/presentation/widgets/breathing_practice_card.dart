@@ -2,7 +2,9 @@ import 'package:ai_note/src/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class BreathingPracticeCard extends StatelessWidget {
-  const BreathingPracticeCard({super.key});
+  const BreathingPracticeCard({required this.onStartPressed, super.key});
+
+  final VoidCallback onStartPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +55,7 @@ class BreathingPracticeCard extends StatelessWidget {
               right: 16,
               bottom: 12,
               child: FilledButton(
-                onPressed: () {},
+                onPressed: onStartPressed,
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.secondary,
                   foregroundColor: Colors.white,
