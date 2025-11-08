@@ -6,6 +6,7 @@ import 'package:ai_note/src/features/auth/presentation/controllers/auth_controll
 import 'package:ai_note/src/features/auth/presentation/pages/auth_page.dart';
 import 'package:ai_note/src/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
+import 'package:ai_note/src/features/notifications/domain/entities/chat_detail_data.dart';
 import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
 import 'package:ai_note/src/features/notifications/presentation/pages/chat_detail_page.dart';
 import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
