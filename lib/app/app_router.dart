@@ -13,9 +13,11 @@ import 'package:ai_note/src/features/notifications/presentation/pages/chat_detai
 import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
 import 'package:ai_note/src/features/plan/presentation/pages/plan_page.dart';
-import 'package:ai_note/src/features/recipes/presentation/pages/recipes_page.dart';
+import 'package:ai_note/src/features/practice/presentation/pages/breathing_practice_page.dart';
+import 'package:ai_note/src/features/practice/presentation/pages/practice_page.dart';
 import 'package:ai_note/src/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:ai_note/src/features/profile/presentation/pages/profile_page.dart';
+import 'package:ai_note/src/features/recipes/presentation/pages/recipes_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -88,25 +90,16 @@ GoRouter createAppRouter(AuthController authController) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/articles',
+                path: '/practice',
                 pageBuilder: (context, state) =>
-                    _buildTransitionPage(state, const ArticlesPage()),
+                    _buildTransitionPage(state, const PracticePage()),
                 routes: [
                   GoRoute(
-                    path: 'article/:id',
-                    pageBuilder: (context, state) {
-                      final extra = state.extra;
-                      if (extra is Article) {
-                        return _buildTransitionPage(
-                          state,
-                          ArticleDetailPage(article: extra),
-                        );
-                      }
-                      return _buildTransitionPage(
-                        state,
-                        const _ArticleMissingPage(),
-                      );
-                    },
+                    path: 'breathing',
+                    pageBuilder: (context, state) => _buildTransitionPage(
+                      state,
+                      const BreathingPracticePage(),
+                    ),
                   ),
                 ],
               ),
@@ -136,6 +129,26 @@ GoRouter createAppRouter(AuthController authController) {
                 ],
               ),
             ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/articles',
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const ArticlesPage()),
+        routes: [
+          GoRoute(
+            path: 'article/:id',
+            pageBuilder: (context, state) {
+              final extra = state.extra;
+              if (extra is Article) {
+                return _buildTransitionPage(
+                  state,
+                  ArticleDetailPage(article: extra),
+                );
+              }
+              return _buildTransitionPage(state, const _ArticleMissingPage());
+            },
           ),
         ],
       ),

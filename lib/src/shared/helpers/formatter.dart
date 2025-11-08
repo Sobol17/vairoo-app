@@ -1,6 +1,10 @@
 import 'package:ai_note/src/shared/constants/monts.dart';
 
 class Formatter {
+  String formatMonth(DateTime date) {
+    return MONTH_NAMES[date.month - 1];
+  }
+
   String formatMonthYear(DateTime date) {
     return '${MONTH_NAMES[date.month - 1]} ${date.year}';
   }

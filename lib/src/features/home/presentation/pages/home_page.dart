@@ -153,7 +153,7 @@ class _HomeViewState extends State<_HomeView> {
   }
 
   void _openArticles() {
-    context.go('/articles');
+    context.push('/articles');
   }
 
   void _onRoutineTap(HomeRoutinePlan routine) {

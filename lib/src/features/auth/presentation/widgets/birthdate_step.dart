@@ -86,6 +86,13 @@ class _BirthdateStepState extends State<BirthdateStep> {
     });
   }
 
+  void _changeYear(int year) {
+    setState(() {
+      _visibleMonth = DateTime(year, _visibleMonth.month);
+      _clampVisibleMonth();
+    });
+  }
+
   bool get _canGoPrev {
     final minMonth = DateTime(_minDate.year, _minDate.month);
     final prev = DateTime(_visibleMonth.year, _visibleMonth.month - 1);
@@ -145,10 +152,14 @@ class _BirthdateStepState extends State<BirthdateStep> {
         ),
         const SizedBox(height: 28),
         CalendarHeader(
-          monthLabel: formatter.formatMonthYear(_visibleMonth),
+          monthLabel: formatter.formatMonth(_visibleMonth),
           primary: primary,
           onPrev: _canGoPrev ? () => _changeMonth(-1) : null,
           onNext: _canGoNext ? () => _changeMonth(1) : null,
+          year: _visibleMonth.year,
+          minYear: _minDate.year,
+          maxYear: _maxDate.year,
+          onYearChanged: widget.isLoading ? null : _changeYear,
         ),
         const SizedBox(height: 12),
         CalendarGrid(

@@ -2,6 +2,7 @@ import 'package:ai_note/src/core/theme/app_colors.dart';
 import 'package:ai_note/src/features/auth/presentation/widgets/brand_logo.dart';
 import 'package:ai_note/src/shared/helpers/formatter.dart';
 import 'package:ai_note/src/shared/helpers/phone_mask.dart';
+import 'package:ai_note/src/shared/widgets/calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -55,15 +56,16 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   }
 
   Future<void> _selectBirthDate() async {
-    final now = DateTime.now();
-    final initialDate = _birthDate != null
-        ? DateTime(_birthDate!.year, _birthDate!.month, _birthDate!.day)
-        : DateTime(now.year - 18, now.month, now.day);
-    final picked = await showDatePicker(
+    FocusScope.of(context).unfocus();
+    final picked = await showModalBottomSheet<DateTime>(
       context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(1940),
-      lastDate: now,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _CalendarPickerBottomSheet(
+        initialDate: _birthDate,
+        minDate: DateTime(1940),
+        maxDate: DateTime.now(),
+      ),
     );
     if (picked != null) {
       setState(() {
@@ -567,6 +569,200 @@ class _TextEditBottomSheetState extends State<_TextEditBottomSheet> {
                 child: const Text('Отмена'),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CalendarPickerBottomSheet extends StatefulWidget {
+  const _CalendarPickerBottomSheet({
+    required this.initialDate,
+    required this.minDate,
+    required this.maxDate,
+  });
+
+  final DateTime? initialDate;
+  final DateTime minDate;
+  final DateTime maxDate;
+
+  @override
+  State<_CalendarPickerBottomSheet> createState() =>
+      _CalendarPickerBottomSheetState();
+}
+
+class _CalendarPickerBottomSheetState
+    extends State<_CalendarPickerBottomSheet> {
+  late DateTime _visibleMonth;
+  DateTime? _selectedDate;
+  final Formatter _formatter = Formatter();
+
+  DateTime get _minMonth => DateTime(widget.minDate.year, widget.minDate.month);
+  DateTime get _maxMonth => DateTime(widget.maxDate.year, widget.maxDate.month);
+
+  @override
+  void initState() {
+    super.initState();
+    final initial = widget.initialDate != null
+        ? _normalizeDate(widget.initialDate!)
+        : null;
+    _selectedDate = initial;
+    _visibleMonth = DateTime(
+      (initial ?? widget.maxDate).year,
+      (initial ?? widget.maxDate).month,
+    );
+    _clampVisibleMonth();
+  }
+
+  void _clampVisibleMonth() {
+    if (_visibleMonth.isBefore(_minMonth)) {
+      _visibleMonth = _minMonth;
+    }
+    if (_visibleMonth.isAfter(_maxMonth)) {
+      _visibleMonth = _maxMonth;
+    }
+  }
+
+  DateTime _normalizeDate(DateTime value) {
+    var result = DateTime(value.year, value.month, value.day);
+    if (result.isBefore(widget.minDate)) {
+      result = DateTime(
+        widget.minDate.year,
+        widget.minDate.month,
+        widget.minDate.day,
+      );
+    }
+    if (result.isAfter(widget.maxDate)) {
+      result = DateTime(
+        widget.maxDate.year,
+        widget.maxDate.month,
+        widget.maxDate.day,
+      );
+    }
+    return result;
+  }
+
+  bool get _canGoPrev {
+    final prev = DateTime(_visibleMonth.year, _visibleMonth.month - 1);
+    return !prev.isBefore(_minMonth);
+  }
+
+  bool get _canGoNext {
+    final next = DateTime(_visibleMonth.year, _visibleMonth.month + 1);
+    return !next.isAfter(_maxMonth);
+  }
+
+  void _changeMonth(int delta) {
+    final candidate = DateTime(_visibleMonth.year, _visibleMonth.month + delta);
+    if (candidate.isBefore(_minMonth) || candidate.isAfter(_maxMonth)) {
+      return;
+    }
+    setState(() {
+      _visibleMonth = candidate;
+    });
+  }
+
+  void _changeYear(int year) {
+    setState(() {
+      _visibleMonth = DateTime(year, _visibleMonth.month);
+      _clampVisibleMonth();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final theme = Theme.of(context);
+
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: bottomInset),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          child: Container(
+            color: AppColors.surface,
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: 36,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton.icon(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.chevron_left_rounded),
+                          label: const Text('Назад'),
+                          style: TextButton.styleFrom(
+                            foregroundColor: AppColors.secondary,
+                            textStyle: theme.textTheme.labelLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Календарь',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                CalendarHeader(
+                  monthLabel: _formatter.formatMonth(_visibleMonth),
+                  primary: AppColors.primary,
+                  onPrev: _canGoPrev ? () => _changeMonth(-1) : null,
+                  onNext: _canGoNext ? () => _changeMonth(1) : null,
+                  year: _visibleMonth.year,
+                  minYear: widget.minDate.year,
+                  maxYear: widget.maxDate.year,
+                  onYearChanged: _changeYear,
+                ),
+                const SizedBox(height: 12),
+                CalendarGrid(
+                  visibleMonth: _visibleMonth,
+                  selectedDate: _selectedDate,
+                  minDate: widget.minDate,
+                  maxDate: widget.maxDate,
+                  selectionMode: CalendarSelectionMode.single,
+                  onSelect: (date) {
+                    setState(() {
+                      _selectedDate = date;
+                    });
+                  },
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: _selectedDate == null
+                        ? null
+                        : () => Navigator.of(context).pop(_selectedDate),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.secondary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      textStyle: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                    ),
+                    child: const Text('Выбрать'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
