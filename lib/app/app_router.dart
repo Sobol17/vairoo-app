@@ -6,6 +6,7 @@ import 'package:ai_note/src/features/auth/presentation/controllers/auth_controll
 import 'package:ai_note/src/features/auth/presentation/pages/auth_page.dart';
 import 'package:ai_note/src/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
+import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
 import 'package:ai_note/src/features/notifications/presentation/pages/chat_detail_page.dart';
 import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:ai_note/src/features/profile/presentation/pages/profile_edit_page.dart';
@@ -51,6 +52,15 @@ GoRouter createAppRouter(AuthController authController) {
                     path: 'notifications',
                     pageBuilder: (context, state) =>
                         _buildTransitionPage(state, const NotificationsPage()),
+                  ),
+                  GoRoute(
+                    path: 'chats',
+                    pageBuilder: (context, state) => _buildTransitionPage(
+                      state,
+                      const NotificationsPage(
+                        initialCategory: NotificationCategory.chat,
+                      ),
+                    ),
                   ),
                 ],
               ),

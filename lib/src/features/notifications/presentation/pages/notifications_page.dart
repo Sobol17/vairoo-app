@@ -1,4 +1,5 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
+import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
 import 'package:ai_note/src/features/notifications/domain/entities/notification_samples.dart';
 import 'package:ai_note/src/features/notifications/domain/repositories/notification_repository.dart';
 import 'package:ai_note/src/features/notifications/presentation/controllers/notifications_controller.dart';
@@ -10,7 +11,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class NotificationsPage extends StatelessWidget {
-  const NotificationsPage({super.key});
+  const NotificationsPage({super.key, this.initialCategory});
+
+  final NotificationCategory? initialCategory;
 
   static Future<void> _handleDeletePressed(
     BuildContext context,
@@ -56,6 +59,7 @@ class NotificationsPage extends StatelessWidget {
       create: (context) => NotificationsController(
         repository: context.read<NotificationRepository>(),
         seed: defaultNotificationsSeed(),
+        initialCategory: initialCategory,
       )..loadNotifications(allowSeed: true),
       child: Consumer<NotificationsController>(
         builder: (context, controller, _) {

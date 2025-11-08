@@ -8,8 +8,13 @@ class NotificationsController extends ChangeNotifier {
   NotificationsController({
     required NotificationRepository repository,
     List<UserNotification>? seed,
+    NotificationCategory? initialCategory,
   }) : _repository = repository,
-       _seed = seed ?? const [];
+       _seed = seed ?? const [] {
+    if (initialCategory != null) {
+      _selectedCategory = initialCategory;
+    }
+  }
 
   final NotificationRepository _repository;
   final List<UserNotification> _seed;

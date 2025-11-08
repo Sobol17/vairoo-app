@@ -143,7 +143,7 @@ class _HomeViewState extends State<_HomeView> {
         ),
       );
     } else {
-      context.push('/home/notifications');
+      context.push('/home/chats');
     }
   }
 

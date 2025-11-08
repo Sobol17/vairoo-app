@@ -1,5 +1,6 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ChatDetailData {
   const ChatDetailData({
@@ -60,6 +61,24 @@ class ChatDetailPage extends StatelessWidget {
             label: const Text('Назад'),
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: InkWell(
+              onTap: () {},
+              child: Row(
+                children: [
+                  const Text(
+                    'Пожаловаться',
+                    style: TextStyle(color: AppColors.secondary),
+                  ),
+                  const SizedBox(width: 8),
+                  SvgPicture.asset('assets/icons/quest.svg'),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Column(
