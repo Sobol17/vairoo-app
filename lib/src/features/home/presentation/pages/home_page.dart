@@ -1,11 +1,17 @@
+import 'package:ai_note/src/core/theme/app_colors.dart';
 import 'package:ai_note/src/features/disclaimer/domain/entities/disclaimer_type.dart';
 import 'package:ai_note/src/features/disclaimer/presentation/controllers/disclaimer_controller.dart';
 import 'package:ai_note/src/features/disclaimer/presentation/pages/disclaimer_screen.dart';
 import 'package:ai_note/src/features/disclaimer/presentation/widgets/main_disclaimer_dialog.dart';
-import 'package:ai_note/src/features/home/domain/entities/note.dart';
-import 'package:ai_note/src/features/home/domain/repositories/note_repository.dart';
-import 'package:ai_note/src/features/home/presentation/controllers/home_controller.dart';
+import 'package:ai_note/src/features/home/data/datasources/mock_data.dart';
+import 'package:ai_note/src/features/home/domain/entities/home_insight.dart';
+import 'package:ai_note/src/features/home/domain/entities/home_plan.dart';
+import 'package:ai_note/src/features/home/presentation/widgets/home_daily_plan_section.dart';
+import 'package:ai_note/src/features/home/presentation/widgets/home_insights_section.dart';
+import 'package:ai_note/src/features/home/presentation/widgets/home_top_header.dart';
+import 'package:ai_note/src/shared/widgets/secondary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -14,12 +20,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<HomeController>(
-      create: (context) =>
-          HomeController(repository: context.read<NoteRepository>())
-            ..loadNotes(),
-      child: const _HomeView(),
-    );
+    return const _HomeView();
   }
 }
 
@@ -41,26 +42,56 @@ class _HomeViewState extends State<_HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final insights = _buildInsights();
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Главный экран'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_outlined),
-            tooltip: 'Уведомления',
-            onPressed: _openNotifications,
+      backgroundColor: AppColors.bgGray,
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          SliverToBoxAdapter(
+            child: HomeTopHeader(
+              quote:
+                  'Сложнее всего начать действовать, все остальное зависит только от упорства',
+              sobrietyCounter: '1д 5ч 36мин',
+              sobrietyStartDate: 'Дата начала 26 июня 2025 года',
+              onChatTap: _handleChatTap,
+              onNotificationsTap: _openNotifications,
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.forum_outlined),
-            tooltip: 'Чат',
-            onPressed: _openArticles,
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            sliver: SliverToBoxAdapter(
+              child: HomeDailyPlanSection(
+                dayLabel: '1 День',
+                planDate: DateTime(2025, 7, 26),
+                routines: mockRoutines,
+                onRoutineTap: _onRoutineTap,
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            sliver: SliverToBoxAdapter(
+              child: HomeInsightsSection(cards: insights),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            sliver: SliverToBoxAdapter(
+              // child: HomeStartDayButton(onPressed: _handleStartDayTap),
+              child: SecondaryButton(
+                label: "Начать день",
+                onPressed: _handleStartDayTap,
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(height: MediaQuery.of(context).padding.bottom + 64),
           ),
         ],
-      ),
-      body: Consumer<HomeController>(
-        builder: (context, controller, _) {
-          return Center(child: Text('Главный экран в разработке'));
-        },
       ),
     );
   }
@@ -81,7 +112,6 @@ class _HomeViewState extends State<_HomeView> {
     if (shouldMarkAccepted && mounted) {
       await controller.markAccepted(DisclaimerType.main);
     } else if (mounted) {
-      // If user somehow dismissed, schedule dialog again on next frame.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           _ensureMainDisclaimer();
@@ -92,7 +122,7 @@ class _HomeViewState extends State<_HomeView> {
 
   Future<void> _handleChatTap() async {
     final controller = context.read<DisclaimerController>();
-    var accepted = await controller.isAccepted(DisclaimerType.chat);
+    final accepted = await controller.isAccepted(DisclaimerType.chat);
     if (!accepted) {
       await showDialog<bool>(
         context: context,
@@ -109,71 +139,53 @@ class _HomeViewState extends State<_HomeView> {
   }
 
   void _openArticles() {
-    context.push('/articles');
+    context.go('/practice');
   }
-}
 
-class _NoteTile extends StatelessWidget {
-  const _NoteTile({required this.note, required this.onDelete});
-
-  final Note note;
-  final VoidCallback onDelete;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        title: Text(note.title),
-        subtitle: Text(
-          note.content,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete_outline),
-          onPressed: onDelete,
-        ),
-      ),
+  void _onRoutineTap(HomeRoutinePlan routine) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Сегодня: ${routine.title.toLowerCase()}')),
     );
   }
-}
 
-Future<void> _showNewNoteDialog(BuildContext context) async {
-  final controller = context.read<HomeController>();
-  final titleController = TextEditingController();
-  final contentController = TextEditingController();
+  void _handleStartDayTap() {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Отличное начало дня!')));
+  }
 
-  await showDialog<void>(
-    context: context,
-    builder: (dialogContext) {
-      final navigator = Navigator.of(dialogContext);
-      return AlertDialog(
-        title: const Text('Новая заметка'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(labelText: 'Заголовок'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: contentController,
-              minLines: 3,
-              maxLines: 5,
-              decoration: const InputDecoration(labelText: 'Содержание'),
-            ),
-          ],
+  List<HomeInsightCardData> _buildInsights() {
+    return [
+      HomeInsightCardData(
+        icon: Image.asset('assets/icons/money_save.png'),
+        title: 'Сэкономлено средств',
+        value: '200 ₽',
+        subtitle: 'Ваши расходы снижаются',
+      ),
+      HomeInsightCardData(
+        icon: Image.asset('assets/icons/top.png'),
+        title: 'Достижения',
+        value: 'Начало пути',
+        subtitle: 'Вы начали свой путь улучшения',
+        actionLabel: 'Раскрыть',
+      ),
+      HomeInsightCardData(
+        icon: Image.asset('assets/icons/avatar.png'),
+        title: 'Библиотека знаний',
+        value: 'Статьи и лайфхаки',
+        subtitle: 'Узнавайте много нового',
+        onTap: _openArticles,
+      ),
+      HomeInsightCardData(
+        icon: SvgPicture.asset(
+          'assets/icons/hearth.svg',
+          width: 50,
+          height: 50,
         ),
-        actions: [
-          TextButton(
-            onPressed: () => navigator.pop(),
-            child: const Text('Отмена'),
-          ),
-        ],
-      );
-    },
-  );
-  titleController.dispose();
-  contentController.dispose();
+        title: 'Ккал',
+        value: '1',
+        subtitle: 'Держите себя в тонусе',
+      ),
+    ];
+  }
 }
