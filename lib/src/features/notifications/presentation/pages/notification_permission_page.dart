@@ -77,7 +77,9 @@ class NotificationPermissionPage extends StatelessWidget {
                   PrimaryButton(
                     label: "Включить",
                     onPressed: controller.isRequesting
-                        ? null
+                        ? () {
+                            context.go('/home');
+                          }
                         : controller.requestPermission,
                     isLoading: false,
                   ),

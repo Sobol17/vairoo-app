@@ -1,6 +1,7 @@
 import 'package:ai_note/src/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:ai_note/src/features/auth/presentation/widgets/auth_header.dart';
 import 'package:ai_note/src/features/auth/presentation/widgets/goal_step.dart';
-import 'package:ai_note/src/features/auth/presentation/widgets/header.dart';
+import 'package:ai_note/src/features/auth/presentation/widgets/habit_spending_step.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -54,6 +55,7 @@ class _AuthBody extends StatelessWidget {
             ),
             AuthStep.birthdateInput => controller.backToOtp,
             AuthStep.paymentInput => controller.backToGoal,
+            AuthStep.habitSpendingInput => controller.backToPayment,
             AuthStep.goalInput => controller.backToBirthdate,
             (_) => null,
           },
@@ -111,6 +113,13 @@ class _AuthBody extends StatelessWidget {
                       key: const ValueKey('payment_step'),
                       isLoading: controller.isLoading,
                       onStartTrial: controller.completePayment,
+                    ),
+                    AuthStep.habitSpendingInput => HabitSpendingStep(
+                      key: const ValueKey('habit_spending_step'),
+                      isLoading: controller.isLoading,
+                      initialValue: controller.habitSpending,
+                      onSubmit: controller.completeHabitSpending,
+                      onSkip: controller.skipHabitSpending,
                     ),
                     AuthStep.authenticated => const SizedBox.shrink(),
                   },

@@ -10,6 +10,7 @@ enum AuthStep {
   birthdateInput,
   goalInput,
   paymentInput,
+  habitSpendingInput,
   authenticated,
 }
 
@@ -28,6 +29,7 @@ class AuthController extends ChangeNotifier {
   AuthSession? _session;
   DateTime? _birthDate;
   String? _goal;
+  String? _habitSpending;
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
@@ -36,6 +38,7 @@ class AuthController extends ChangeNotifier {
   AuthSession? get session => _session;
   DateTime? get birthDate => _birthDate;
   String? get goal => _goal;
+  String? get habitSpending => _habitSpending;
   bool get isAuthenticated => _step == AuthStep.authenticated;
 
   Future<void> restoreSession() async {
@@ -73,6 +76,7 @@ class AuthController extends ChangeNotifier {
     _session = null;
     _birthDate = null;
     _goal = null;
+    _habitSpending = null;
     _step = AuthStep.phoneInput;
     _errorMessage = null;
     if (wasDifferentStep || hadError || clearPhone) {
@@ -141,6 +145,7 @@ class AuthController extends ChangeNotifier {
       }
       _errorMessage = null;
       _birthDate = null;
+      _habitSpending = null;
       _step = AuthStep.birthdateInput;
     } catch (error) {
       _setError(_mapError(error));
@@ -164,6 +169,22 @@ class AuthController extends ChangeNotifier {
   }
 
   void completePayment() {
+    _errorMessage = null;
+    _step = AuthStep.habitSpendingInput;
+    notifyListeners();
+  }
+
+  void completeHabitSpending(String spending) {
+    _habitSpending = spending;
+    _finishOnboarding();
+  }
+
+  void skipHabitSpending() {
+    _habitSpending = null;
+    _finishOnboarding();
+  }
+
+  void _finishOnboarding() {
     _errorMessage = null;
     _step = AuthStep.authenticated;
     notifyListeners();
@@ -190,6 +211,14 @@ class AuthController extends ChangeNotifier {
     if (_step == AuthStep.paymentInput) {
       _errorMessage = null;
       _step = AuthStep.goalInput;
+      notifyListeners();
+    }
+  }
+
+  void backToPayment() {
+    if (_step == AuthStep.habitSpendingInput) {
+      _errorMessage = null;
+      _step = AuthStep.paymentInput;
       notifyListeners();
     }
   }
