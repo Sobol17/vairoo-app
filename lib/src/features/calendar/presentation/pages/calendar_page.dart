@@ -5,6 +5,7 @@ import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_bott
 import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_intro_sheet.dart';
 import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_notes_tabs.dart';
 import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_tab_bar.dart';
+import 'package:ai_note/src/features/calendar/presentation/widgets/create_note_sheet.dart';
 import 'package:ai_note/src/features/plan/presentation/widgets/circular_nav_button.dart';
 import 'package:flutter/material.dart';
 
@@ -17,10 +18,14 @@ class CalendarPage extends StatefulWidget {
 
 class _CalendarPageState extends State<CalendarPage> {
   bool _warningShown = false;
+  late List<CalendarNote> _todayNotes;
+  late List<CalendarNote> _allNotes;
 
   @override
   void initState() {
     super.initState();
+    _todayNotes = List<CalendarNote>.from(todayCalendarNotes);
+    _allNotes = List<CalendarNote>.from(allCalendarNotes);
     WidgetsBinding.instance.addPostFrameCallback((_) => _showWarningSheet());
   }
 
@@ -47,10 +52,25 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  void _handleCreateNote() {
+  Future<void> _handleCreateNote() async {
     if (!mounted) return;
+    final note = await showModalBottomSheet<CalendarNote>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => const CreateCalendarNoteSheet(),
+    );
+    if (note == null || !mounted) {
+      return;
+    }
+    setState(() {
+      _allNotes = [note, ..._allNotes];
+      if (_isSameDay(note.date, DateTime.now())) {
+        _todayNotes = [note, ..._todayNotes];
+      }
+    });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Скоро можно будет создать новую запись')),
+      const SnackBar(content: Text('Заметка создана')),
     );
   }
 
@@ -108,12 +128,12 @@ class _CalendarPageState extends State<CalendarPage> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     CalendarNotesTab(
-                      notes: todayCalendarNotes,
+                      notes: _todayNotes,
                       onCreateNote: _handleCreateNote,
                       onNoteTap: _handleNoteTap,
                     ),
                     CalendarNotesTab(
-                      notes: allCalendarNotes,
+                      notes: _allNotes,
                       onCreateNote: _handleCreateNote,
                       onNoteTap: _handleNoteTap,
                     ),
@@ -125,5 +145,9 @@ class _CalendarPageState extends State<CalendarPage> {
         ),
       ),
     );
+  }
+
+  bool _isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }

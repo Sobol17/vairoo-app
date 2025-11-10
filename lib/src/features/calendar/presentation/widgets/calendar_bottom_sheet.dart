@@ -4,7 +4,9 @@ import 'package:ai_note/src/shared/widgets/calendar.dart';
 import 'package:flutter/material.dart';
 
 class PlanCalendarBottomSheet extends StatefulWidget {
-  const PlanCalendarBottomSheet();
+  const PlanCalendarBottomSheet({this.initialDate});
+
+  final DateTime? initialDate;
 
   @override
   State<PlanCalendarBottomSheet> createState() =>
@@ -25,8 +27,9 @@ class _PlanCalendarBottomSheetState extends State<PlanCalendarBottomSheet> {
   void initState() {
     super.initState();
     final now = DateTime.now();
-    _visibleMonth = DateTime(now.year, now.month);
-    _selectedDate = DateTime(now.year, now.month, now.day);
+    final initial = widget.initialDate ?? DateTime(now.year, now.month, now.day);
+    _visibleMonth = DateTime(initial.year, initial.month);
+    _selectedDate = initial;
     _minDate = DateTime(now.year - 1, 1, 1);
     _maxDate = DateTime(now.year + 1, 12, 31);
   }

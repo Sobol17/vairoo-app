@@ -1,5 +1,6 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
 import 'package:ai_note/src/shared/widgets/secondary_button.dart';
+import 'package:ai_note/src/shared/widgets/sheet_header.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,10 +22,10 @@ class CalendarIntroSheet extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _SheetHeader(
-                theme: theme,
-                onClose: () => context.pop(),
+              SheetHeader(
                 title: 'О практике',
+                actionLabel: 'Понятно',
+                onAction: () => context.pop(),
               ),
               Expanded(
                 child: Container(
@@ -93,57 +94,6 @@ class CalendarIntroSheet extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SheetHeader extends StatelessWidget {
-  const _SheetHeader({
-    required this.theme,
-    required this.onClose,
-    required this.title,
-  });
-
-  final ThemeData theme;
-  final VoidCallback onClose;
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-      child: SizedBox(
-        height: 40,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                onPressed: onClose,
-                icon: const Icon(Icons.chevron_left_rounded),
-                label: const Text('Понятно'),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.secondary,
-                  textStyle: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-            Center(
-              child: Text(
-                title,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
