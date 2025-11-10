@@ -123,28 +123,34 @@ class _HabitSpendingStepState extends State<HabitSpendingStep> {
         ),
         const Spacer(),
         Transform.scale(
-          scale: 1.3,
+          scale: 1.4,
           child: SvgPicture.asset(
             'assets/icons/habit_illustration.svg',
-            height: 380,
+            height: 340,
           ),
         ),
         const Spacer(),
-        TextButton(
-          onPressed: widget.isLoading ? null : widget.onSkip,
-          child: const Text(
-            'Заполнить позже',
-            style: TextStyle(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w600,
-            ),
+        SafeArea(
+          child: Column(
+            children: [
+              TextButton(
+                onPressed: widget.isLoading ? null : widget.onSkip,
+                child: const Text(
+                  'Заполнить позже',
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              PrimaryButton(
+                label: 'Выбрать',
+                onPressed: _canSubmit ? _handleSubmit : null,
+                isLoading: widget.isLoading,
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 12),
-        PrimaryButton(
-          label: 'Выбрать',
-          onPressed: _canSubmit ? _handleSubmit : null,
-          isLoading: widget.isLoading,
         ),
       ],
     );

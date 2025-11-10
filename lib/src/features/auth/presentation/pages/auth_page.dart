@@ -26,7 +26,7 @@ class AuthPage extends StatelessWidget {
               return const SizedBox.shrink();
             }
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               child: _AuthBody(controller: controller),
             );
           },
