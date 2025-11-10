@@ -4,11 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 class HeaderCircleButton extends StatelessWidget {
   const HeaderCircleButton({
     required this.icon,
+    this.color,
     required this.onTap,
     super.key,
   });
 
   final SvgPicture icon;
+  final Color? color;
   final VoidCallback onTap;
 
   @override
@@ -19,7 +21,7 @@ class HeaderCircleButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.2),
+          color: color ?? Colors.white.withValues(alpha: 0.2),
           shape: BoxShape.circle,
         ),
         child: icon,

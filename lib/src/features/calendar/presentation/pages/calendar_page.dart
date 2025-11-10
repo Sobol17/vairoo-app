@@ -1,6 +1,7 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
 import 'package:ai_note/src/features/calendar/data/datasources/mock_notes.dart';
 import 'package:ai_note/src/features/calendar/domain/entities/calendar_note.dart';
+import 'package:ai_note/src/features/calendar/presentation/pages/calendar_note_detail_page.dart';
 import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_bottom_sheet.dart';
 import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_intro_sheet.dart';
 import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_notes_tabs.dart';
@@ -24,8 +25,9 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
-    _todayNotes = List<CalendarNote>.from(todayCalendarNotes);
     _allNotes = List<CalendarNote>.from(allCalendarNotes);
+    _sortNotes();
+    _refreshTodayNotes();
     WidgetsBinding.instance.addPostFrameCallback((_) => _showWarningSheet());
   }
 
@@ -65,9 +67,8 @@ class _CalendarPageState extends State<CalendarPage> {
     }
     setState(() {
       _allNotes = [note, ..._allNotes];
-      if (_isSameDay(note.date, DateTime.now())) {
-        _todayNotes = [note, ..._todayNotes];
-      }
+      _sortNotes();
+      _refreshTodayNotes();
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Заметка создана')),
@@ -76,9 +77,15 @@ class _CalendarPageState extends State<CalendarPage> {
 
   void _handleNoteTap(CalendarNote note) {
     if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Открываю заметку «${note.title}»')));
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => CalendarNoteDetailPage(
+          note: note,
+          onUpdate: _updateNote,
+          onDelete: _removeNote,
+        ),
+      ),
+    );
   }
 
   @override
@@ -149,5 +156,34 @@ class _CalendarPageState extends State<CalendarPage> {
 
   bool _isSameDay(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  void _sortNotes() {
+    _allNotes.sort((a, b) => b.date.compareTo(a.date));
+  }
+
+  void _refreshTodayNotes() {
+    final now = DateTime.now();
+    _todayNotes = _allNotes.where((note) => _isSameDay(note.date, now)).toList();
+  }
+
+  void _updateNote(CalendarNote updated) {
+    setState(() {
+      _allNotes = _allNotes
+          .map((note) => note.id == updated.id ? updated : note)
+          .toList();
+      _sortNotes();
+      _refreshTodayNotes();
+    });
+  }
+
+  void _removeNote(CalendarNote note) {
+    setState(() {
+      _allNotes = _allNotes.where((item) => item.id != note.id).toList();
+      _refreshTodayNotes();
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Заметка «${note.title}» удалена')),
+    );
   }
 }

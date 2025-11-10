@@ -26,7 +26,7 @@ class PracticeGameCard extends StatelessWidget {
     final theme = Theme.of(context);
     return Material(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(6),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => _launchGame(context),
@@ -54,14 +54,15 @@ class PracticeGameCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.bgGray,
-                        borderRadius: BorderRadius.circular(12),
+                        color: AppColors.secondary.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         game.tag,
                         style: theme.textTheme.labelMedium?.copyWith(
-                          color: AppColors.textSecondary,
+                          color: AppColors.primary,
                           fontWeight: FontWeight.w600,
+                          fontSize: 12,
                         ),
                       ),
                     ),

@@ -85,7 +85,7 @@ class CalendarIntroSheet extends StatelessWidget {
                       ),
                       SecondaryButton(
                         label: 'Создать запись',
-                        onPressed: () {},
+                        onPressed: () => context.pop(),
                       ),
                       SizedBox(height: bottomInset + 16),
                     ],

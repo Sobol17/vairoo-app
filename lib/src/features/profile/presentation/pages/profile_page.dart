@@ -1,5 +1,5 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/plan/presentation/widgets/circular_nav_button.dart';
+import 'package:ai_note/src/features/home/presentation/widgets/header_circle_button.dart';
 import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
 import 'package:ai_note/src/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:ai_note/src/features/profile/presentation/widgets/actions_section.dart';
@@ -7,6 +7,7 @@ import 'package:ai_note/src/features/profile/presentation/widgets/notifications_
 import 'package:ai_note/src/features/profile/presentation/widgets/profile_info_row.dart';
 import 'package:ai_note/src/features/profile/presentation/widgets/profile_section.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -45,9 +46,13 @@ class _ProfileView extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            CircularNavButton(
-                              icon: Icons.chat_bubble_outline,
-                              onPressed: () => context.push('/home/chat'),
+                            HeaderCircleButton(
+                              color: AppColors.surface,
+                              icon: SvgPicture.asset(
+                                'assets/icons/chat.svg',
+                                width: 20,
+                              ),
+                              onTap: () => context.push('/home/chat'),
                             ),
                             Expanded(
                               child: Column(
@@ -69,9 +74,13 @@ class _ProfileView extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            CircularNavButton(
-                              icon: Icons.calendar_month_outlined,
-                              onPressed: () => context.push('/calendar'),
+                            HeaderCircleButton(
+                              color: AppColors.surface,
+                              icon: SvgPicture.asset(
+                                'assets/icons/calendar.svg',
+                                width: 20,
+                              ),
+                              onTap: () => context.push('/calendar'),
                             ),
                           ],
                         ),

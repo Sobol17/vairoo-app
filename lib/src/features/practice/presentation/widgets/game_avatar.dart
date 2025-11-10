@@ -13,7 +13,7 @@ class GameAvatar extends StatelessWidget {
       height: 56,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(6),
       ),
       alignment: Alignment.center,
       child: Text(emoji, style: const TextStyle(fontSize: 26)),

@@ -10,7 +10,16 @@ import 'package:ai_note/src/shared/widgets/sheet_header.dart';
 import 'package:flutter/material.dart';
 
 class CreateCalendarNoteSheet extends StatefulWidget {
-  const CreateCalendarNoteSheet({super.key});
+  const CreateCalendarNoteSheet({
+    this.initialNote,
+    this.submitLabel = 'Создать заметку',
+    super.key,
+  });
+
+  final CalendarNote? initialNote;
+  final String submitLabel;
+
+  bool get isEditing => initialNote != null;
 
   @override
   State<CreateCalendarNoteSheet> createState() =>
@@ -24,9 +33,27 @@ class _CreateCalendarNoteSheetState extends State<CreateCalendarNoteSheet> {
   final _riskDescriptionController = TextEditingController();
   final _relapseDescriptionController = TextEditingController();
 
-  DateTime _selectedDate = DateTime.now();
+  late DateTime _selectedDate;
   bool _riskEnabled = false;
   bool _relapseEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final initial = widget.initialNote;
+    _selectedDate = initial?.date ?? DateTime.now();
+    _feelingsController.text = initial?.feelings ?? '';
+    _thoughtsController.text = initial?.thoughts ?? '';
+    _actionsController.text = initial?.actions ?? '';
+    _riskEnabled = initial?.isRisk ?? false;
+    _relapseEnabled = initial?.isRelapse ?? false;
+    if (_riskEnabled) {
+      _riskDescriptionController.text = initial?.riskDescription ?? '';
+    }
+    if (_relapseEnabled) {
+      _relapseDescriptionController.text = initial?.relapseDescription ?? '';
+    }
+  }
 
   @override
   void dispose() {
@@ -100,11 +127,24 @@ class _CreateCalendarNoteSheetState extends State<CreateCalendarNoteSheet> {
   void _submit() {
     final title = _buildTitle();
     final preview = _buildPreview();
+    final id = widget.initialNote?.id ??
+        DateTime.now().microsecondsSinceEpoch.toString();
     final note = CalendarNote(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      id: id,
       date: _selectedDate,
       title: title,
       preview: preview,
+      feelings: _feelingsController.text.trim(),
+      thoughts: _thoughtsController.text.trim(),
+      actions: _actionsController.text.trim(),
+      isRisk: _riskEnabled,
+      riskDescription: _riskEnabled
+          ? _riskDescriptionController.text.trim()
+          : null,
+      isRelapse: _relapseEnabled,
+      relapseDescription: _relapseEnabled
+          ? _relapseDescriptionController.text.trim()
+          : null,
     );
     Navigator.of(context).pop(note);
   }
@@ -118,7 +158,7 @@ class _CreateCalendarNoteSheetState extends State<CreateCalendarNoteSheet> {
       if (_relapseEnabled) _relapseDescriptionController.text.trim(),
     ].where((value) => value.isNotEmpty).toList();
     if (candidates.isEmpty) {
-      return 'Новая запись';
+      return widget.initialNote?.title ?? 'Новая запись';
     }
     return candidates.first;
   }
@@ -132,7 +172,7 @@ class _CreateCalendarNoteSheetState extends State<CreateCalendarNoteSheet> {
       if (_relapseEnabled) _relapseDescriptionController.text.trim(),
     ].where((value) => value.isNotEmpty).toList();
     if (inputs.isEmpty) {
-      return 'Запись из календаря';
+      return widget.initialNote?.preview ?? 'Запись из календаря';
     }
     return inputs.take(2).join(' · ');
   }
@@ -265,7 +305,7 @@ class _CreateCalendarNoteSheetState extends State<CreateCalendarNoteSheet> {
                                 const SizedBox(height: 12),
                               ],
                               SecondaryButton(
-                                label: 'Создать заметку',
+                                label: widget.submitLabel,
                                 onPressed: _submit,
                               ),
                               SizedBox(height: bottomInset),
