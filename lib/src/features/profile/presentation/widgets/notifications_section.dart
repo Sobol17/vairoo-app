@@ -28,7 +28,7 @@ class NotificationsSection extends StatelessWidget {
           ),
           child: Column(
             children: [
-              SwitchListTile(
+              SwitchListTile.adaptive(
                 title: const Text('Пуш-уведомления'),
                 subtitle: const Text('Вкл.'),
                 value: controller.pushEnabled,
@@ -36,7 +36,7 @@ class NotificationsSection extends StatelessWidget {
                 onChanged: controller.togglePushNotifications,
               ),
               const Divider(height: 0),
-              SwitchListTile(
+              SwitchListTile.adaptive(
                 title: const Text('Сообщения на почту'),
                 subtitle: const Text('Вкл.'),
                 value: controller.emailEnabled,

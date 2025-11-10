@@ -307,7 +307,11 @@ class _CreateCalendarNoteSheetState extends State<CreateCalendarNoteSheet> {
       controller: controller,
       minLines: 4,
       maxLines: 6,
-      decoration: InputDecoration(hintText: hint),
+      decoration: InputDecoration(
+        hintText: hint,
+        fillColor: Colors.white,
+        filled: true,
+      ),
     );
   }
 }

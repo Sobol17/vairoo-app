@@ -22,7 +22,7 @@ class SheetHeader extends StatelessWidget {
     final theme = Theme.of(context);
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+      padding: const EdgeInsets.fromLTRB(10, 16, 20, 12),
       child: SizedBox(
         height: 40,
         child: Stack(
@@ -32,7 +32,7 @@ class SheetHeader extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
                 onPressed: onAction,
-                icon: Icon(icon),
+                icon: Icon(icon, size: 24),
                 label: Text(actionLabel),
                 style: TextButton.styleFrom(
                   foregroundColor: actionColor ?? AppColors.secondary,
