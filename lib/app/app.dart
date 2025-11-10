@@ -19,6 +19,7 @@ import 'package:ai_note/src/features/home/domain/repositories/note_repository.da
 import 'package:ai_note/src/features/notifications/data/datasources/notification_local_data_source.dart';
 import 'package:ai_note/src/features/notifications/data/repositories/notification_repository_impl.dart';
 import 'package:ai_note/src/features/notifications/domain/repositories/notification_repository.dart';
+import 'package:ai_note/src/features/notifications/presentation/controllers/notification_permission_controller.dart';
 import 'package:ai_note/src/features/profile/data/datasources/profile_local_data_source.dart';
 import 'package:ai_note/src/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
@@ -72,6 +73,11 @@ class App extends StatelessWidget {
             repository: context.read<AuthRepository>(),
             useApi: false,
           )..restoreSession(),
+        ),
+        ChangeNotifierProvider<NotificationPermissionController>(
+          create: (context) => NotificationPermissionController(
+            authController: context.read<AuthController>(),
+          ),
         ),
         ProxyProvider<PreferencesStorage, NoteLocalDataSource>(
           update: (_, storage, __) => NoteLocalDataSource(storage),
@@ -132,12 +138,28 @@ class _AppRouterHost extends StatefulWidget {
 
 class _AppRouterHostState extends State<_AppRouterHost> {
   late final GoRouter _router;
+  late final _MergedListenable _routerRefreshListenable;
 
   @override
   void initState() {
     super.initState();
     final authController = context.read<AuthController>();
-    _router = createAppRouter(authController);
+    final permissionController =
+        context.read<NotificationPermissionController>();
+    _routerRefreshListenable = _MergedListenable(
+      [authController, permissionController],
+    );
+    _router = createAppRouter(
+      authController: authController,
+      permissionController: permissionController,
+      refreshListenable: _routerRefreshListenable,
+    );
+  }
+
+  @override
+  void dispose() {
+    _routerRefreshListenable.dispose();
+    super.dispose();
   }
 
   @override
@@ -148,5 +170,27 @@ class _AppRouterHostState extends State<_AppRouterHost> {
       theme: AppTheme.light(),
       routerConfig: _router,
     );
+  }
+}
+
+class _MergedListenable extends ChangeNotifier {
+  _MergedListenable(List<Listenable> listenables) : _listenables = listenables {
+    for (final listenable in _listenables) {
+      listenable.addListener(_onDependencyChanged);
+    }
+  }
+
+  final List<Listenable> _listenables;
+
+  void _onDependencyChanged() {
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    for (final listenable in _listenables) {
+      listenable.removeListener(_onDependencyChanged);
+    }
+    super.dispose();
   }
 }

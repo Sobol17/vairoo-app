@@ -78,7 +78,13 @@ class _ArticlesViewState extends State<_ArticlesView> {
             slivers: [
               SliverToBoxAdapter(
                 child: ArticlesHeader(
-                  onBackPressed: () => context.push('/home'),
+                  onBackPressed: () {
+                    if (Navigator.canPop(context)) {
+                      context.pop();
+                    } else {
+                      context.go('/home');
+                    }
+                  },
                 ),
               ),
               SliverPadding(

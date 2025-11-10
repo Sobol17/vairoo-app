@@ -8,8 +8,9 @@ import 'package:ai_note/src/features/calendar/presentation/pages/calendar_page.d
 import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
 import 'package:ai_note/src/features/notifications/domain/entities/chat_detail_data.dart';
 import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
+import 'package:ai_note/src/features/notifications/presentation/controllers/notification_permission_controller.dart';
 import 'package:ai_note/src/features/notifications/presentation/pages/chat_detail_page.dart';
+import 'package:ai_note/src/features/notifications/presentation/pages/notification_permission_page.dart';
 import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
 import 'package:ai_note/src/features/plan/presentation/pages/plan_page.dart';
@@ -21,16 +22,27 @@ import 'package:ai_note/src/features/recipes/presentation/pages/recipes_page.dar
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-GoRouter createAppRouter(AuthController authController) {
+GoRouter createAppRouter({
+  required AuthController authController,
+  required NotificationPermissionController permissionController,
+  required Listenable refreshListenable,
+}) {
   return GoRouter(
     initialLocation: '/home',
     debugLogDiagnostics: false,
-    refreshListenable: authController,
+    refreshListenable: refreshListenable,
     routes: [
       GoRoute(
         path: '/auth',
         pageBuilder: (context, state) =>
             _buildTransitionPage(state, const AuthPage()),
+      ),
+      GoRoute(
+        path: '/notification-permission',
+        pageBuilder: (context, state) => _buildTransitionPage(
+          state,
+          const NotificationPermissionPage(),
+        ),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -156,10 +168,21 @@ GoRouter createAppRouter(AuthController authController) {
     redirect: (context, state) {
       final isAuthenticated = authController.isAuthenticated;
       final loggingIn = state.matchedLocation == '/auth';
+      final onPermissionPage =
+          state.matchedLocation == '/notification-permission';
+      final needsPermissionPrompt =
+          isAuthenticated && permissionController.shouldPrompt;
+
       if (!isAuthenticated && !loggingIn) {
         return '/auth';
       }
       if (isAuthenticated && loggingIn) {
+        return '/home';
+      }
+      if (needsPermissionPrompt && !onPermissionPage) {
+        return '/notification-permission';
+      }
+      if (!needsPermissionPrompt && onPermissionPage) {
         return '/home';
       }
       return null;
