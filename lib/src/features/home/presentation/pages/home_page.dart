@@ -5,7 +5,6 @@ import 'package:ai_note/src/features/disclaimer/presentation/pages/disclaimer_sc
 import 'package:ai_note/src/features/disclaimer/presentation/widgets/main_disclaimer_dialog.dart';
 import 'package:ai_note/src/features/home/data/datasources/mock_data.dart';
 import 'package:ai_note/src/features/home/domain/entities/home_insight.dart';
-import 'package:ai_note/src/features/home/domain/entities/home_plan.dart';
 import 'package:ai_note/src/features/home/presentation/widgets/home_daily_plan_section.dart';
 import 'package:ai_note/src/features/home/presentation/widgets/home_insights_section.dart';
 import 'package:ai_note/src/features/home/presentation/widgets/home_motivation_card.dart';
@@ -84,7 +83,9 @@ class _HomeViewState extends State<_HomeView> {
                     dayLabel: '1 День',
                     planDate: DateTime(2025, 7, 26),
                     routines: mockRoutines,
-                    onRoutineTap: _onRoutineTap,
+                    onRoutineTap: (plan) {
+                      context.push('/home/plan', extra: sampleDayPlan);
+                    },
                   ),
                 ),
               ),
@@ -173,12 +174,6 @@ class _HomeViewState extends State<_HomeView> {
 
   void _openArticles() {
     context.push('/articles');
-  }
-
-  void _onRoutineTap(HomeRoutinePlan routine) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Сегодня: ${routine.title.toLowerCase()}')),
-    );
   }
 
   void _handleStartDayTap() {
