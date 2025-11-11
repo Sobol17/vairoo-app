@@ -10,6 +10,8 @@ import 'package:ai_note/src/features/home/presentation/widgets/home_daily_plan_s
 import 'package:ai_note/src/features/home/presentation/widgets/home_insights_section.dart';
 import 'package:ai_note/src/features/home/presentation/widgets/home_motivation_card.dart';
 import 'package:ai_note/src/features/home/presentation/widgets/home_top_header.dart';
+import 'package:ai_note/src/features/home/presentation/widgets/sos_button.dart';
+import 'package:ai_note/src/features/notifications/domain/entities/chat_detail_data.dart';
 import 'package:ai_note/src/features/plan/data/plan_samples.dart';
 import 'package:ai_note/src/shared/widgets/secondary_button.dart';
 import 'package:flutter/material.dart';
@@ -48,60 +50,77 @@ class _HomeViewState extends State<_HomeView> {
 
     return Scaffold(
       backgroundColor: AppColors.bgGray,
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        slivers: [
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _HomeHeaderDelegate(
-              child: HomeTopHeader(
-                onChatTap: _handleChatTap,
-                onNotificationsTap: _openNotifications,
+      body: Stack(
+        children: [
+          CustomScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
+            slivers: [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _HomeHeaderDelegate(
+                  child: HomeTopHeader(
+                    onChatTap: _handleChatTap,
+                    onNotificationsTap: _openNotifications,
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.only(top: 24, bottom: 12),
+                sliver: SliverToBoxAdapter(
+                  child: HomeMotivationCard(
+                    quote:
+                        'Сложнее всего начать действовать, все остальное зависит только от упорства',
+                    sobrietyCounter: '1д 5ч 36мин',
+                    sobrietyStartDate: 'Дата начала 26 июня 2025 года',
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                sliver: SliverToBoxAdapter(
+                  child: HomeDailyPlanSection(
+                    dayLabel: '1 День',
+                    planDate: DateTime(2025, 7, 26),
+                    routines: mockRoutines,
+                    onRoutineTap: _onRoutineTap,
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                sliver: SliverToBoxAdapter(
+                  child: HomeInsightsSection(cards: insights),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: MediaQuery.of(context).padding.bottom + 140,
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            left: 16,
+            bottom: 95,
+            child: SosButton(onTap: _openSpecialistChat),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: SafeArea(
+              top: false,
+              child: Container(
+                color: Colors.white,
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                child: SecondaryButton(
+                  label: "Начать день",
+                  onPressed: _handleStartDayTap,
+                ),
               ),
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.only(top: 24, bottom: 12),
-            sliver: SliverToBoxAdapter(
-              child: HomeMotivationCard(
-                quote:
-                    'Сложнее всего начать действовать, все остальное зависит только от упорства',
-                sobrietyCounter: '1д 5ч 36мин',
-                sobrietyStartDate: 'Дата начала 26 июня 2025 года',
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            sliver: SliverToBoxAdapter(
-              child: HomeDailyPlanSection(
-                dayLabel: '1 День',
-                planDate: DateTime(2025, 7, 26),
-                routines: mockRoutines,
-                onRoutineTap: _onRoutineTap,
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-            sliver: SliverToBoxAdapter(
-              child: HomeInsightsSection(cards: insights),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            sliver: SliverToBoxAdapter(
-              // child: HomeStartDayButton(onPressed: _handleStartDayTap),
-              child: SecondaryButton(
-                label: "Начать день",
-                onPressed: _handleStartDayTap,
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: SizedBox(height: MediaQuery.of(context).padding.bottom + 64),
           ),
         ],
       ),
@@ -133,19 +152,19 @@ class _HomeViewState extends State<_HomeView> {
   }
 
   Future<void> _handleChatTap() async {
-    final controller = context.read<DisclaimerController>();
-    final accepted = await controller.isAccepted(DisclaimerType.chat);
-    if (!accepted) {
-      await showDialog<bool>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => DisclaimerScreen(
-          onAcknowledged: () => controller.markAccepted(DisclaimerType.chat),
-        ),
-      );
-    } else {
-      context.push('/home/chats');
+    final accepted = await _ensureChatDisclaimerAccepted();
+    if (!accepted || !mounted) {
+      return;
     }
+    context.push('/home/chats');
+  }
+
+  Future<void> _openSpecialistChat() async {
+    final accepted = await _ensureChatDisclaimerAccepted();
+    if (!accepted || !mounted) {
+      return;
+    }
+    context.push('/home/chat', extra: const ChatDetailData.sample());
   }
 
   void _openNotifications() {
@@ -164,6 +183,25 @@ class _HomeViewState extends State<_HomeView> {
 
   void _handleStartDayTap() {
     context.push('/home/plan', extra: sampleDayPlan);
+  }
+
+  Future<bool> _ensureChatDisclaimerAccepted() async {
+    final controller = context.read<DisclaimerController>();
+    final accepted = await controller.isAccepted(DisclaimerType.chat);
+    if (accepted) {
+      return true;
+    }
+    final acknowledged = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => DisclaimerScreen(
+        onAcknowledged: () {
+          controller.markAccepted(DisclaimerType.chat);
+          Navigator.of(dialogContext).pop(true);
+        },
+      ),
+    );
+    return acknowledged == true;
   }
 
   List<HomeInsightCardData> _buildInsights() {
