@@ -6,6 +6,7 @@ import 'package:ai_note/src/features/auth/presentation/controllers/auth_controll
 import 'package:ai_note/src/features/auth/presentation/pages/auth_page.dart';
 import 'package:ai_note/src/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
+import 'package:ai_note/src/features/disclaimer/presentation/pages/disclaimer_screen.dart';
 import 'package:ai_note/src/features/notifications/domain/entities/chat_detail_data.dart';
 import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
 import 'package:ai_note/src/features/notifications/presentation/controllers/notification_permission_controller.dart';
@@ -21,6 +22,7 @@ import 'package:ai_note/src/features/profile/presentation/pages/profile_page.dar
 import 'package:ai_note/src/features/recipes/presentation/pages/recipes_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 GoRouter createAppRouter({
   required AuthController authController,
@@ -28,10 +30,15 @@ GoRouter createAppRouter({
   required Listenable refreshListenable,
 }) {
   return GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/disclaimer',
     debugLogDiagnostics: false,
     refreshListenable: refreshListenable,
     routes: [
+      GoRoute(
+        path: '/disclaimer',
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const _DisclaimerEntryPage()),
+      ),
       GoRoute(
         path: '/auth',
         pageBuilder: (context, state) =>
@@ -170,16 +177,17 @@ GoRouter createAppRouter({
       final loggingIn = state.matchedLocation == '/auth';
       final onPermissionPage =
           state.matchedLocation == '/notification-permission';
+      final onDisclaimer = state.matchedLocation == '/disclaimer';
       final needsPermissionPrompt =
           isAuthenticated && permissionController.shouldPrompt;
 
-      if (!isAuthenticated && !loggingIn) {
+      if (!isAuthenticated && !loggingIn && !onDisclaimer) {
         return '/auth';
       }
       if (isAuthenticated && loggingIn) {
         return '/home';
       }
-      if (needsPermissionPrompt && !onPermissionPage) {
+      if (needsPermissionPrompt && !onPermissionPage && !onDisclaimer) {
         return '/notification-permission';
       }
       if (!needsPermissionPrompt && onPermissionPage) {
@@ -241,6 +249,31 @@ class _ArticleMissingPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _DisclaimerEntryPage extends StatelessWidget {
+  const _DisclaimerEntryPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return DisclaimerScreen(
+      onAcknowledged: () {
+        final authController = context.read<AuthController>();
+        final permissionController =
+            context.read<NotificationPermissionController>();
+        final needsPermissionPrompt =
+            authController.isAuthenticated && permissionController.shouldPrompt;
+
+        if (needsPermissionPrompt) {
+          context.go('/notification-permission');
+        } else if (authController.isAuthenticated) {
+          context.go('/home');
+        } else {
+          context.go('/auth');
+        }
+      },
     );
   }
 }

@@ -95,7 +95,7 @@ class _PhoneStepState extends State<PhoneStep> {
         ),
         const SizedBox(height: 12),
         Text(
-          'Введите номер телефона для получения кода из SMS',
+          'Введите номер телефона для получения кода \n из SMS',
           textAlign: TextAlign.center,
           style: secondaryText,
         ),
@@ -176,7 +176,8 @@ class _PhoneStepState extends State<PhoneStep> {
       digits = digits.substring(0, 11);
     }
 
-    if (digits.length == 11 && (digits.startsWith('7') || digits.startsWith('8'))) {
+    if (digits.length == 11 &&
+        (digits.startsWith('7') || digits.startsWith('8'))) {
       return digits.substring(1);
     }
 

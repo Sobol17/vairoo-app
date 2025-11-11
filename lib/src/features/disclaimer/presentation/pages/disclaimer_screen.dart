@@ -37,77 +37,81 @@ class DisclaimerScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF0F7F80), Color(0xFF0D4B5B)],
+            colors: [Color(0xFF54BCB8), Color(0xFF0D4B5B)],
           ),
         ),
-
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const BrandLogo(),
-              const SizedBox(height: 12),
-              Text(
-                'ДИСКЛЕЙМЕР',
-                textAlign: TextAlign.center,
-                style: accentStyle,
-              ),
-              const SizedBox(height: 32),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: headline,
-                  children: [
-                    const TextSpan(
-                      text:
-                          'Приложение «Vairoo» является инструментом поддержки и информации и ',
-                    ),
-                    TextSpan(
-                      text:
-                          'НЕ ЗАМЕНЯЕТ профессиональную медицинскую помощь, диагностику или лечение.',
-                      style: headline?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const BrandLogo(color: AppColors.surface),
+                const SizedBox(height: 12),
+                Text(
+                  'ДИСКЛЕЙМЕР',
+                  textAlign: TextAlign.center,
+                  style: accentStyle,
+                ),
+                const SizedBox(height: 32),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: headline,
+                    children: [
+                      const TextSpan(
+                        text:
+                            'Приложение «Vairoo» является инструментом поддержки и информации и ',
+                      ),
+                      TextSpan(
+                        text:
+                            'НЕ ЗАМЕНЯЕТ профессиональную медицинскую помощь, диагностику или лечение.',
+                        style: headline?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Text(
+                  'Мы знаем, что решение отказаться от алкоголя — одно из самых смелых в жизни. Возможно, ты испытываешь неуверенность, страх или сомнения. Это абсолютно нормально. Каждое большое путешествие начинается с одного шага, и твой — прямо здесь.',
+                  textAlign: TextAlign.left,
+                  style: supportingStyle,
+                ),
+                const SizedBox(height: 20),
+                Center(child: SvgPicture.asset('assets/icons/hearth.svg')),
+                const SizedBox(height: 24),
+                Text(
+                  'При наличии тяжёлых симптомов отмены (делирий, судороги, сильная рвота), острой алкогольной интоксикации или суицидальных мыслей НЕМЕДЛЕННО обратитесь за экстренной медицинской помощью по телефону 103 или 112.',
+                  textAlign: TextAlign.left,
+                  style: warningStyle,
+                ),
+                const SizedBox(height: 28),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: onAcknowledged,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppColors.primary,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      textStyle: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-              Text(
-                'Мы знаем, что решение отказаться от алкоголя — одно из самых смелых в жизни. Возможно, ты испытываешь неуверенность, страх или сомнения. Это абсолютно нормально. Каждое большое путешествие начинается с одного шага, и твой — прямо здесь.',
-                textAlign: TextAlign.center,
-                style: supportingStyle,
-              ),
-              const SizedBox(height: 20),
-              Center(child: SvgPicture.asset('assets/icons/hearth.svg')),
-              const SizedBox(height: 24),
-              Text(
-                'При наличии тяжёлых симптомов отмены (делирий, судороги, сильная рвота), острой алкогольной интоксикации или суицидальных мыслей НЕМЕДЛЕННО обратитесь за экстренной медицинской помощью по телефону 103 или 112.',
-                textAlign: TextAlign.center,
-                style: warningStyle,
-              ),
-              const SizedBox(height: 28),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: onAcknowledged,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                    textStyle: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+                    child: const Text(
+                      'Ознакомился',
+                      style: TextStyle(color: AppColors.accent),
                     ),
                   ),
-                  child: const Text('Ознакомился'),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
