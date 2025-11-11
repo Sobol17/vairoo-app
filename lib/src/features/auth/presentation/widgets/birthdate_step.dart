@@ -28,6 +28,7 @@ class _BirthdateStepState extends State<BirthdateStep> {
 
   static final DateTime _minDate = DateTime(1900, 1);
   static final DateTime _maxDate = DateTime.now();
+  static final DateTime _latestAllowedBirthdate = DateTime(2010, 12, 31);
 
   late DateTime _visibleMonth;
   DateTime? _selectedDate;
@@ -127,7 +128,7 @@ class _BirthdateStepState extends State<BirthdateStep> {
             color: AppColors.bgGray,
             borderRadius: BorderRadius.circular(3),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -150,7 +151,7 @@ class _BirthdateStepState extends State<BirthdateStep> {
             ],
           ),
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: 16),
         CalendarHeader(
           monthLabel: formatter.formatMonth(_visibleMonth),
           primary: primary,
@@ -172,7 +173,9 @@ class _BirthdateStepState extends State<BirthdateStep> {
               : (date) {
                   setState(() {
                     _selectedDate = date;
-                    _errorText = null;
+                    _errorText = _isTooYoung(date)
+                        ? 'Приложение доступно пользователям, родившимся не позже 2010 года'
+                        : null;
                   });
                 },
         ),
@@ -190,7 +193,9 @@ class _BirthdateStepState extends State<BirthdateStep> {
         const Spacer(),
         PrimaryButton(
           label: 'Продолжить',
-          onPressed: _selectedDate != null ? _handleContinue : null,
+          onPressed: _selectedDate != null && !_isTooYoung(_selectedDate!)
+              ? _handleContinue
+              : null,
           isLoading: widget.isLoading,
         ),
         const SizedBox(height: 8),
@@ -210,6 +215,15 @@ class _BirthdateStepState extends State<BirthdateStep> {
       });
       return;
     }
+    if (_isTooYoung(selected)) {
+      setState(() {
+        _errorText =
+            'Приложение доступно пользователям, родившимся не позже 2010 года';
+      });
+      return;
+    }
     widget.onSubmit(selected);
   }
+
+  bool _isTooYoung(DateTime date) => date.isAfter(_latestAllowedBirthdate);
 }

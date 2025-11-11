@@ -17,4 +17,12 @@ const List<HomeRoutinePlan> mockRoutines = [
         'https://images.unsplash.com/photo-1435224654926-ecc9f7fa028c?auto=format&fit=crop&w=800&q=80',
     steps: ['Гидратация', 'Физическая активность', 'Здоровые перекусы'],
   ),
+  HomeRoutinePlan(
+    id: 'evening',
+    title: 'Плавное завершение дня',
+    tagLabel: 'Вечер',
+    coverImageUrl:
+        'https://images.unsplash.com/photo-1435224654926-ecc9f7fa028c?auto=format&fit=crop&w=800&q=80',
+    steps: ['Гидратация', 'Физическая активность', 'Здоровые перекусы'],
+  ),
 ];

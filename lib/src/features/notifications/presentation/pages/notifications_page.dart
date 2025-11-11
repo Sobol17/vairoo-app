@@ -90,33 +90,6 @@ class NotificationsPage extends StatelessWidget {
                 ),
               ),
               actions: [
-                if (controller.hasNotifications)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: AppColors.secondaryLight,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        child: InkWell(
-                          child: Text(
-                            controller.areAllSelected
-                                ? 'Снять выбор'
-                                : 'Выбрать все',
-                            style: TextStyle(
-                              color: AppColors.secondary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                 DecoratedBox(
                   decoration: BoxDecoration(
                     color: Colors.white,
