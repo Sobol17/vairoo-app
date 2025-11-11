@@ -1,15 +1,24 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
 import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-class PlanActivityCard extends StatelessWidget {
+class PlanActivityCard extends StatefulWidget {
   const PlanActivityCard({required this.activity, super.key});
 
   final PlanActivity activity;
 
   @override
+  State<PlanActivityCard> createState() => _PlanActivityCardState();
+}
+
+class _PlanActivityCardState extends State<PlanActivityCard> {
+  bool _completed = false;
+
+  @override
   Widget build(BuildContext context) {
+    final activity = widget.activity;
     final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
@@ -91,21 +100,80 @@ class PlanActivityCard extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppColors.secondary),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  child: Text(activity.secondaryActionLabel),
+                child: _SecondaryToggleButton(
+                  label: activity.secondaryActionLabel,
+                  completed: _completed,
+                  onPressed: _toggleSecondaryAction,
                 ),
               ),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  void _toggleSecondaryAction() {
+    setState(() {
+      _completed = !_completed;
+    });
+  }
+}
+
+class _SecondaryToggleButton extends StatelessWidget {
+  const _SecondaryToggleButton({
+    required this.label,
+    required this.completed,
+    required this.onPressed,
+  });
+
+  final String label;
+  final bool completed;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final displayLabel = completed ? 'Выполнено' : label;
+
+    final borderColor = completed
+        ? AppColors.primary.withOpacity(0.5)
+        : AppColors.secondary;
+    final foregroundColor = completed ? AppColors.primary : AppColors.secondary;
+    final backgroundColor = completed
+        ? AppColors.primary.withOpacity(0.08)
+        : Colors.transparent;
+
+    final buttonStyle =
+        OutlinedButton.styleFrom(
+          side: BorderSide(color: borderColor),
+          backgroundColor: backgroundColor,
+          foregroundColor: foregroundColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        ).copyWith(
+          textStyle: MaterialStatePropertyAll(
+            theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ) ??
+                const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+          ),
+        );
+
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: buttonStyle,
+      child: completed
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset('assets/icons/check.svg'),
+                const SizedBox(width: 4),
+                Flexible(child: Text(displayLabel)),
+              ],
+            )
+          : Text(displayLabel),
     );
   }
 }
