@@ -45,30 +45,26 @@ class _InsightCardState extends State<InsightCard>
           subtitle: widget.data.subtitle,
           onTap: _handleAction,
         ),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeInOut,
-          child: _expanded && widget.data.hasAchievements
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: Column(
-                    children: widget.data.achievements!
-                        .map(
-                          (achievement) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _AchievementTile(
-                              icon: achievement.icon,
-                              title: achievement.title,
-                              subtitle: achievement.subtitle,
-                              onTap: _handleAction,
-                            ),
+        _expanded && widget.data.hasAchievements
+            ? Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Column(
+                  children: widget.data.achievements!
+                      .map(
+                        (achievement) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _AchievementTile(
+                            icon: achievement.icon,
+                            title: achievement.title,
+                            subtitle: achievement.subtitle,
+                            onTap: _handleAction,
                           ),
-                        )
-                        .toList(),
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }

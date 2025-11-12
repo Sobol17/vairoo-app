@@ -215,11 +215,6 @@ class _HomeViewState extends State<_HomeView> {
         actionLabel: 'Раскрыть',
         achievements: [
           HomeAchievementDetail(
-            icon: Image.asset('assets/icons/top.png'),
-            title: 'Начало пути',
-            subtitle: 'Вы начали свой путь улучшения',
-          ),
-          HomeAchievementDetail(
             icon: Image.asset('assets/icons/avatar.png'),
             title: 'Намеченный путь',
             subtitle: '7 дней позади',
