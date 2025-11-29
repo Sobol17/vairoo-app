@@ -5,8 +5,10 @@ import 'package:ai_note/src/features/articles/presentation/pages/articles_page.d
 import 'package:ai_note/src/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:ai_note/src/features/auth/presentation/pages/auth_page.dart';
 import 'package:ai_note/src/features/calendar/presentation/pages/calendar_page.dart';
-import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
+import 'package:ai_note/src/features/disclaimer/domain/entities/disclaimer_type.dart';
+import 'package:ai_note/src/features/disclaimer/presentation/controllers/disclaimer_controller.dart';
 import 'package:ai_note/src/features/disclaimer/presentation/pages/disclaimer_screen.dart';
+import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
 import 'package:ai_note/src/features/notifications/domain/entities/chat_detail_data.dart';
 import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
 import 'package:ai_note/src/features/notifications/presentation/controllers/notification_permission_controller.dart';
@@ -17,6 +19,8 @@ import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
 import 'package:ai_note/src/features/plan/presentation/pages/plan_page.dart';
 import 'package:ai_note/src/features/practice/presentation/pages/breathing_practice_page.dart';
 import 'package:ai_note/src/features/practice/presentation/pages/practice_page.dart';
+import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
+import 'package:ai_note/src/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:ai_note/src/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:ai_note/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:ai_note/src/features/recipes/presentation/pages/recipes_page.dart';
@@ -27,6 +31,7 @@ import 'package:provider/provider.dart';
 GoRouter createAppRouter({
   required AuthController authController,
   required NotificationPermissionController permissionController,
+  required DisclaimerController disclaimerController,
   required Listenable refreshListenable,
 }) {
   return GoRouter(
@@ -46,10 +51,8 @@ GoRouter createAppRouter({
       ),
       GoRoute(
         path: '/notification-permission',
-        pageBuilder: (context, state) => _buildTransitionPage(
-          state,
-          const NotificationPermissionPage(),
-        ),
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const NotificationPermissionPage()),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -139,17 +142,22 @@ GoRouter createAppRouter({
                 path: '/profile',
                 pageBuilder: (context, state) =>
                     _buildTransitionPage(state, const ProfilePage()),
-                routes: [
-                  GoRoute(
-                    path: 'edit',
-                    pageBuilder: (context, state) =>
-                        _buildTransitionPage(state, const ProfileEditPage()),
-                  ),
-                ],
               ),
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: '/profile/edit',
+        pageBuilder: (context, state) => _buildTransitionPage(
+          state,
+          ChangeNotifierProvider<ProfileController>(
+            create: (ctx) =>
+                ProfileController(repository: ctx.read<ProfileRepository>())
+                  ..loadProfile(),
+            child: const ProfileEditPage(),
+          ),
+        ),
       ),
       GoRoute(
         path: '/articles',
@@ -180,6 +188,22 @@ GoRouter createAppRouter({
       final onDisclaimer = state.matchedLocation == '/disclaimer';
       final needsPermissionPrompt =
           isAuthenticated && permissionController.shouldPrompt;
+      final hasAcceptedDisclaimer = disclaimerController.isAcceptedSync(
+        DisclaimerType.main,
+      );
+
+      if (!hasAcceptedDisclaimer && !onDisclaimer) {
+        return '/disclaimer';
+      }
+      if (hasAcceptedDisclaimer && onDisclaimer) {
+        if (!isAuthenticated) {
+          return '/auth';
+        }
+        if (needsPermissionPrompt) {
+          return '/notification-permission';
+        }
+        return '/home';
+      }
 
       if (!isAuthenticated && !loggingIn && !onDisclaimer) {
         return '/auth';
@@ -260,9 +284,10 @@ class _DisclaimerEntryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return DisclaimerScreen(
       onAcknowledged: () {
+        context.read<DisclaimerController>().markAccepted(DisclaimerType.main);
         final authController = context.read<AuthController>();
-        final permissionController =
-            context.read<NotificationPermissionController>();
+        final permissionController = context
+            .read<NotificationPermissionController>();
         final needsPermissionPrompt =
             authController.isAuthenticated && permissionController.shouldPrompt;
 

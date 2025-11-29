@@ -4,6 +4,7 @@ import 'package:ai_note/src/features/articles/presentation/widgets/article_body.
 import 'package:ai_note/src/features/articles/presentation/widgets/article_detail_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class ArticleDetailPage extends StatelessWidget {
   const ArticleDetailPage({super.key, required this.article});
@@ -38,7 +39,7 @@ class _ArticleDetailContent extends StatelessWidget {
         slivers: [
           SliverToBoxAdapter(child: ArticleDetailHeader(article: article)),
           SliverFillRemaining(
-            hasScrollBody: false,
+            hasScrollBody: true,
             child: ArticleBody(article: article),
           ),
         ],

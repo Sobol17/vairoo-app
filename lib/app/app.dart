@@ -13,14 +13,19 @@ import 'package:ai_note/src/features/disclaimer/data/datasources/disclaimer_loca
 import 'package:ai_note/src/features/disclaimer/data/repositories/disclaimer_repository_impl.dart';
 import 'package:ai_note/src/features/disclaimer/domain/repositories/disclaimer_repository.dart';
 import 'package:ai_note/src/features/disclaimer/presentation/controllers/disclaimer_controller.dart';
+import 'package:ai_note/src/features/home/data/datasources/home_remote_data_source.dart';
 import 'package:ai_note/src/features/home/data/datasources/note_local_data_source.dart';
+import 'package:ai_note/src/features/home/data/repositories/home_repository_impl.dart';
 import 'package:ai_note/src/features/home/data/repositories/note_repository_impl.dart';
+import 'package:ai_note/src/features/home/domain/repositories/home_repository.dart';
 import 'package:ai_note/src/features/home/domain/repositories/note_repository.dart';
+import 'package:ai_note/src/features/home/presentation/controllers/home_controller.dart';
 import 'package:ai_note/src/features/notifications/data/datasources/notification_local_data_source.dart';
 import 'package:ai_note/src/features/notifications/data/repositories/notification_repository_impl.dart';
 import 'package:ai_note/src/features/notifications/domain/repositories/notification_repository.dart';
 import 'package:ai_note/src/features/notifications/presentation/controllers/notification_permission_controller.dart';
 import 'package:ai_note/src/features/profile/data/datasources/profile_local_data_source.dart';
+import 'package:ai_note/src/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:ai_note/src/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
 import 'package:ai_note/src/features/recipes/data/datasources/recipes_local_data_source.dart';
@@ -52,6 +57,31 @@ class App extends StatelessWidget {
         Provider<PreferencesStorage>.value(value: preferencesStorage),
         Provider<Dio>.value(value: apiClient.client),
         Provider<SharedPreferences>.value(value: preferencesStorage.instance),
+        ProxyProvider<ApiClient, HomeRepository>(
+          update: (_, client, __) =>
+              HomeRepositoryImpl(HomeRemoteDataSource(client)),
+        ),
+        ChangeNotifierProvider<HomeController>(
+          create: (context) =>
+              HomeController(repository: context.read<HomeRepository>())
+                ..loadHome(),
+        ),
+        ProxyProvider<ApiClient, ProfileRemoteDataSource>(
+          update: (_, client, __) => ProfileRemoteDataSource(client),
+        ),
+        ProxyProvider<PreferencesStorage, ProfileLocalDataSource>(
+          update: (_, storage, __) => ProfileLocalDataSource(storage),
+        ),
+        ProxyProvider2<
+          ProfileRemoteDataSource,
+          ProfileLocalDataSource,
+          ProfileRepository
+        >(
+          update: (_, remote, local, __) => ProfileRepositoryImpl(
+            remoteDataSource: remote,
+            localDataSource: local,
+          ),
+        ),
         ProxyProvider<ApiClient, AuthRemoteDataSource>(
           update: (_, client, __) => AuthRemoteDataSource(client),
         ),
@@ -71,7 +101,9 @@ class App extends StatelessWidget {
         ChangeNotifierProvider<AuthController>(
           create: (context) => AuthController(
             repository: context.read<AuthRepository>(),
-            useApi: false,
+            apiClient: context.read<ApiClient>(),
+            profileRepository: context.read<ProfileRepository>(),
+            useApi: true,
           )..restoreSession(),
         ),
         ChangeNotifierProvider<NotificationPermissionController>(
@@ -97,13 +129,6 @@ class App extends StatelessWidget {
         ProxyProvider<ArticlesRemoteDataSource, ArticlesRepository>(
           update: (_, dataSource, __) =>
               ArticlesRepositoryImpl(remoteDataSource: dataSource),
-        ),
-        ProxyProvider<PreferencesStorage, ProfileLocalDataSource>(
-          update: (_, storage, __) => ProfileLocalDataSource(storage),
-        ),
-        ProxyProvider<ProfileLocalDataSource, ProfileRepository>(
-          update: (_, dataSource, __) =>
-              ProfileRepositoryImpl(localDataSource: dataSource),
         ),
         ProxyProvider<PreferencesStorage, DisclaimerLocalDataSource>(
           update: (_, storage, __) => DisclaimerLocalDataSource(storage),
@@ -144,14 +169,18 @@ class _AppRouterHostState extends State<_AppRouterHost> {
   void initState() {
     super.initState();
     final authController = context.read<AuthController>();
-    final permissionController =
-        context.read<NotificationPermissionController>();
-    _routerRefreshListenable = _MergedListenable(
-      [authController, permissionController],
-    );
+    final permissionController = context
+        .read<NotificationPermissionController>();
+    final disclaimerController = context.read<DisclaimerController>();
+    _routerRefreshListenable = _MergedListenable([
+      authController,
+      permissionController,
+      disclaimerController,
+    ]);
     _router = createAppRouter(
       authController: authController,
       permissionController: permissionController,
+      disclaimerController: disclaimerController,
       refreshListenable: _routerRefreshListenable,
     );
   }
