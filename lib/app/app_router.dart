@@ -16,6 +16,8 @@ import 'package:ai_note/src/features/notifications/presentation/pages/chat_detai
 import 'package:ai_note/src/features/notifications/presentation/pages/notification_permission_page.dart';
 import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
+import 'package:ai_note/src/features/plan/domain/repositories/plan_repository.dart';
+import 'package:ai_note/src/features/plan/presentation/controllers/plan_controller.dart';
 import 'package:ai_note/src/features/plan/presentation/pages/plan_page.dart';
 import 'package:ai_note/src/features/practice/presentation/pages/breathing_practice_page.dart';
 import 'package:ai_note/src/features/practice/presentation/pages/practice_page.dart';
@@ -97,7 +99,16 @@ GoRouter createAppRouter({
                       final plan = state.extra is DailyPlan
                           ? state.extra as DailyPlan
                           : null;
-                      return _buildTransitionPage(state, PlanPage(plan: plan));
+                      return _buildTransitionPage(
+                        state,
+                        ChangeNotifierProvider<PlanController>(
+                          create: (ctx) => PlanController(
+                            repository: ctx.read<PlanRepository>(),
+                            initialPlan: plan,
+                          )..createOrFetchPlan(),
+                          child: const PlanPage(),
+                        ),
+                      );
                     },
                   ),
                   GoRoute(

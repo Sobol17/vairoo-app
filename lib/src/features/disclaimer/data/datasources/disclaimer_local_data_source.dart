@@ -13,5 +13,8 @@ class DisclaimerLocalDataSource {
     await _storage.setBool(_key(type), true);
   }
 
+  bool isAcceptedSync(DisclaimerType type) =>
+      _storage.getBool(_key(type)) ?? false;
+
   String _key(DisclaimerType type) => 'disclaimer_${type.name}_accepted';
 }

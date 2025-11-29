@@ -4,40 +4,44 @@ class ArticleModel extends Article {
   const ArticleModel({
     required super.id,
     required super.title,
-    required super.summary,
+    required super.subtitle,
     required super.content,
-    required super.publishedAt,
-    super.coverImageUrl,
+    required super.createdAt,
+    required super.updatedAt,
     super.author,
-    super.tags = const [],
   });
 
   factory ArticleModel.fromEntity(Article article) {
     return ArticleModel(
       id: article.id,
       title: article.title,
-      summary: article.summary,
+      subtitle: article.subtitle,
       content: article.content,
-      publishedAt: article.publishedAt,
-      coverImageUrl: article.coverImageUrl,
+      createdAt: article.createdAt,
+      updatedAt: article.updatedAt,
       author: article.author,
-      tags: List<String>.from(article.tags),
     );
   }
 
   factory ArticleModel.fromJson(Map<String, dynamic> json) {
+    final createdAt =
+        _parseDate(
+          json['created_at'] as String? ?? json['createdAt'] as String?,
+        ) ??
+        DateTime.now();
+    final updatedAt =
+        _parseDate(
+          json['updated_at'] as String? ?? json['updatedAt'] as String?,
+        ) ??
+        createdAt;
     return ArticleModel(
       id: json['id'] as String,
       title: json['title'] as String? ?? '',
-      summary: json['summary'] as String? ?? '',
+      subtitle: json['subtitle'] as String? ?? '',
       content: json['content'] as String? ?? '',
-      publishedAt: DateTime.parse(json['publishedAt'] as String),
-      coverImageUrl: json['coverImageUrl'] as String?,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
       author: json['author'] as String?,
-      tags: (json['tags'] as List<dynamic>?)
-              ?.map((tag) => tag.toString())
-              .toList(growable: false) ??
-          const [],
     );
   }
 
@@ -45,12 +49,18 @@ class ArticleModel extends Article {
     return <String, dynamic>{
       'id': id,
       'title': title,
-      'summary': summary,
+      'subtitle': subtitle,
       'content': content,
-      'publishedAt': publishedAt.toIso8601String(),
-      'coverImageUrl': coverImageUrl,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
       'author': author,
-      'tags': tags,
     };
+  }
+
+  static DateTime? _parseDate(String? input) {
+    if (input == null || input.isEmpty) {
+      return null;
+    }
+    return DateTime.tryParse(input);
   }
 }

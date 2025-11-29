@@ -4,54 +4,49 @@ class Article extends Equatable {
   const Article({
     required this.id,
     required this.title,
-    required this.summary,
+    required this.subtitle,
     required this.content,
-    required this.publishedAt,
-    this.coverImageUrl,
+    required this.createdAt,
+    required this.updatedAt,
     this.author,
-    this.tags = const [],
   });
 
   final String id;
   final String title;
-  final String summary;
+  final String subtitle;
   final String content;
-  final DateTime publishedAt;
-  final String? coverImageUrl;
+  final DateTime createdAt;
+  final DateTime updatedAt;
   final String? author;
-  final List<String> tags;
 
   Article copyWith({
     String? id,
     String? title,
-    String? summary,
+    String? subtitle,
     String? content,
-    DateTime? publishedAt,
-    String? coverImageUrl,
+    DateTime? createdAt,
+    DateTime? updatedAt,
     String? author,
-    List<String>? tags,
   }) {
     return Article(
       id: id ?? this.id,
       title: title ?? this.title,
-      summary: summary ?? this.summary,
+      subtitle: subtitle ?? this.subtitle,
       content: content ?? this.content,
-      publishedAt: publishedAt ?? this.publishedAt,
-      coverImageUrl: coverImageUrl ?? this.coverImageUrl,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       author: author ?? this.author,
-      tags: tags ?? this.tags,
     );
   }
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        summary,
-        content,
-        publishedAt,
-        coverImageUrl,
-        author,
-        tags,
-      ];
+    id,
+    title,
+    subtitle,
+    content,
+    createdAt,
+    updatedAt,
+    author,
+  ];
 }

@@ -3,4 +3,5 @@ import 'package:ai_note/src/features/notifications/domain/entities/user_notifica
 abstract class NotificationRepository {
   Future<List<UserNotification>> fetchNotifications();
   Future<void> saveNotifications(List<UserNotification> notifications);
+  Future<void> deleteAllNotifications();
 }

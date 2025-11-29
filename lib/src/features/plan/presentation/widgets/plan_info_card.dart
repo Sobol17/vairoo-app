@@ -1,11 +1,15 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
 import 'package:flutter/material.dart';
 
-class RealityCheckCard extends StatelessWidget {
-  const RealityCheckCard({required this.realityCheck, super.key});
+class PlanInfoCard extends StatelessWidget {
+  const PlanInfoCard({
+    required this.title,
+    required this.description,
+    super.key,
+  });
 
-  final RealityCheck realityCheck;
+  final String title;
+  final String description;
 
   @override
   Widget build(BuildContext context) {
@@ -14,25 +18,25 @@ class RealityCheckCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.9),
+        color: AppColors.primary,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            realityCheck.title,
+            title,
             style: theme.textTheme.titleMedium?.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(
-            realityCheck.description,
+            description,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withOpacity(0.9),
-              height: 1.4,
+              color: Colors.white.withValues(alpha: 0.9),
+              height: 1.35,
             ),
           ),
         ],

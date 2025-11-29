@@ -1,5 +1,7 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
 import 'package:ai_note/src/features/auth/presentation/widgets/brand_logo.dart';
+import 'package:ai_note/src/features/profile/domain/entities/profile.dart';
+import 'package:ai_note/src/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:ai_note/src/shared/helpers/formatter.dart';
 import 'package:ai_note/src/shared/helpers/phone_mask.dart';
 import 'package:ai_note/src/shared/widgets/calendar.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:provider/provider.dart';
 
 class ProfileEditPage extends StatefulWidget {
   const ProfileEditPage({super.key});
@@ -23,19 +26,36 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   String? _phoneDigits;
   DateTime? _birthDate;
+  bool _isSaving = false;
+  ProfileController? _profileController;
+  Profile? _lastProfile;
 
   @override
   void initState() {
     super.initState();
     _formatter = Formatter();
-    _nameController = TextEditingController(text: 'Иван Иванович');
+    _nameController = TextEditingController();
     _emailController = TextEditingController();
-    _initializePhoneController('8 919 123 45-67');
-    _birthDate = DateTime(2000, 7, 26);
+    _phoneController = TextEditingController();
+    _initializePhoneController('');
+    _birthDate = null;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final controller = context.read<ProfileController>();
+    if (!identical(_profileController, controller)) {
+      _profileController?.removeListener(_onProfileUpdated);
+      _profileController = controller;
+      _profileController?.addListener(_onProfileUpdated);
+      _onProfileUpdated();
+    }
   }
 
   @override
   void dispose() {
+    _profileController?.removeListener(_onProfileUpdated);
     _nameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
@@ -44,15 +64,30 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   void _initializePhoneController(String phone) {
     final digits = _prepareDigitsForMask(phone);
-    if (digits.isEmpty) {
-      _phoneController = TextEditingController();
-      _phoneDigits = null;
+    final mask = _createPhoneMask(
+      initialDigits: digits.isEmpty ? null : digits,
+    );
+    final masked = mask.getMaskedText();
+    _phoneDigits = masked.isEmpty ? null : mask.getUnmaskedText();
+    _phoneController.text = masked;
+  }
+
+  void _onProfileUpdated() {
+    final controller = _profileController;
+    if (controller == null) {
       return;
     }
-    final mask = _createPhoneMask(initialDigits: digits);
-    final masked = mask.getMaskedText();
-    _phoneDigits = mask.getUnmaskedText();
-    _phoneController = TextEditingController(text: masked);
+    final profile = controller.profile;
+    if (_lastProfile == profile) {
+      return;
+    }
+    setState(() {
+    _lastProfile = profile;
+    _nameController.text = profile.name;
+    _emailController.text = profile.email ?? '';
+    _birthDate = profile.birthDate;
+    _initializePhoneController(profile.phone ?? '');
+    });
   }
 
   Future<void> _selectBirthDate() async {
@@ -82,9 +117,37 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     return _formatter.formatFullDate(date);
   }
 
-  void _handleContinue() {
+  Future<void> _handleContinue() async {
+    if (_isSaving) {
+      return;
+    }
     FocusScope.of(context).unfocus();
-    context.pop();
+    setState(() => _isSaving = true);
+    final emailText = _emailController.text.trim();
+    try {
+      final controller = _profileController;
+      if (controller == null) {
+        throw StateError('ProfileController is not available');
+      }
+      await controller.submitProfileInfo(
+        name: _nameController.text,
+        birthDate: _birthDate,
+        email: emailText.isEmpty ? null : emailText,
+      );
+      if (mounted) {
+        context.pop(true);
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Не удалось сохранить изменения: $error')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
   }
 
   Future<void> _editName() async {
@@ -296,7 +359,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                               left: -15,
                               top: -8,
                               child: TextButton.icon(
-                                onPressed: () => context.push('/profile'),
+                                onPressed: () => context.pop(),
                                 icon: const Icon(Icons.chevron_left_rounded),
                                 label: const Text('Назад'),
                                 style: TextButton.styleFrom(
@@ -461,8 +524,17 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        onPressed: _handleContinue,
-                        child: const Text('Продолжить'),
+                        onPressed: _isSaving ? null : _handleContinue,
+                        child: _isSaving
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text('Продолжить'),
                       ),
                       const SizedBox(height: 24),
                     ],

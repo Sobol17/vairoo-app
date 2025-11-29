@@ -11,12 +11,12 @@ class ProfileLocalDataSource {
   Future<ProfileModel> readProfile() async {
     final stored = _storage.getString(_profileKey);
     if (stored == null || stored.isEmpty) {
-      return ProfileModel.initial();
+      return const ProfileModel.empty();
     }
     try {
       return ProfileModel.fromEncoded(stored);
     } catch (_) {
-      return ProfileModel.initial();
+      return const ProfileModel.empty();
     }
   }
 

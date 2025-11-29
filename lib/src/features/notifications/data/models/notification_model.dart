@@ -38,6 +38,17 @@ class NotificationModel extends UserNotification {
     );
   }
 
+  factory NotificationModel.fromApiJson(Map<String, dynamic> json) {
+    return NotificationModel(
+      id: json['id'] as String,
+      category: NotificationCategory.system,
+      title: json['title'] as String,
+      message: json['message'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      isRead: json['is_read'] as bool? ?? false,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

@@ -10,10 +10,14 @@ Future<void> bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final sharedPreferences = await SharedPreferences.getInstance();
+  const apiBaseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://127.0.0.1:8000',
+  );
 
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'https://api.example.com',
+      baseUrl: apiBaseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       contentType: 'application/json',

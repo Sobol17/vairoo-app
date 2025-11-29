@@ -16,4 +16,9 @@ class DisclaimerRepositoryImpl implements DisclaimerRepository {
   Future<void> markAccepted(DisclaimerType type) {
     return _localDataSource.markAccepted(type);
   }
+
+  @override
+  bool isAcceptedSync(DisclaimerType type) {
+    return _localDataSource.isAcceptedSync(type);
+  }
 }

@@ -10,7 +10,11 @@ class ProfileController extends ChangeNotifier {
   final ProfileRepository _repository;
   final Formatter _formatter = Formatter();
 
-  Profile _profile = const Profile(name: '', sobrietyStartDate: null);
+  Profile _profile = const Profile(
+    id: 'local-profile',
+    name: '',
+    sobrietyStartDate: null,
+  );
   bool _isLoading = false;
 
   Profile get profile => _profile;
@@ -73,6 +77,26 @@ class ProfileController extends ChangeNotifier {
       _profile = profile;
     } finally {
       _setLoading(false);
+    }
+  }
+
+  Future<void> submitProfileInfo({
+    required String name,
+    DateTime? birthDate,
+    String? email,
+  }) async {
+    _setLoading(true);
+    try {
+      final updated = _profile.copyWith(
+        name: name.trim(),
+        birthDate: birthDate ?? _profile.birthDate,
+        email: (email?.trim().isEmpty ?? true) ? null : email?.trim(),
+      );
+      final fresh = await _repository.updateProfileInfo(updated);
+      _profile = fresh;
+    } finally {
+      _setLoading(false);
+      notifyListeners();
     }
   }
 

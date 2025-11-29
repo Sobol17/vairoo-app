@@ -1,5 +1,7 @@
+import 'package:ai_note/src/core/network/api_client.dart';
 import 'package:ai_note/src/features/auth/domain/entities/auth_session.dart';
 import 'package:ai_note/src/features/auth/domain/repositories/auth_repository.dart';
+import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -15,11 +17,19 @@ enum AuthStep {
 }
 
 class AuthController extends ChangeNotifier {
-  AuthController({required AuthRepository repository, bool useApi = false})
-    : _repository = repository,
-      _useApi = useApi;
+  AuthController({
+    required AuthRepository repository,
+    required ApiClient apiClient,
+    required ProfileRepository profileRepository,
+    bool useApi = false,
+  }) : _repository = repository,
+       _apiClient = apiClient,
+       _profileRepository = profileRepository,
+       _useApi = useApi;
 
   final AuthRepository _repository;
+  final ApiClient _apiClient;
+  final ProfileRepository _profileRepository;
   final bool _useApi;
 
   bool _isLoading = false;
@@ -48,8 +58,7 @@ class AuthController extends ChangeNotifier {
     try {
       final existing = await _repository.loadSession();
       if (existing != null) {
-        _session = existing;
-        _phoneNumber = existing.phoneNumber;
+        _applySession(existing);
         _step = AuthStep.authenticated;
         notifyListeners();
       }
@@ -134,19 +143,24 @@ class AuthController extends ChangeNotifier {
           phoneNumber: _phoneNumber,
           code: normalized,
         );
-        _session = session;
+        _applySession(session);
       } else {
         await Future<void>.delayed(const Duration(milliseconds: 400));
-        _session = AuthSession(
-          accessToken: 'local-access-token',
-          refreshToken: 'local-refresh-token',
-          phoneNumber: _phoneNumber,
+        _applySession(
+          AuthSession(
+            accessToken: 'local-access-token',
+            phoneNumber: _phoneNumber,
+          ),
         );
       }
       _errorMessage = null;
       _birthDate = null;
       _habitSpending = null;
-      _step = AuthStep.birthdateInput;
+      if (_session?.isNewUser ?? false) {
+        _step = AuthStep.birthdateInput;
+      } else {
+        _finishOnboarding();
+      }
     } catch (error) {
       _setError(_mapError(error));
     } finally {
@@ -154,14 +168,41 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  void completeBirthdate(DateTime? date) {
-    _birthDate = date;
+  Future<void> completeBirthdate(DateTime? date) async {
+    if (date != null && _useApi) {
+      _setLoading(true);
+      _setError(null);
+      try {
+        await _profileRepository.updateBirthdate(date);
+        _birthDate = date;
+      } catch (error) {
+        _setError(_mapError(error));
+        return;
+      } finally {
+        _setLoading(false);
+      }
+    } else {
+      _birthDate = date;
+    }
     _errorMessage = null;
     _step = AuthStep.goalInput;
     notifyListeners();
   }
 
-  void completeGoal(String goal) {
+  Future<void> completeGoal(String goal) async {
+    final needsRemote = _useApi;
+    if (needsRemote) {
+      _setLoading(true);
+      _setError(null);
+      try {
+        await _profileRepository.updateGoal(goal);
+      } catch (error) {
+        _setError(_mapError(error));
+        return;
+      } finally {
+        _setLoading(false);
+      }
+    }
     _goal = goal;
     _errorMessage = null;
     _step = AuthStep.paymentInput;
@@ -174,7 +215,27 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void completeHabitSpending(String spending) {
+  Future<void> completeHabitSpending(String spending) async {
+    final normalized = spending.replaceAll(',', '.');
+    final parsed = double.tryParse(normalized);
+    if (parsed == null) {
+      _errorMessage = 'Введите корректную сумму';
+      notifyListeners();
+      return;
+    }
+    final needsRemote = _useApi;
+    if (needsRemote) {
+      _setLoading(true);
+      _setError(null);
+      try {
+        await _profileRepository.updateHabitSpending(parsed);
+      } catch (error) {
+        _setError(_mapError(error));
+        return;
+      } finally {
+        _setLoading(false);
+      }
+    }
     _habitSpending = spending;
     _finishOnboarding();
   }
@@ -188,6 +249,12 @@ class AuthController extends ChangeNotifier {
     _errorMessage = null;
     _step = AuthStep.authenticated;
     notifyListeners();
+  }
+
+  void _applySession(AuthSession session) {
+    _session = session;
+    _phoneNumber = session.phoneNumber;
+    _apiClient.setAuthToken(session.accessToken, tokenType: session.tokenType);
   }
 
   void backToOtp() {
@@ -227,6 +294,13 @@ class AuthController extends ChangeNotifier {
     showPhoneInput(clearPhone: true);
   }
 
+  Future<void> logout() async {
+    await _repository.clearSession();
+    await _profileRepository.clearProfile();
+    _apiClient.setAuthToken(null);
+    showPhoneInput(clearPhone: true);
+  }
+
   void _setLoading(bool value) {
     if (_isLoading == value) {
       return;
@@ -247,7 +321,7 @@ class AuthController extends ChangeNotifier {
     if (error is DioException) {
       final data = error.response?.data;
       if (data is Map<String, dynamic>) {
-        final message = data['message'] ?? data['error'];
+        final message = data['detail'] ?? data['message'] ?? data['error'];
         if (message is String && message.isNotEmpty) {
           return message;
         }

@@ -30,4 +30,6 @@ class NotificationLocalDataSource {
       notifications.map((item) => item.toJsonString()).toList(),
     );
   }
+
+  Future<void> clear() => _storage.remove(_notificationsStorageKey);
 }

@@ -21,9 +21,13 @@ import 'package:ai_note/src/features/home/domain/repositories/home_repository.da
 import 'package:ai_note/src/features/home/domain/repositories/note_repository.dart';
 import 'package:ai_note/src/features/home/presentation/controllers/home_controller.dart';
 import 'package:ai_note/src/features/notifications/data/datasources/notification_local_data_source.dart';
+import 'package:ai_note/src/features/notifications/data/datasources/notification_remote_data_source.dart';
 import 'package:ai_note/src/features/notifications/data/repositories/notification_repository_impl.dart';
 import 'package:ai_note/src/features/notifications/domain/repositories/notification_repository.dart';
 import 'package:ai_note/src/features/notifications/presentation/controllers/notification_permission_controller.dart';
+import 'package:ai_note/src/features/plan/data/datasources/plan_remote_data_source.dart';
+import 'package:ai_note/src/features/plan/data/repositories/plan_repository_impl.dart';
+import 'package:ai_note/src/features/plan/domain/repositories/plan_repository.dart';
 import 'package:ai_note/src/features/profile/data/datasources/profile_local_data_source.dart';
 import 'package:ai_note/src/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:ai_note/src/features/profile/data/repositories/profile_repository_impl.dart';
@@ -63,8 +67,7 @@ class App extends StatelessWidget {
         ),
         ChangeNotifierProvider<HomeController>(
           create: (context) =>
-              HomeController(repository: context.read<HomeRepository>())
-                ..loadHome(),
+              HomeController(repository: context.read<HomeRepository>()),
         ),
         ProxyProvider<ApiClient, ProfileRemoteDataSource>(
           update: (_, client, __) => ProfileRemoteDataSource(client),
@@ -117,11 +120,21 @@ class App extends StatelessWidget {
         ProxyProvider<NoteLocalDataSource, NoteRepository>(
           update: (_, dataSource, __) => NoteRepositoryImpl(dataSource),
         ),
+        ProxyProvider<ApiClient, NotificationRemoteDataSource>(
+          update: (_, client, __) => NotificationRemoteDataSource(client),
+        ),
         ProxyProvider<PreferencesStorage, NotificationLocalDataSource>(
           update: (_, storage, __) => NotificationLocalDataSource(storage),
         ),
-        ProxyProvider<NotificationLocalDataSource, NotificationRepository>(
-          update: (_, dataSource, __) => NotificationRepositoryImpl(dataSource),
+        ProxyProvider2<
+          NotificationRemoteDataSource,
+          NotificationLocalDataSource,
+          NotificationRepository
+        >(
+          update: (_, remote, local, __) => NotificationRepositoryImpl(
+            remoteDataSource: remote,
+            localDataSource: local,
+          ),
         ),
         ProxyProvider<ApiClient, ArticlesRemoteDataSource>(
           update: (_, client, __) => ArticlesRemoteDataSource(client),
@@ -129,6 +142,13 @@ class App extends StatelessWidget {
         ProxyProvider<ArticlesRemoteDataSource, ArticlesRepository>(
           update: (_, dataSource, __) =>
               ArticlesRepositoryImpl(remoteDataSource: dataSource),
+        ),
+        ProxyProvider<ApiClient, PlanRemoteDataSource>(
+          update: (_, client, __) => PlanRemoteDataSource(client),
+        ),
+        ProxyProvider<PlanRemoteDataSource, PlanRepository>(
+          update: (_, dataSource, __) =>
+              PlanRepositoryImpl(remoteDataSource: dataSource),
         ),
         ProxyProvider<PreferencesStorage, DisclaimerLocalDataSource>(
           update: (_, storage, __) => DisclaimerLocalDataSource(storage),

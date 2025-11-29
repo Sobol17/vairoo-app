@@ -63,9 +63,9 @@ class ArticleDetailHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          if (article.summary.isNotEmpty)
+          if (article.subtitle.isNotEmpty)
             Text(
-              article.summary,
+              article.subtitle,
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontSize: 14,
                 color: Colors.white.withValues(alpha: 0.85),

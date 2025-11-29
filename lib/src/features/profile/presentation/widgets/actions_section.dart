@@ -1,5 +1,7 @@
 import 'package:ai_note/src/core/theme/app_colors.dart';
+import 'package:ai_note/src/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ActionsSection extends StatelessWidget {
   @override
@@ -19,7 +21,7 @@ class ActionsSection extends StatelessWidget {
             child: Text('Сбросить все данные', style: style),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () => context.read<AuthController>().logout(),
             child: Text('Выйти', style: style),
           ),
           TextButton(

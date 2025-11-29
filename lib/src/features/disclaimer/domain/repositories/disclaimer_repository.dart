@@ -4,4 +4,6 @@ abstract class DisclaimerRepository {
   Future<bool> isAccepted(DisclaimerType type);
 
   Future<void> markAccepted(DisclaimerType type);
+
+  bool isAcceptedSync(DisclaimerType type);
 }

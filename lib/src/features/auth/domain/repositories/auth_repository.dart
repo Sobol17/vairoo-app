@@ -9,4 +9,6 @@ abstract class AuthRepository {
   });
 
   Future<AuthSession?> loadSession();
+
+  Future<void> clearSession();
 }

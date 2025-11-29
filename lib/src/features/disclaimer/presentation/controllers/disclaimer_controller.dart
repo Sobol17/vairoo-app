@@ -30,4 +30,13 @@ class DisclaimerController extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  bool isAcceptedSync(DisclaimerType type) {
+    if (_cache.containsKey(type)) {
+      return _cache[type]!;
+    }
+    final accepted = _repository.isAcceptedSync(type);
+    _cache[type] = accepted;
+    return accepted;
+  }
 }

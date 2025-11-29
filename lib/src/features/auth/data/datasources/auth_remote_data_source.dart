@@ -1,7 +1,6 @@
-import 'package:dio/dio.dart';
-
 import 'package:ai_note/src/core/network/api_client.dart';
 import 'package:ai_note/src/features/auth/data/models/auth_session_model.dart';
+import 'package:dio/dio.dart';
 
 class AuthRemoteDataSource {
   AuthRemoteDataSource(this._client);
@@ -10,10 +9,8 @@ class AuthRemoteDataSource {
 
   Future<void> requestOtp(String phoneNumber) async {
     await _client.post<dynamic>(
-      '/auth/request-otp',
-      data: {
-        'phoneNumber': phoneNumber,
-      },
+      '/api/client/auth/request_code',
+      data: {'phone': phoneNumber},
     );
   }
 
@@ -22,11 +19,8 @@ class AuthRemoteDataSource {
     required String code,
   }) async {
     final response = await _client.post<Map<String, dynamic>>(
-      '/auth/verify-otp',
-      data: {
-        'phoneNumber': phoneNumber,
-        'code': code,
-      },
+      '/api/client/auth/verify_code',
+      data: {'phone': phoneNumber, 'code': code},
     );
 
     final data = response.data;
@@ -39,6 +33,6 @@ class AuthRemoteDataSource {
       );
     }
 
-    return AuthSessionModel.fromJson(data);
+    return AuthSessionModel.fromJson(data, fallbackPhoneNumber: phoneNumber);
   }
 }

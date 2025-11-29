@@ -18,7 +18,13 @@ class AuthLocalDataSource {
       return null;
     }
 
-    return AuthSessionModel.fromJsonString(serialized);
+    try {
+      return AuthSessionModel.fromJsonString(serialized);
+    } on FormatException {
+      // Corrupted or legacy payload — drop it silently.
+      await clearSession();
+      return null;
+    }
   }
 
   Future<void> clearSession() async {

@@ -91,7 +91,13 @@ class _ProfileView extends StatelessWidget {
                           child: Image.asset('assets/icons/avatar.png'),
                         ),
                         TextButton(
-                          onPressed: () => context.push('/profile/edit'),
+                          onPressed: () async {
+                            final updated = await context.push('/profile/edit');
+                            if (updated == true) {
+                              // ignore: use_build_context_synchronously
+                              await controller.loadProfile();
+                            }
+                          },
                           child: const Text('Изменить'),
                         ),
                         const SizedBox(height: 16),

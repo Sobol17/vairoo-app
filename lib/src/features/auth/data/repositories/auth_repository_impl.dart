@@ -7,8 +7,8 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
     required AuthRemoteDataSource remoteDataSource,
     required AuthLocalDataSource localDataSource,
-  })  : _remoteDataSource = remoteDataSource,
-        _localDataSource = localDataSource;
+  }) : _remoteDataSource = remoteDataSource,
+       _localDataSource = localDataSource;
 
   final AuthRemoteDataSource _remoteDataSource;
   final AuthLocalDataSource _localDataSource;
@@ -36,5 +36,10 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<AuthSession?> loadSession() {
     return _localDataSource.loadSession();
+  }
+
+  @override
+  Future<void> clearSession() {
+    return _localDataSource.clearSession();
   }
 }

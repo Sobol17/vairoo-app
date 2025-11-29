@@ -49,7 +49,12 @@ class NotificationsPage extends StatelessWidget {
     if (hasSelection) {
       await controller.deleteSelected();
     } else {
-      await controller.deleteCurrentCategory();
+      final category = controller.selectedCategory;
+      if (category == NotificationCategory.system) {
+        await controller.deleteAll();
+      } else {
+        await controller.deleteCurrentCategory();
+      }
     }
   }
 

@@ -134,6 +134,13 @@ class NotificationsController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> deleteAll() async {
+    await _repository.deleteAllNotifications();
+    _notifications = [];
+    _selectedIds.clear();
+    notifyListeners();
+  }
+
   List<UserNotification> _sortByDateDescending(
     List<UserNotification> notifications,
   ) {

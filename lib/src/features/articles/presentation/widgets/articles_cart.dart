@@ -49,7 +49,7 @@ class ArticleCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        article.summary,
+                        article.subtitle,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
                           height: 1.2,
