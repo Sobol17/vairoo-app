@@ -42,7 +42,6 @@ class PaywallPage extends StatelessWidget {
     final theme = Theme.of(context);
     final controller = context.watch<PaywallController>();
     final isLoading = controller.isLoading;
-    final primary = theme.colorScheme.primary;
     final bodyStyle = theme.textTheme.bodyMedium?.copyWith(
       color: AppColors.textSecondary,
       height: 1.5,
@@ -52,152 +51,105 @@ class PaywallPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  BrandLogo(),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () => Navigator.of(context).maybePop(),
-                      child: const Text('Закрыть'),
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        const BrandLogo(),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () => Navigator.of(context).maybePop(),
+                            child: const Text('Закрыть'),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              Center(
-                child: SvgPicture.asset(
-                  'assets/icons/paywall.svg',
-                  height: 220,
+                    Center(
+                      child: SvgPicture.asset(
+                        'assets/icons/paywall.svg',
+                        height: 220,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    Text(
+                      'Поздравляем вас с успешным завершением этой тридцатидневной программы трезвости!',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Вы очень старались, и мы надеемся, что вы заметили положительные изменения в своём отношении к алкоголю. Чтобы сохранить результат, сохраняйте мотивацию, вспоминайте проблемы от употребления и пользу отказа. Используйте новые навыки, принимайте сложность перемен и учитесь преодолевать трудности. Находите радость в каждом дне и не стесняйтесь просить помощь.',
+                      style: bodyStyle,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Наше приложение продолжит поддерживать вас: можно задать вопрос специалисту, получить помощь в чате, опираться на дыхательные и другие техники саморегуляции, а также поиграть в мини-игру. Ваши пожелания помогут нам сделать приложение лучше. Этот текст выдержан в сжатом виде для удобства восприятия и мотивации.',
+                      style: bodyStyle,
+                    ),
+                    const SizedBox(height: 80),
+                  ],
                 ),
               ),
-              const SizedBox(height: 32),
-              Text(
-                'Поздравляем вас с успешным завершением этой тридцатидневной программы трезвости!',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w700,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Вы очень старались, и мы надеемся, что вы заметили положительные изменения в своём отношении к алкоголю. Чтобы сохранить результат, сохраняйте мотивацию, вспоминайте проблемы от употребления и пользу отказа. Используйте новые навыки, принимайте сложность перемен и учитесь преодолевать трудности. Находите радость в каждом дне и не стесняйтесь просить помощь.',
-                style: bodyStyle,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Наше приложение продолжит поддерживать вас: можно задать вопрос специалисту, получить помощь в чате, опираться на дыхательные и другие техники саморегуляции, а также поиграть в мини-игру. Ваши пожелания помогут нам сделать приложение лучше. Этот текст выдержан в сжатом виде для удобства восприятия и мотивации.',
-                style: bodyStyle,
-              ),
-              const SizedBox(height: 12),
-              PaywallCard(accent: AppColors.accent),
-              const SizedBox(height: 20),
-              PrimaryButton(
-                label: 'Продолжить путь трезвости',
-                onPressed: () => _handleCheckout(context),
+            ),
+            SafeArea(
+              top: false,
+              child: _PaywallBottomPanel(
                 isLoading: isLoading,
+                onCheckout: () => _handleCheckout(context),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _OfferCard extends StatelessWidget {
-  const _OfferCard({required this.onContinue, required this.isLoading});
+class _PaywallBottomPanel extends StatelessWidget {
+  const _PaywallBottomPanel({
+    required this.onCheckout,
+    required this.isLoading,
+  });
 
-  final VoidCallback onContinue;
+  final VoidCallback onCheckout;
   final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.accentLight,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.secondary.withValues(alpha: 0.4),
-          width: 2,
-        ),
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
+      decoration: const BoxDecoration(
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 18,
-            offset: const Offset(0, 10),
+            color: Color(0x1A000000),
+            blurRadius: 12,
+            offset: Offset(0, -6),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '299 руб.',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textBlack,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Продолжить путь',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.secondary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '30 дней',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textBlack,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton(
-              onPressed: isLoading ? null : onContinue,
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.primary,
-                textStyle: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              child: isLoading
-                  ? const SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Продолжить путь'),
-            ),
+          PaywallCard(accent: AppColors.accent),
+          const SizedBox(height: 12),
+          PrimaryButton(
+            label: 'Продолжить путь трезвости',
+            onPressed: isLoading ? null : onCheckout,
+            isLoading: isLoading,
           ),
         ],
       ),
@@ -206,7 +158,7 @@ class _OfferCard extends StatelessWidget {
 }
 
 class PaywallCard extends StatelessWidget {
-  const PaywallCard({required this.accent});
+  const PaywallCard({required this.accent, super.key});
 
   final Color accent;
 

@@ -4,10 +4,16 @@ import 'package:Vairoo/src/features/home/presentation/widgets/plan_bullet_row.da
 import 'package:flutter/material.dart';
 
 class RoutineCard extends StatelessWidget {
-  const RoutineCard({required this.plan, required this.onTap, super.key});
+  const RoutineCard({
+    required this.plan,
+    required this.onTap,
+    required this.isPlanStarted,
+    super.key,
+  });
 
   final HomeRoutinePlan plan;
   final VoidCallback onTap;
+  final bool isPlanStarted;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +120,7 @@ class RoutineCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(18),
                               ),
                             ),
-                            child: const Text('Начать'),
+                            child: Text(isPlanStarted ? 'План дня' : 'Начать'),
                           ),
                         ),
                       ],

@@ -1,4 +1,5 @@
 import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/paywall/presentation/controllers/subscription_controller.dart';
 import 'package:Vairoo/src/features/plan/domain/entities/daily_plan.dart';
 import 'package:Vairoo/src/features/plan/presentation/controllers/plan_controller.dart';
 import 'package:Vairoo/src/features/plan/presentation/widgets/circular_nav_button.dart';
@@ -29,6 +30,8 @@ class _PlanPageState extends State<PlanPage> {
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<PlanController>();
+    final subscriptionExpired =
+        context.watch<SubscriptionController>().isSubscriptionExpired;
     final plan = controller.plan;
 
     return Scaffold(
@@ -39,7 +42,11 @@ class _PlanPageState extends State<PlanPage> {
           SafeArea(
             child: plan == null
                 ? _buildEmptyState(controller)
-                : _buildPlanView(controller, plan),
+                : _buildPlanView(
+                    controller,
+                    plan,
+                    subscriptionExpired,
+                  ),
           ),
         ],
       ),
@@ -96,7 +103,11 @@ class _PlanPageState extends State<PlanPage> {
     );
   }
 
-  Widget _buildPlanView(PlanController controller, DailyPlan plan) {
+  Widget _buildPlanView(
+    PlanController controller,
+    DailyPlan plan,
+    bool subscriptionExpired,
+  ) {
     final currentStep = controller.visibleStep;
     final content = getPlanStepContent(currentStep);
     final activities = plan.blocks.itemsForStep(currentStep);
@@ -141,7 +152,13 @@ class _PlanPageState extends State<PlanPage> {
             ),
           ],
         ),
-        _buildBottomBar(controller, plan, currentStep, content),
+        _buildBottomBar(
+          controller,
+          plan,
+          currentStep,
+          content,
+          subscriptionExpired,
+        ),
         if (controller.isLoading)
           const Positioned(
             top: 0,
@@ -232,18 +249,23 @@ class _PlanPageState extends State<PlanPage> {
     DailyPlan plan,
     PlanStep currentStep,
     PlanStepContent content,
+    bool subscriptionExpired,
   ) {
     final isDayCompleted = controller.isDayCompleted || plan.isCompleted;
     final canGoNext = controller.canGoNextStep && !isDayCompleted;
     final actionError = controller.actionErrorMessage;
     final isFinished = currentStep == PlanStep.finished;
-    final label = isDayCompleted && !canGoNext && !isFinished
-        ? 'День завершен'
-        : content.ctaLabel;
+    final label = isFinished
+        ? (subscriptionExpired ? 'Продолжить путь трезвости' : 'День завершен')
+        : isDayCompleted && !canGoNext
+            ? 'День завершен'
+            : content.ctaLabel;
 
     VoidCallback? onPressed;
     if (isFinished) {
-      onPressed = () => context.push('/paywall');
+      onPressed = subscriptionExpired
+          ? () => context.push('/paywall')
+          : () => context.go('/home');
     } else if (isDayCompleted) {
       onPressed = () => Navigator.of(context).maybePop();
     } else if (canGoNext) {

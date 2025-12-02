@@ -42,14 +42,12 @@ class _HomeViewState extends State<_HomeView> {
   bool _requestedLoad = false;
   bool _isStartingDay = false;
   bool _hasActivePlan = false;
-  DailyPlan? _cachedPlan;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _ensureMainDisclaimer();
       _loadHome();
-      _checkExistingPlan();
     });
   }
 
@@ -110,17 +108,26 @@ class _HomeViewState extends State<_HomeView> {
                   ),
                 ),
               ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                sliver: SliverToBoxAdapter(
-                  child: HomeDailyPlanSection(
-                    dayLabel: controller.dayLabel,
-                    planDate: controller.planDate,
-                    routines: controller.routines,
-                    onRoutineTap: _handlePlanCardTap,
+              if (controller.routines.isNotEmpty)
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  sliver: SliverToBoxAdapter(
+                    child: HomeDailyPlanSection(
+                      dayLabel: controller.dayLabel,
+                      planDate: controller.planDate,
+                      routines: controller.routines,
+                      isPlanStarted: _hasActivePlan,
+                      onRoutineTap: _handlePlanCardTap,
+                    ),
+                  ),
+                )
+              else
+                const SliverPadding(
+                  padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  sliver: SliverToBoxAdapter(
+                    child: _CompletedPlanBanner(),
                   ),
                 ),
-              ),
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                 sliver: SliverToBoxAdapter(
@@ -240,12 +247,7 @@ class _HomeViewState extends State<_HomeView> {
     });
     try {
       final planRepository = context.read<PlanRepository>();
-      DailyPlan plan;
-      if (_hasActivePlan && _cachedPlan != null) {
-        plan = _cachedPlan!;
-      } else {
-        plan = await _fetchExistingOrStartPlan(planRepository);
-      }
+      final plan = await _fetchExistingOrStartPlan(planRepository);
       if (!mounted) {
         return;
       }
@@ -255,37 +257,12 @@ class _HomeViewState extends State<_HomeView> {
         return;
       }
       final message = _mapPlanStartError(error);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
     } finally {
       if (mounted) {
         setState(() {
           _isStartingDay = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _checkExistingPlan() async {
-    try {
-      final repository = context.read<PlanRepository>();
-      final plan = await repository.fetchCurrentPlan();
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _hasActivePlan = true;
-        _cachedPlan = plan;
-      });
-    } on DioException catch (error) {
-      if (error.response?.statusCode == 404) {
-        if (!mounted) {
-          return;
-        }
-        setState(() {
-          _hasActivePlan = false;
-          _cachedPlan = null;
         });
       }
     }
@@ -309,12 +286,10 @@ class _HomeViewState extends State<_HomeView> {
   void _markPlanStarted(DailyPlan plan) {
     if (!mounted) {
       _hasActivePlan = true;
-      _cachedPlan = plan;
       return;
     }
     setState(() {
       _hasActivePlan = true;
-      _cachedPlan = plan;
     });
   }
 
@@ -337,6 +312,9 @@ class _HomeViewState extends State<_HomeView> {
     final accepted = await controller.isAccepted(DisclaimerType.chat);
     if (accepted) {
       return true;
+    }
+    if (!mounted) {
+      return false;
     }
     final acknowledged = await showDialog<bool>(
       context: context,
@@ -547,5 +525,36 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(covariant _HomeHeaderDelegate oldDelegate) {
     return oldDelegate.child != child;
+  }
+}
+
+class _CompletedPlanBanner extends StatelessWidget {
+  const _CompletedPlanBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Text(
+        'Сегодня вы выполнили весь план. Отправляйтесь отдыхать',
+        style: theme.textTheme.titleMedium?.copyWith(
+          color: AppColors.primary,
+          fontWeight: FontWeight.w600,
+          height: 1.4,
+        ),
+      ),
+    );
   }
 }

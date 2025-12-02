@@ -1,4 +1,3 @@
-import 'package:Vairoo/src/features/home/data/datasources/mock_data.dart';
 import 'package:Vairoo/src/features/home/domain/entities/home_data.dart';
 import 'package:Vairoo/src/features/home/domain/entities/home_plan.dart';
 import 'package:Vairoo/src/features/home/domain/repositories/home_repository.dart';
@@ -64,7 +63,7 @@ class HomeController extends ChangeNotifier {
   List<HomeRoutinePlan> get routines {
     final plans = _data?.plan;
     if (plans == null || plans.isEmpty) {
-      return mockRoutines;
+      return const [];
     }
     return plans.map(_mapPlan).toList(growable: false);
   }

@@ -10,12 +10,14 @@ class HomeDailyPlanSection extends StatefulWidget {
     required this.planDate,
     required this.routines,
     required this.onRoutineTap,
+    required this.isPlanStarted,
   });
 
   final String dayLabel;
   final DateTime planDate;
   final List<HomeRoutinePlan> routines;
   final ValueChanged<HomeRoutinePlan> onRoutineTap;
+  final bool isPlanStarted;
 
   @override
   State<HomeDailyPlanSection> createState() => _HomeDailyPlanSectionState();
@@ -81,6 +83,7 @@ class _HomeDailyPlanSectionState extends State<HomeDailyPlanSection> {
                 ),
                 child: RoutineCard(
                   plan: plan,
+                  isPlanStarted: widget.isPlanStarted,
                   onTap: () => widget.onRoutineTap(plan),
                 ),
               );
