@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/articles/domain/entities/article.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/articles/domain/entities/article.dart';
 import 'package:flutter/material.dart';
 
 class ArticleDetailHeader extends StatelessWidget {

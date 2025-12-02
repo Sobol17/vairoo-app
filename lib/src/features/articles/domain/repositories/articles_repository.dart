@@ -1,4 +1,4 @@
-import 'package:ai_note/src/features/articles/domain/entities/article.dart';
+import 'package:Vairoo/src/features/articles/domain/entities/article.dart';
 
 abstract class ArticlesRepository {
   Future<List<Article>> fetchArticles();

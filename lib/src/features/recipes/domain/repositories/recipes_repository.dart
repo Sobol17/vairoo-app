@@ -1,4 +1,4 @@
-import 'package:ai_note/src/features/recipes/domain/entities/recipe.dart';
+import 'package:Vairoo/src/features/recipes/domain/entities/recipe.dart';
 
 abstract class RecipesRepository {
   Future<List<Recipe>> fetchRecipes();

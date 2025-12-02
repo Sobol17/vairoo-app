@@ -1,8 +1,8 @@
-import 'package:ai_note/src/features/home/data/datasources/mock_data.dart';
-import 'package:ai_note/src/features/home/domain/entities/home_data.dart';
-import 'package:ai_note/src/features/home/domain/entities/home_plan.dart';
-import 'package:ai_note/src/features/home/domain/repositories/home_repository.dart';
-import 'package:ai_note/src/shared/helpers/formatter.dart';
+import 'package:Vairoo/src/features/home/data/datasources/mock_data.dart';
+import 'package:Vairoo/src/features/home/domain/entities/home_data.dart';
+import 'package:Vairoo/src/features/home/domain/entities/home_plan.dart';
+import 'package:Vairoo/src/features/home/domain/repositories/home_repository.dart';
+import 'package:Vairoo/src/shared/helpers/formatter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -33,14 +33,16 @@ class HomeController extends ChangeNotifier {
     if (start == null) {
       return '0д 0ч 0мин';
     }
-    final diff = DateTime.now().difference(DateTime(
-      start.year,
-      start.month,
-      start.day,
-      start.hour,
-      start.minute,
-      start.second,
-    ));
+    final diff = DateTime.now().difference(
+      DateTime(
+        start.year,
+        start.month,
+        start.day,
+        start.hour,
+        start.minute,
+        start.second,
+      ),
+    );
     final days = diff.inDays;
     final hours = diff.inHours % 24;
     final minutes = diff.inMinutes % 60;

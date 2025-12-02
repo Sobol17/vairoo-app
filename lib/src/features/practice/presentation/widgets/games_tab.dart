@@ -1,5 +1,5 @@
-import 'package:ai_note/src/features/practice/data/datasources/practice_games.dart';
-import 'package:ai_note/src/features/practice/presentation/widgets/practice_game_card.dart';
+import 'package:Vairoo/src/features/practice/data/datasources/practice_games.dart';
+import 'package:Vairoo/src/features/practice/presentation/widgets/practice_game_card.dart';
 import 'package:flutter/material.dart';
 
 class GamesTab extends StatelessWidget {

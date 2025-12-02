@@ -1,20 +1,21 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/disclaimer/domain/entities/disclaimer_type.dart';
-import 'package:ai_note/src/features/disclaimer/presentation/controllers/disclaimer_controller.dart';
-import 'package:ai_note/src/features/disclaimer/presentation/pages/disclaimer_screen.dart';
-import 'package:ai_note/src/features/disclaimer/presentation/widgets/main_disclaimer_dialog.dart';
-import 'package:ai_note/src/features/home/domain/entities/home_plan.dart';
-import 'package:ai_note/src/features/home/domain/entities/home_insight.dart';
-import 'package:ai_note/src/features/home/presentation/controllers/home_controller.dart';
-import 'package:ai_note/src/features/home/presentation/widgets/home_daily_plan_section.dart';
-import 'package:ai_note/src/features/home/presentation/widgets/home_insights_section.dart';
-import 'package:ai_note/src/features/home/presentation/widgets/home_motivation_card.dart';
-import 'package:ai_note/src/features/home/presentation/widgets/home_top_header.dart';
-import 'package:ai_note/src/features/home/presentation/widgets/sos_button.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/chat_detail_data.dart';
-import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
-import 'package:ai_note/src/features/plan/domain/repositories/plan_repository.dart';
-import 'package:ai_note/src/shared/widgets/secondary_button.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/disclaimer/domain/entities/disclaimer_type.dart';
+import 'package:Vairoo/src/features/disclaimer/presentation/controllers/disclaimer_controller.dart';
+import 'package:Vairoo/src/features/disclaimer/presentation/pages/disclaimer_screen.dart';
+import 'package:Vairoo/src/features/disclaimer/presentation/widgets/main_disclaimer_dialog.dart';
+import 'package:Vairoo/src/features/home/domain/entities/home_insight.dart';
+import 'package:Vairoo/src/features/home/domain/entities/home_plan.dart';
+import 'package:Vairoo/src/features/home/presentation/controllers/home_controller.dart';
+import 'package:Vairoo/src/features/home/presentation/widgets/home_daily_plan_section.dart';
+import 'package:Vairoo/src/features/home/presentation/widgets/home_insights_section.dart';
+import 'package:Vairoo/src/features/home/presentation/widgets/home_motivation_card.dart';
+import 'package:Vairoo/src/features/home/presentation/widgets/home_top_header.dart';
+import 'package:Vairoo/src/features/home/presentation/widgets/sos_button.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/chat_detail_data.dart';
+import 'package:Vairoo/src/features/plan/domain/entities/daily_plan.dart';
+import 'package:Vairoo/src/features/plan/domain/repositories/plan_repository.dart';
+import 'package:Vairoo/src/features/practice/domain/entities/practice_tab.dart';
+import 'package:Vairoo/src/shared/widgets/secondary_button.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -123,7 +124,10 @@ class _HomeViewState extends State<_HomeView> {
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                 sliver: SliverToBoxAdapter(
-                  child: HomeInsightsSection(cards: insights),
+                  child: HomeInsightsSection(
+                    todayCards: insights.todayCards,
+                    totalCards: insights.totalCards,
+                  ),
                 ),
               ),
               SliverToBoxAdapter(
@@ -136,7 +140,11 @@ class _HomeViewState extends State<_HomeView> {
           Positioned(
             left: 16,
             bottom: 95,
-            child: SosButton(onTap: _openSpecialistChat),
+            child: SosButton(
+              onCalmingTap: _openCalmingPractice,
+              onGamesTap: _openPracticeGames,
+              onChatTap: _openSpecialistChat,
+            ),
           ),
           Positioned(
             left: 0,
@@ -199,6 +207,14 @@ class _HomeViewState extends State<_HomeView> {
     context.push('/home/chat', extra: const ChatDetailData.sample());
   }
 
+  void _openCalmingPractice() {
+    context.go('/practice', extra: PracticeTab.calming);
+  }
+
+  void _openPracticeGames() {
+    context.go('/practice', extra: PracticeTab.games);
+  }
+
   void _openNotifications() {
     context.push('/home/notifications');
   }
@@ -239,9 +255,9 @@ class _HomeViewState extends State<_HomeView> {
         return;
       }
       final message = _mapPlanStartError(error);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     } finally {
       if (mounted) {
         setState(() {
@@ -335,7 +351,7 @@ class _HomeViewState extends State<_HomeView> {
     return acknowledged == true;
   }
 
-  List<HomeInsightCardData> _buildInsights(
+  _InsightsTabsData _buildInsights(
     HomeController controller,
     VoidCallback onArticlesTap,
   ) {
@@ -363,22 +379,9 @@ class _HomeViewState extends State<_HomeView> {
         )
         .toList(growable: false);
 
-    final savingsLabel = data.totalSaved.isNotEmpty
-        ? '${data.totalSaved} ${data.savings.currency}'
-        : '${data.savings.amount} ${data.savings.currency}';
-
-    final cards = <HomeInsightCardData>[
-      HomeInsightCardData(
-        icon: Image.asset('assets/icons/money_save.png'),
-        title: 'Сэкономлено средств',
-        value: savingsLabel,
-        subtitle: data.savings.caption.isNotEmpty
-            ? data.savings.caption
-            : 'Ваши расходы снижаются',
-      ),
-    ];
+    final trailingCards = <HomeInsightCardData>[];
     if (achievements.isNotEmpty) {
-      cards.add(
+      trailingCards.add(
         HomeInsightCardData(
           icon: Image.asset('assets/icons/top.png'),
           title: 'Достижения',
@@ -389,7 +392,7 @@ class _HomeViewState extends State<_HomeView> {
         ),
       );
     }
-    cards.addAll([
+    trailingCards.addAll([
       HomeInsightCardData(
         icon: Image.asset('assets/icons/articles.png'),
         title: 'Библиотека знаний',
@@ -410,40 +413,58 @@ class _HomeViewState extends State<_HomeView> {
         subtitle: data.calories.description,
       ),
     ]);
-    return cards;
+
+    final todayCards = [
+      _buildSavingsCard(
+        value: '${data.savings.amount} ${data.savings.currency}',
+        subtitle: data.savings.caption,
+      ),
+      ...trailingCards,
+    ];
+
+    final totalValue = data.totalSaved.isNotEmpty
+        ? '${data.totalSaved} ${data.savings.currency}'
+        : '${data.savings.amount} ${data.savings.currency}';
+    final totalCards = [
+      _buildSavingsCard(
+        value: totalValue,
+        subtitle: data.savings.caption,
+      ),
+      ...trailingCards,
+    ];
+
+    return _InsightsTabsData(
+      todayCards: todayCards,
+      totalCards: totalCards,
+    );
   }
 
-  List<HomeInsightCardData> _buildFallbackInsights(VoidCallback onArticlesTap) {
-    return [
-      HomeInsightCardData(
-        icon: Image.asset('assets/icons/money_save.png'),
-        title: 'Сэкономлено средств',
-        value: '200 ₽',
-        subtitle: 'Ваши расходы снижаются',
+  _InsightsTabsData _buildFallbackInsights(VoidCallback onArticlesTap) {
+    final achievements = [
+      HomeAchievementDetail(
+        icon: Image.asset('assets/icons/avatar.png'),
+        title: 'Намеченный путь',
+        subtitle: '7 дней позади',
       ),
+      HomeAchievementDetail(
+        icon: Image.asset('assets/icons/money_save.png'),
+        title: 'Свободный человек',
+        subtitle: '20 дней трезвости',
+      ),
+      HomeAchievementDetail(
+        icon: Image.asset('assets/icons/articles.png'),
+        title: 'Товарищ на пути',
+        subtitle: 'Начали общаться в сообществе',
+      ),
+    ];
+    final trailingCards = [
       HomeInsightCardData(
         icon: Image.asset('assets/icons/top.png'),
         title: 'Достижения',
-        value: 'Начало пути',
-        subtitle: 'Вы начали свой путь улучшения',
+        value: 'Вы начали свой путь улучшения',
+        subtitle: 'Продолжайте выполнять задания',
         actionLabel: 'Раскрыть',
-        achievements: [
-          HomeAchievementDetail(
-            icon: Image.asset('assets/icons/avatar.png'),
-            title: 'Намеченный путь',
-            subtitle: '7 дней позади',
-          ),
-          HomeAchievementDetail(
-            icon: Image.asset('assets/icons/money_save.png'),
-            title: 'Свободный человек',
-            subtitle: '20 дней трезвости',
-          ),
-          HomeAchievementDetail(
-            icon: Image.asset('assets/icons/articles.png'),
-            title: 'Товарищ на пути',
-            subtitle: 'Начали общаться в сообществе',
-          ),
-        ],
+        achievements: achievements,
       ),
       HomeInsightCardData(
         icon: Image.asset('assets/icons/articles.png'),
@@ -463,7 +484,43 @@ class _HomeViewState extends State<_HomeView> {
         subtitle: 'Держите себя в тонусе',
       ),
     ];
+
+    final todayCards = [
+      _buildSavingsCard(value: '200 ₽', subtitle: 'Ваши расходы снижаются'),
+      ...trailingCards,
+    ];
+    final totalCards = [
+      _buildSavingsCard(value: '1000 ₽', subtitle: 'Ваши расходы снижаются'),
+      ...trailingCards,
+    ];
+
+    return _InsightsTabsData(
+      todayCards: todayCards,
+      totalCards: totalCards,
+    );
   }
+
+  HomeInsightCardData _buildSavingsCard({
+    required String value,
+    required String subtitle,
+  }) {
+    return HomeInsightCardData(
+      icon: Image.asset('assets/icons/money_save.png'),
+      title: 'Сэкономлено средств',
+      value: value,
+      subtitle: subtitle.isNotEmpty ? subtitle : 'Ваши расходы снижаются',
+    );
+  }
+}
+
+class _InsightsTabsData {
+  const _InsightsTabsData({
+    required this.todayCards,
+    required this.totalCards,
+  });
+
+  final List<HomeInsightCardData> todayCards;
+  final List<HomeInsightCardData> totalCards;
 }
 
 class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {

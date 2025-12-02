@@ -1,8 +1,8 @@
-import 'package:ai_note/src/features/notifications/data/datasources/notification_local_data_source.dart';
-import 'package:ai_note/src/features/notifications/data/datasources/notification_remote_data_source.dart';
-import 'package:ai_note/src/features/notifications/data/models/notification_model.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/user_notification.dart';
-import 'package:ai_note/src/features/notifications/domain/repositories/notification_repository.dart';
+import 'package:Vairoo/src/features/notifications/data/datasources/notification_local_data_source.dart';
+import 'package:Vairoo/src/features/notifications/data/datasources/notification_remote_data_source.dart';
+import 'package:Vairoo/src/features/notifications/data/models/notification_model.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/user_notification.dart';
+import 'package:Vairoo/src/features/notifications/domain/repositories/notification_repository.dart';
 import 'package:dio/dio.dart';
 
 class NotificationRepositoryImpl implements NotificationRepository {

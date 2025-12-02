@@ -1,10 +1,12 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/notification_samples.dart';
-import 'package:ai_note/src/features/notifications/domain/repositories/notification_repository.dart';
-import 'package:ai_note/src/features/notifications/presentation/controllers/notifications_controller.dart';
-import 'package:ai_note/src/features/notifications/presentation/widgets/category_switcher.dart';
-import 'package:ai_note/src/features/notifications/presentation/widgets/nofitications_body.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/notification_category.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/notification_samples.dart';
+import 'package:Vairoo/src/features/notifications/domain/repositories/chats_repository.dart';
+import 'package:Vairoo/src/features/notifications/domain/repositories/notification_repository.dart';
+import 'package:Vairoo/src/features/notifications/presentation/controllers/chats_controller.dart';
+import 'package:Vairoo/src/features/notifications/presentation/controllers/notifications_controller.dart';
+import 'package:Vairoo/src/features/notifications/presentation/widgets/category_switcher.dart';
+import 'package:Vairoo/src/features/notifications/presentation/widgets/nofitications_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -60,15 +62,27 @@ class NotificationsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NotificationsController>(
-      create: (context) => NotificationsController(
-        repository: context.read<NotificationRepository>(),
-        seed: defaultNotificationsSeed(),
-        initialCategory: initialCategory,
-      )..loadNotifications(allowSeed: true),
-      child: Consumer<NotificationsController>(
-        builder: (context, controller, _) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<NotificationsController>(
+          create: (context) => NotificationsController(
+            repository: context.read<NotificationRepository>(),
+            seed: defaultNotificationsSeed(),
+            initialCategory: initialCategory,
+          )..loadNotifications(allowSeed: true),
+        ),
+        ChangeNotifierProvider<ChatsController>(
+          create: (context) =>
+              ChatsController(repository: context.read<ChatsRepository>())
+                ..loadChats(),
+        ),
+      ],
+      child: Consumer2<NotificationsController, ChatsController>(
+        builder: (context, notificationController, chatsController, _) {
           final theme = Theme.of(context);
+          final isChatTab =
+              notificationController.selectedCategory ==
+              NotificationCategory.chat;
 
           return Scaffold(
             backgroundColor: AppColors.bgGray,
@@ -101,12 +115,17 @@ class NotificationsPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: IconButton(
-                    tooltip: controller.hasSelection
+                    tooltip: notificationController.hasSelection
                         ? 'Удалить выбранные'
                         : 'Очистить список',
-                    onPressed:
-                        (controller.hasSelection || controller.hasNotifications)
-                        ? () => _handleDeletePressed(context, controller)
+                    onPressed: isChatTab
+                        ? null
+                        : (notificationController.hasSelection ||
+                              notificationController.hasNotifications)
+                        ? () => _handleDeletePressed(
+                            context,
+                            notificationController,
+                          )
                         : null,
                     icon: SvgPicture.asset('assets/icons/backet.svg'),
                   ),
@@ -116,7 +135,7 @@ class NotificationsPage extends StatelessWidget {
             body: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: controller.isLoading
+                child: notificationController.isLoading && !isChatTab
                     ? const Center(child: CircularProgressIndicator())
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,12 +149,16 @@ class NotificationsPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 20),
                           CategorySwitcher(
-                            selected: controller.selectedCategory,
-                            onCategorySelected: controller.selectCategory,
+                            selected: notificationController.selectedCategory,
+                            onCategorySelected:
+                                notificationController.selectCategory,
                           ),
                           const SizedBox(height: 24),
                           Expanded(
-                            child: NotificationsBody(controller: controller),
+                            child: NotificationsBody(
+                              notificationsController: notificationController,
+                              chatsController: chatsController,
+                            ),
                           ),
                         ],
                       ),

@@ -1,11 +1,16 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/chat_detail_data.dart';
-import 'package:ai_note/src/features/notifications/presentation/widgets/chat_header.dart';
-import 'package:ai_note/src/features/notifications/presentation/widgets/chat_input_bar.dart';
-import 'package:ai_note/src/features/notifications/presentation/widgets/chat_message.dart';
-import 'package:ai_note/src/features/notifications/presentation/widgets/report_card.dart';
+import 'package:Vairoo/src/core/network/api_client.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/chat_detail_data.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/chat_message.dart';
+import 'package:Vairoo/src/features/notifications/domain/repositories/chats_repository.dart';
+import 'package:Vairoo/src/features/notifications/presentation/controllers/chat_detail_controller.dart';
+import 'package:Vairoo/src/features/notifications/presentation/widgets/chat_header.dart';
+import 'package:Vairoo/src/features/notifications/presentation/widgets/chat_input_bar.dart';
+import 'package:Vairoo/src/features/notifications/presentation/widgets/chat_message.dart';
+import 'package:Vairoo/src/features/notifications/presentation/widgets/report_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class ChatDetailPage extends StatelessWidget {
   const ChatDetailPage({required this.data, super.key});
@@ -14,7 +19,26 @@ class ChatDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider<ChatDetailController>(
+      create: (context) => ChatDetailController(
+        repository: context.read<ChatsRepository>(),
+        initialData: data,
+        apiClient: context.read<ApiClient>(),
+      )..loadInitial(),
+      child: _ChatDetailView(data: data),
+    );
+  }
+}
+
+class _ChatDetailView extends StatelessWidget {
+  const _ChatDetailView({required this.data});
+
+  final ChatDetailData data;
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final controller = context.watch<ChatDetailController>();
     return Scaffold(
       backgroundColor: AppColors.bgGray,
       appBar: AppBar(
@@ -65,27 +89,9 @@ class ChatDetailPage extends StatelessWidget {
               child: ChatHeader(data: data),
             ),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: MessageBubble.user(
-                      text: data.question,
-                      theme: theme,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: MessageBubble.specialist(
-                      text: data.answer,
-                      theme: theme,
-                    ),
-                  ),
-                ],
-              ),
+              child: controller.isLoading && controller.messages.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : _ChatMessagesList(messages: controller.messages),
             ),
             Padding(
               padding: EdgeInsets.only(
@@ -93,11 +99,65 @@ class ChatDetailPage extends StatelessWidget {
                 right: 0,
                 bottom: MediaQuery.of(context).viewPadding.bottom,
               ),
-              child: const ChatInputBar(),
+              child: ChatInputBar(
+                onSend: controller.sendMessage,
+                isSending: controller.isSending,
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ChatMessagesList extends StatelessWidget {
+  const _ChatMessagesList({required this.messages});
+
+  final List<ChatMessage> messages;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    if (messages.isEmpty) {
+      return Center(
+        child: Text(
+          'Напишите первое сообщение',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+      physics: const BouncingScrollPhysics(),
+      itemCount: messages.length,
+      itemBuilder: (context, index) {
+        final message = messages[index];
+        final alignment = message.senderType == ChatSenderType.user
+            ? Alignment.centerRight
+            : Alignment.centerLeft;
+
+        final bubble = switch (message.senderType) {
+          ChatSenderType.user => MessageBubble.user(
+            text: message.text,
+            theme: theme,
+          ),
+          ChatSenderType.consultant => MessageBubble.specialist(
+            text: message.text,
+            theme: theme,
+          ),
+          ChatSenderType.system => MessageBubble.specialist(
+            text: message.text,
+            theme: theme,
+          ),
+        };
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Align(alignment: alignment, child: bubble),
+        );
+      },
     );
   }
 }

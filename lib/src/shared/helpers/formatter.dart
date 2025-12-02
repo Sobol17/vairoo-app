@@ -1,4 +1,4 @@
-import 'package:ai_note/src/shared/constants/monts.dart';
+import 'package:Vairoo/src/shared/constants/monts.dart';
 
 class Formatter {
   String formatMonth(DateTime date) {

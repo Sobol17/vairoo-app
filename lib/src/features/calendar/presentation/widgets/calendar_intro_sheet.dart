@@ -1,6 +1,6 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/shared/widgets/secondary_button.dart';
-import 'package:ai_note/src/shared/widgets/sheet_header.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/shared/widgets/secondary_button.dart';
+import 'package:Vairoo/src/shared/widgets/sheet_header.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

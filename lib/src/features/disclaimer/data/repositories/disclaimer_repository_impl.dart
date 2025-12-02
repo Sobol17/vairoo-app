@@ -1,6 +1,6 @@
-import 'package:ai_note/src/features/disclaimer/data/datasources/disclaimer_local_data_source.dart';
-import 'package:ai_note/src/features/disclaimer/domain/entities/disclaimer_type.dart';
-import 'package:ai_note/src/features/disclaimer/domain/repositories/disclaimer_repository.dart';
+import 'package:Vairoo/src/features/disclaimer/data/datasources/disclaimer_local_data_source.dart';
+import 'package:Vairoo/src/features/disclaimer/domain/entities/disclaimer_type.dart';
+import 'package:Vairoo/src/features/disclaimer/domain/repositories/disclaimer_repository.dart';
 
 class DisclaimerRepositoryImpl implements DisclaimerRepository {
   DisclaimerRepositoryImpl(this._localDataSource);

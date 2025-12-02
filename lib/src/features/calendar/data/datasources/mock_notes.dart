@@ -1,4 +1,4 @@
-import 'package:ai_note/src/features/calendar/domain/entities/calendar_note.dart';
+import 'package:Vairoo/src/features/calendar/domain/entities/calendar_note.dart';
 
 List<CalendarNote> todayCalendarNotes = [
   CalendarNote(
@@ -14,7 +14,8 @@ List<CalendarNote> todayCalendarNotes = [
     actions:
         'Сделал глубокий вдох, переключил внимание на разговоры с семьёй и пошёл дальше.',
     isRisk: true,
-    riskDescription: 'Большие магазины и витрины с алкоголем — мой частый триггер.',
+    riskDescription:
+        'Большие магазины и витрины с алкоголем — мой частый триггер.',
   ),
   CalendarNote(
     id: 'note-today-2',

@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/storage/preferences_storage.dart';
-import 'package:ai_note/src/features/disclaimer/domain/entities/disclaimer_type.dart';
+import 'package:Vairoo/src/core/storage/preferences_storage.dart';
+import 'package:Vairoo/src/features/disclaimer/domain/entities/disclaimer_type.dart';
 
 class DisclaimerLocalDataSource {
   DisclaimerLocalDataSource(this._storage);

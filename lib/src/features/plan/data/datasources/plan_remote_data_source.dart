@@ -1,6 +1,6 @@
-import 'package:ai_note/src/core/network/api_client.dart';
-import 'package:ai_note/src/features/plan/data/models/daily_plan_model.dart';
-import 'package:ai_note/src/features/plan/data/models/plan_completion_result_model.dart';
+import 'package:Vairoo/src/core/network/api_client.dart';
+import 'package:Vairoo/src/features/plan/data/models/daily_plan_model.dart';
+import 'package:Vairoo/src/features/plan/data/models/plan_completion_result_model.dart';
 import 'package:dio/dio.dart';
 
 class PlanRemoteDataSource {

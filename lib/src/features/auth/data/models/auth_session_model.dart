@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:ai_note/src/features/auth/domain/entities/auth_session.dart';
+import 'package:Vairoo/src/features/auth/domain/entities/auth_session.dart';
 
 class AuthSessionModel extends AuthSession {
   const AuthSessionModel({

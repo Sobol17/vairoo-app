@@ -1,7 +1,7 @@
-import 'package:ai_note/src/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:ai_note/src/features/auth/data/datasources/auth_remote_data_source.dart';
-import 'package:ai_note/src/features/auth/domain/entities/auth_session.dart';
-import 'package:ai_note/src/features/auth/domain/repositories/auth_repository.dart';
+import 'package:Vairoo/src/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:Vairoo/src/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:Vairoo/src/features/auth/domain/entities/auth_session.dart';
+import 'package:Vairoo/src/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
@@ -16,6 +16,11 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> requestOtp({required String phoneNumber}) {
     return _remoteDataSource.requestOtp(phoneNumber);
+  }
+
+  @override
+  Future<void> requestSmsOtp({required String phoneNumber}) {
+    return _remoteDataSource.requestOtpSms(phoneNumber);
   }
 
   @override

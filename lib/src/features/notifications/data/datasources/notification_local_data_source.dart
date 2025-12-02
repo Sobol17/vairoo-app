@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/storage/preferences_storage.dart';
-import 'package:ai_note/src/features/notifications/data/models/notification_model.dart';
+import 'package:Vairoo/src/core/storage/preferences_storage.dart';
+import 'package:Vairoo/src/features/notifications/data/models/notification_model.dart';
 
 const _notificationsStorageKey = 'notifications.items';
 

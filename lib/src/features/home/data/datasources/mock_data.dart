@@ -1,4 +1,4 @@
-import 'package:ai_note/src/features/home/domain/entities/home_plan.dart';
+import 'package:Vairoo/src/features/home/domain/entities/home_plan.dart';
 
 const List<HomeRoutinePlan> mockRoutines = [
   HomeRoutinePlan(

@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/network/api_client.dart';
-import 'package:ai_note/src/features/home/data/models/home_data_model.dart';
+import 'package:Vairoo/src/core/network/api_client.dart';
+import 'package:Vairoo/src/features/home/data/models/home_data_model.dart';
 import 'package:dio/dio.dart';
 
 class HomeRemoteDataSource {

@@ -1,6 +1,7 @@
-import 'package:ai_note/src/features/profile/domain/entities/profile.dart';
-import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
-import 'package:ai_note/src/shared/helpers/formatter.dart';
+import 'package:Vairoo/src/features/profile/domain/entities/profile.dart';
+import 'package:Vairoo/src/features/profile/domain/repositories/profile_repository.dart';
+import 'package:Vairoo/src/shared/helpers/formatter.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 class ProfileController extends ChangeNotifier {
@@ -67,6 +68,8 @@ class ProfileController extends ChangeNotifier {
 
   bool get pushEnabled => _profile.pushNotificationsEnabled;
   bool get emailEnabled => _profile.emailNotificationsEnabled;
+  double? get dailyExpenses => _profile.dailyExpenses;
+  double? get dailyCalories => _profile.dailyCalories;
 
   bool get isProfileComplete => _profile.isComplete;
 
@@ -116,6 +119,26 @@ class ProfileController extends ChangeNotifier {
     await updateProfile(updated);
   }
 
+  Future<void> updateDailyExpenses(double amount) async {
+    try {
+      await _repository.updateDailyExpenses(amount);
+      _profile = _profile.copyWith(dailyExpenses: amount);
+      notifyListeners();
+    } catch (error) {
+      throw Exception(_mapError(error));
+    }
+  }
+
+  Future<void> updateDailyCalories(double amount) async {
+    try {
+      await _repository.updateDailyCalories(amount);
+      _profile = _profile.copyWith(dailyCalories: amount);
+      notifyListeners();
+    } catch (error) {
+      throw Exception(_mapError(error));
+    }
+  }
+
   void _setLoading(bool value) {
     if (_isLoading == value) {
       return;
@@ -134,5 +157,19 @@ class ProfileController extends ChangeNotifier {
       return 'дня';
     }
     return 'дней';
+  }
+
+  String _mapError(Object error) {
+    if (error is DioException) {
+      final data = error.response?.data;
+      if (data is Map<String, dynamic>) {
+        final message = data['detail'] ?? data['message'] ?? data['error'];
+        if (message is String && message.isNotEmpty) {
+          return message;
+        }
+      }
+      return error.message ?? 'Не удалось выполнить запрос';
+    }
+    return error.toString();
   }
 }

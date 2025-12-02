@@ -1,4 +1,4 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ProfileInfoRow extends StatelessWidget {
@@ -7,6 +7,7 @@ class ProfileInfoRow extends StatelessWidget {
     required this.value,
     this.highlight = false,
     this.showChevron = true,
+    this.onTap,
     super.key,
   });
 
@@ -14,6 +15,7 @@ class ProfileInfoRow extends StatelessWidget {
   final String value;
   final bool highlight;
   final bool showChevron;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,7 @@ class ProfileInfoRow extends StatelessWidget {
             ),
           );
 
-    return Padding(
+    final row = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
@@ -53,6 +55,19 @@ class ProfileInfoRow extends StatelessWidget {
           if (showChevron)
             const Icon(Icons.chevron_right_rounded, color: AppColors.textGray),
         ],
+      ),
+    );
+
+    if (onTap == null) {
+      return row;
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: row,
       ),
     );
   }

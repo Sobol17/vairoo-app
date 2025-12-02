@@ -1,14 +1,16 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/calendar/data/datasources/mock_notes.dart';
-import 'package:ai_note/src/features/calendar/domain/entities/calendar_note.dart';
-import 'package:ai_note/src/features/calendar/presentation/pages/calendar_note_detail_page.dart';
-import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_bottom_sheet.dart';
-import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_intro_sheet.dart';
-import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_notes_tabs.dart';
-import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_tab_bar.dart';
-import 'package:ai_note/src/features/calendar/presentation/widgets/create_note_sheet.dart';
-import 'package:ai_note/src/features/plan/presentation/widgets/circular_nav_button.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/calendar/domain/entities/calendar_note.dart';
+import 'package:Vairoo/src/features/calendar/presentation/controllers/calendar_notes_controller.dart';
+import 'package:Vairoo/src/features/calendar/presentation/pages/calendar_note_detail_page.dart';
+import 'package:Vairoo/src/features/calendar/presentation/widgets/calendar_bottom_sheet.dart';
+import 'package:Vairoo/src/features/calendar/presentation/widgets/calendar_intro_sheet.dart';
+import 'package:Vairoo/src/features/calendar/presentation/widgets/calendar_notes_tabs.dart';
+import 'package:Vairoo/src/features/calendar/presentation/widgets/calendar_tab_bar.dart';
+import 'package:Vairoo/src/features/calendar/presentation/widgets/create_note_sheet.dart';
+import 'package:Vairoo/src/features/plan/presentation/widgets/circular_nav_button.dart';
+import 'package:Vairoo/src/shared/helpers/formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -19,15 +21,11 @@ class CalendarPage extends StatefulWidget {
 
 class _CalendarPageState extends State<CalendarPage> {
   bool _warningShown = false;
-  late List<CalendarNote> _todayNotes;
-  late List<CalendarNote> _allNotes;
+  final Formatter _formatter = Formatter();
 
   @override
   void initState() {
     super.initState();
-    _allNotes = List<CalendarNote>.from(allCalendarNotes);
-    _sortNotes();
-    _refreshTodayNotes();
     WidgetsBinding.instance.addPostFrameCallback((_) => _showWarningSheet());
   }
 
@@ -46,12 +44,17 @@ class _CalendarPageState extends State<CalendarPage> {
 
   Future<void> _showCalendarSheet() async {
     if (!mounted) return;
-    await showModalBottomSheet<void>(
+    final controller = context.read<CalendarNotesController>();
+    final date = await showModalBottomSheet<DateTime>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (_) => const PlanCalendarBottomSheet(),
+      builder: (_) =>
+          PlanCalendarBottomSheet(initialDate: controller.selectedDate),
     );
+    if (date != null) {
+      await controller.filterByDate(date);
+    }
   }
 
   Future<void> _handleCreateNote() async {
@@ -65,14 +68,19 @@ class _CalendarPageState extends State<CalendarPage> {
     if (note == null || !mounted) {
       return;
     }
-    setState(() {
-      _allNotes = [note, ..._allNotes];
-      _sortNotes();
-      _refreshTodayNotes();
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Заметка создана')),
-    );
+    final controller = context.read<CalendarNotesController>();
+    try {
+      await controller.createNote(note);
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Заметка создана')));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Не удалось создать заметку')),
+      );
+    }
   }
 
   void _handleNoteTap(CalendarNote note) {
@@ -91,6 +99,7 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final controller = context.watch<CalendarNotesController>();
 
     return DefaultTabController(
       length: 2,
@@ -127,25 +136,30 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: CalendarTabBar(theme: theme),
+                child: CalendarTabBar(
+                  theme: theme,
+                  todayLabel: _buildSelectedLabel(controller),
+                ),
               ),
               const SizedBox(height: 8),
               Expanded(
-                child: TabBarView(
-                  physics: const BouncingScrollPhysics(),
-                  children: [
-                    CalendarNotesTab(
-                      notes: _todayNotes,
-                      onCreateNote: _handleCreateNote,
-                      onNoteTap: _handleNoteTap,
-                    ),
-                    CalendarNotesTab(
-                      notes: _allNotes,
-                      onCreateNote: _handleCreateNote,
-                      onNoteTap: _handleNoteTap,
-                    ),
-                  ],
-                ),
+                child: controller.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : TabBarView(
+                        physics: const BouncingScrollPhysics(),
+                        children: [
+                          CalendarNotesTab(
+                            notes: controller.filteredNotes,
+                            onCreateNote: _handleCreateNote,
+                            onNoteTap: _handleNoteTap,
+                          ),
+                          CalendarNotesTab(
+                            notes: controller.allNotes,
+                            onCreateNote: _handleCreateNote,
+                            onNoteTap: _handleNoteTap,
+                          ),
+                        ],
+                      ),
               ),
             ],
           ),
@@ -154,36 +168,42 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  bool _isSameDay(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
+  Future<void> _updateNote(CalendarNote updated) async {
+    final controller = context.read<CalendarNotesController>();
+    try {
+      await controller.updateNote(updated);
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Заметка обновлена')));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Не удалось обновить заметку')),
+      );
+    }
   }
 
-  void _sortNotes() {
-    _allNotes.sort((a, b) => b.date.compareTo(a.date));
+  Future<void> _removeNote(CalendarNote note) async {
+    final controller = context.read<CalendarNotesController>();
+    try {
+      await controller.deleteNote(note);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Заметка «${note.title}» удалена')),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Не удалось удалить заметку')),
+      );
+    }
   }
 
-  void _refreshTodayNotes() {
-    final now = DateTime.now();
-    _todayNotes = _allNotes.where((note) => _isSameDay(note.date, now)).toList();
-  }
-
-  void _updateNote(CalendarNote updated) {
-    setState(() {
-      _allNotes = _allNotes
-          .map((note) => note.id == updated.id ? updated : note)
-          .toList();
-      _sortNotes();
-      _refreshTodayNotes();
-    });
-  }
-
-  void _removeNote(CalendarNote note) {
-    setState(() {
-      _allNotes = _allNotes.where((item) => item.id != note.id).toList();
-      _refreshTodayNotes();
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Заметка «${note.title}» удалена')),
-    );
+  String _buildSelectedLabel(CalendarNotesController controller) {
+    if (controller.isSelectedDateToday) {
+      return 'Сегодня';
+    }
+    return _formatter.formatCalendarDate(controller.selectedDate);
   }
 }

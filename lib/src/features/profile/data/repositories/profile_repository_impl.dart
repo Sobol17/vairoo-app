@@ -1,8 +1,8 @@
-import 'package:ai_note/src/features/profile/data/datasources/profile_local_data_source.dart';
-import 'package:ai_note/src/features/profile/data/datasources/profile_remote_data_source.dart';
-import 'package:ai_note/src/features/profile/data/models/profile_model.dart';
-import 'package:ai_note/src/features/profile/domain/entities/profile.dart';
-import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
+import 'package:Vairoo/src/features/profile/data/datasources/profile_local_data_source.dart';
+import 'package:Vairoo/src/features/profile/data/datasources/profile_remote_data_source.dart';
+import 'package:Vairoo/src/features/profile/data/models/profile_model.dart';
+import 'package:Vairoo/src/features/profile/domain/entities/profile.dart';
+import 'package:Vairoo/src/features/profile/domain/repositories/profile_repository.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   ProfileRepositoryImpl({
@@ -53,6 +53,22 @@ class ProfileRepositoryImpl implements ProfileRepository {
     await _remoteDataSource.updateProfile({'habit_spending': amount});
     final stored = await _localDataSource.readProfile();
     final updated = stored.copyWith(habitSpending: amount);
+    await saveProfile(updated);
+  }
+
+  @override
+  Future<void> updateDailyExpenses(double amount) async {
+    await _remoteDataSource.updateProfile({'daily_spending': amount});
+    final stored = await _localDataSource.readProfile();
+    final updated = stored.copyWith(dailyExpenses: amount);
+    await saveProfile(updated);
+  }
+
+  @override
+  Future<void> updateDailyCalories(double amount) async {
+    await _remoteDataSource.updateProfile({'daily_calories': amount});
+    final stored = await _localDataSource.readProfile();
+    final updated = stored.copyWith(dailyCalories: amount);
     await saveProfile(updated);
   }
 

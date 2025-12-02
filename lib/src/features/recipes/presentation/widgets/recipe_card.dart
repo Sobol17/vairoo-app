@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/recipes/domain/entities/recipe.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/recipes/domain/entities/recipe.dart';
 import 'package:flutter/material.dart';
 
 class RecipeCard extends StatelessWidget {
@@ -86,7 +86,7 @@ class RecipeCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                '${recipe.durationMinutes} мин.',
+                recipe.durationDisplay,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.textSecondary,
                   fontWeight: FontWeight.w600,

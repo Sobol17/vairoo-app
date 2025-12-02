@@ -1,7 +1,7 @@
-import 'package:ai_note/src/features/plan/data/datasources/plan_remote_data_source.dart';
-import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
-import 'package:ai_note/src/features/plan/domain/entities/plan_completion_result.dart';
-import 'package:ai_note/src/features/plan/domain/repositories/plan_repository.dart';
+import 'package:Vairoo/src/features/plan/data/datasources/plan_remote_data_source.dart';
+import 'package:Vairoo/src/features/plan/domain/entities/daily_plan.dart';
+import 'package:Vairoo/src/features/plan/domain/entities/plan_completion_result.dart';
+import 'package:Vairoo/src/features/plan/domain/repositories/plan_repository.dart';
 
 class PlanRepositoryImpl implements PlanRepository {
   const PlanRepositoryImpl({required PlanRemoteDataSource remoteDataSource})

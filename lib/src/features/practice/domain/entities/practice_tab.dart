@@ -1,0 +1,4 @@
+enum PracticeTab {
+  calming,
+  games,
+}

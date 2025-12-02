@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/storage/preferences_storage.dart';
-import 'package:ai_note/src/features/auth/data/models/auth_session_model.dart';
+import 'package:Vairoo/src/core/storage/preferences_storage.dart';
+import 'package:Vairoo/src/features/auth/data/models/auth_session_model.dart';
 
 const _authSessionKey = 'auth.session';
 

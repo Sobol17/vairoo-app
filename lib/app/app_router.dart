@@ -1,31 +1,38 @@
-import 'package:ai_note/app/app_shell.dart';
-import 'package:ai_note/src/features/articles/domain/entities/article.dart';
-import 'package:ai_note/src/features/articles/presentation/pages/article_detail_page.dart';
-import 'package:ai_note/src/features/articles/presentation/pages/articles_page.dart';
-import 'package:ai_note/src/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:ai_note/src/features/auth/presentation/pages/auth_page.dart';
-import 'package:ai_note/src/features/calendar/presentation/pages/calendar_page.dart';
-import 'package:ai_note/src/features/disclaimer/domain/entities/disclaimer_type.dart';
-import 'package:ai_note/src/features/disclaimer/presentation/controllers/disclaimer_controller.dart';
-import 'package:ai_note/src/features/disclaimer/presentation/pages/disclaimer_screen.dart';
-import 'package:ai_note/src/features/home/presentation/pages/home_page.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/chat_detail_data.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
-import 'package:ai_note/src/features/notifications/presentation/controllers/notification_permission_controller.dart';
-import 'package:ai_note/src/features/notifications/presentation/pages/chat_detail_page.dart';
-import 'package:ai_note/src/features/notifications/presentation/pages/notification_permission_page.dart';
-import 'package:ai_note/src/features/notifications/presentation/pages/notifications_page.dart';
-import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
-import 'package:ai_note/src/features/plan/domain/repositories/plan_repository.dart';
-import 'package:ai_note/src/features/plan/presentation/controllers/plan_controller.dart';
-import 'package:ai_note/src/features/plan/presentation/pages/plan_page.dart';
-import 'package:ai_note/src/features/practice/presentation/pages/breathing_practice_page.dart';
-import 'package:ai_note/src/features/practice/presentation/pages/practice_page.dart';
-import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
-import 'package:ai_note/src/features/profile/presentation/controllers/profile_controller.dart';
-import 'package:ai_note/src/features/profile/presentation/pages/profile_edit_page.dart';
-import 'package:ai_note/src/features/profile/presentation/pages/profile_page.dart';
-import 'package:ai_note/src/features/recipes/presentation/pages/recipes_page.dart';
+import 'package:Vairoo/app/app_shell.dart';
+import 'package:Vairoo/src/features/articles/domain/entities/article.dart';
+import 'package:Vairoo/src/features/articles/presentation/pages/article_detail_page.dart';
+import 'package:Vairoo/src/features/articles/presentation/pages/articles_page.dart';
+import 'package:Vairoo/src/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:Vairoo/src/features/auth/presentation/pages/auth_page.dart';
+import 'package:Vairoo/src/features/calendar/domain/repositories/calendar_notes_repository.dart';
+import 'package:Vairoo/src/features/calendar/presentation/controllers/calendar_notes_controller.dart';
+import 'package:Vairoo/src/features/calendar/presentation/pages/calendar_page.dart';
+import 'package:Vairoo/src/features/disclaimer/domain/entities/disclaimer_type.dart';
+import 'package:Vairoo/src/features/disclaimer/presentation/controllers/disclaimer_controller.dart';
+import 'package:Vairoo/src/features/disclaimer/presentation/pages/disclaimer_screen.dart';
+import 'package:Vairoo/src/features/home/presentation/pages/home_page.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/chat_detail_data.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/notification_category.dart';
+import 'package:Vairoo/src/features/notifications/presentation/controllers/notification_permission_controller.dart';
+import 'package:Vairoo/src/features/notifications/presentation/pages/chat_detail_page.dart';
+import 'package:Vairoo/src/features/notifications/presentation/pages/notification_permission_page.dart';
+import 'package:Vairoo/src/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:Vairoo/src/features/plan/domain/entities/daily_plan.dart';
+import 'package:Vairoo/src/features/plan/domain/repositories/plan_repository.dart';
+import 'package:Vairoo/src/features/plan/presentation/controllers/plan_controller.dart';
+import 'package:Vairoo/src/features/plan/presentation/pages/plan_page.dart';
+import 'package:Vairoo/src/features/paywall/domain/repositories/paywall_repository.dart';
+import 'package:Vairoo/src/features/paywall/presentation/controllers/paywall_controller.dart';
+import 'package:Vairoo/src/features/paywall/presentation/controllers/subscription_controller.dart';
+import 'package:Vairoo/src/features/paywall/presentation/pages/paywall_page.dart';
+import 'package:Vairoo/src/features/practice/domain/entities/practice_tab.dart';
+import 'package:Vairoo/src/features/practice/presentation/pages/breathing_practice_page.dart';
+import 'package:Vairoo/src/features/practice/presentation/pages/practice_page.dart';
+import 'package:Vairoo/src/features/profile/domain/repositories/profile_repository.dart';
+import 'package:Vairoo/src/features/profile/presentation/controllers/profile_controller.dart';
+import 'package:Vairoo/src/features/profile/presentation/pages/profile_edit_page.dart';
+import 'package:Vairoo/src/features/profile/presentation/pages/profile_page.dart';
+import 'package:Vairoo/src/features/recipes/presentation/pages/recipes_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +41,7 @@ GoRouter createAppRouter({
   required AuthController authController,
   required NotificationPermissionController permissionController,
   required DisclaimerController disclaimerController,
+  required SubscriptionController subscriptionController,
   required Listenable refreshListenable,
 }) {
   return GoRouter(
@@ -124,8 +132,16 @@ GoRouter createAppRouter({
             routes: [
               GoRoute(
                 path: '/practice',
-                pageBuilder: (context, state) =>
-                    _buildTransitionPage(state, const PracticePage()),
+                pageBuilder: (context, state) {
+                  final tab = state.extra;
+                  final initialTab = tab is PracticeTab
+                      ? tab
+                      : PracticeTab.calming;
+                  return _buildTransitionPage(
+                    state,
+                    PracticePage(initialTab: initialTab),
+                  );
+                },
                 routes: [
                   GoRoute(
                     path: 'breathing',
@@ -142,8 +158,15 @@ GoRouter createAppRouter({
             routes: [
               GoRoute(
                 path: '/calendar',
-                pageBuilder: (context, state) =>
-                    _buildTransitionPage(state, const CalendarPage()),
+                pageBuilder: (context, state) => _buildTransitionPage(
+                  state,
+                  ChangeNotifierProvider<CalendarNotesController>(
+                    create: (ctx) => CalendarNotesController(
+                      repository: ctx.read<CalendarNotesRepository>(),
+                    )..loadNotes(),
+                    child: const CalendarPage(),
+                  ),
+                ),
               ),
             ],
           ),
@@ -167,6 +190,18 @@ GoRouter createAppRouter({
                 ProfileController(repository: ctx.read<ProfileRepository>())
                   ..loadProfile(),
             child: const ProfileEditPage(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: '/paywall',
+        pageBuilder: (context, state) => _buildTransitionPage(
+          state,
+          ChangeNotifierProvider(
+            create: (ctx) => PaywallController(
+              repository: ctx.read<PaywallRepository>(),
+            ),
+            child: const PaywallPage(),
           ),
         ),
       ),
@@ -197,6 +232,7 @@ GoRouter createAppRouter({
       final onPermissionPage =
           state.matchedLocation == '/notification-permission';
       final onDisclaimer = state.matchedLocation == '/disclaimer';
+      final onPaywall = state.matchedLocation == '/paywall';
       final needsPermissionPrompt =
           isAuthenticated && permissionController.shouldPrompt;
       final hasAcceptedDisclaimer = disclaimerController.isAcceptedSync(
@@ -227,6 +263,11 @@ GoRouter createAppRouter({
       }
       if (!needsPermissionPrompt && onPermissionPage) {
         return '/home';
+      }
+      final subscriptionExpired =
+          subscriptionController.isSubscriptionExpired;
+      if (isAuthenticated && subscriptionExpired && !onPaywall) {
+        return '/paywall';
       }
       return null;
     },

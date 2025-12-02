@@ -1,4 +1,4 @@
-import 'package:ai_note/src/shared/widgets/link_chip.dart';
+import 'package:Vairoo/src/shared/widgets/link_chip.dart';
 import 'package:flutter/material.dart';
 
 class DisclaimerText extends StatelessWidget {

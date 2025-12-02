@@ -1,7 +1,7 @@
-import 'package:ai_note/src/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:ai_note/src/features/auth/presentation/widgets/auth_header.dart';
-import 'package:ai_note/src/features/auth/presentation/widgets/goal_step.dart';
-import 'package:ai_note/src/features/auth/presentation/widgets/habit_spending_step.dart';
+import 'package:Vairoo/src/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:Vairoo/src/features/auth/presentation/widgets/auth_header.dart';
+import 'package:Vairoo/src/features/auth/presentation/widgets/goal_step.dart';
+import 'package:Vairoo/src/features/auth/presentation/widgets/habit_spending_step.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -53,7 +53,7 @@ class _AuthBody extends StatelessWidget {
             AuthStep.otpInput => () => controller.showPhoneInput(
               clearPhone: false,
             ),
-            AuthStep.birthdateInput => controller.backToOtp,
+            AuthStep.birthdateInput => null,
             AuthStep.paymentInput => controller.backToGoal,
             AuthStep.habitSpendingInput => controller.backToPayment,
             AuthStep.goalInput => controller.backToBirthdate,
@@ -92,6 +92,9 @@ class _AuthBody extends StatelessWidget {
                       isLoading: controller.isLoading,
                       errorText: controller.errorMessage,
                       onSubmit: controller.submitCode,
+                      onRequestSms: controller.phoneNumber.isEmpty
+                          ? null
+                          : controller.requestSmsCode,
                       onResend: controller.phoneNumber.isEmpty
                           ? null
                           : () =>

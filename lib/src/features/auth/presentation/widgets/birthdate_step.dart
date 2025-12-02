@@ -1,8 +1,8 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/shared/helpers/formatter.dart';
-import 'package:ai_note/src/shared/widgets/calendar.dart';
-import 'package:ai_note/src/shared/widgets/primary_button.dart';
-import 'package:ai_note/src/shared/widgets/secondary_button.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/shared/helpers/formatter.dart';
+import 'package:Vairoo/src/shared/widgets/calendar.dart';
+import 'package:Vairoo/src/shared/widgets/primary_button.dart';
+import 'package:Vairoo/src/shared/widgets/secondary_button.dart';
 import 'package:flutter/material.dart';
 
 class BirthdateStep extends StatefulWidget {

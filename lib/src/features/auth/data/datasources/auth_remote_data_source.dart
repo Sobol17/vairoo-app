@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/network/api_client.dart';
-import 'package:ai_note/src/features/auth/data/models/auth_session_model.dart';
+import 'package:Vairoo/src/core/network/api_client.dart';
+import 'package:Vairoo/src/features/auth/data/models/auth_session_model.dart';
 import 'package:dio/dio.dart';
 
 class AuthRemoteDataSource {
@@ -10,6 +10,13 @@ class AuthRemoteDataSource {
   Future<void> requestOtp(String phoneNumber) async {
     await _client.post<dynamic>(
       '/api/client/auth/request_code',
+      data: {'phone': phoneNumber},
+    );
+  }
+
+  Future<void> requestOtpSms(String phoneNumber) async {
+    await _client.post<dynamic>(
+      '/api/client/auth/request_code/sms',
       data: {'phone': phoneNumber},
     );
   }

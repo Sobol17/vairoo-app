@@ -1,4 +1,4 @@
-import 'package:ai_note/src/features/home/domain/entities/home_data.dart';
+import 'package:Vairoo/src/features/home/domain/entities/home_data.dart';
 
 class HomeDataModel extends HomeData {
   const HomeDataModel({

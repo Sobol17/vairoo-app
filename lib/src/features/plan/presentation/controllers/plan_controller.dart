@@ -1,16 +1,14 @@
-import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
-import 'package:ai_note/src/features/plan/domain/repositories/plan_repository.dart';
+import 'package:Vairoo/src/features/plan/domain/entities/daily_plan.dart';
+import 'package:Vairoo/src/features/plan/domain/repositories/plan_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 class PlanController extends ChangeNotifier {
-  PlanController({
-    required PlanRepository repository,
-    DailyPlan? initialPlan,
-  })  : _repository = repository,
-        _plan = initialPlan,
-        _visibleStep = initialPlan?.currentStep,
-        _isDayCompleted = initialPlan?.isCompleted ?? false;
+  PlanController({required PlanRepository repository, DailyPlan? initialPlan})
+    : _repository = repository,
+      _plan = initialPlan,
+      _visibleStep = initialPlan?.currentStep,
+      _isDayCompleted = initialPlan?.isCompleted ?? false;
 
   final PlanRepository _repository;
 

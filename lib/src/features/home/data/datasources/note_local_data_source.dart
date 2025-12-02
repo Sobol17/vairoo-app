@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/storage/preferences_storage.dart';
-import 'package:ai_note/src/features/home/data/models/note_model.dart';
+import 'package:Vairoo/src/core/storage/preferences_storage.dart';
+import 'package:Vairoo/src/features/home/data/models/note_model.dart';
 
 const _notesStorageKey = 'home.notes';
 

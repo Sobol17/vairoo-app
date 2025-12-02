@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "730465762918",
+    "project_id": "vairoo-4a211",
+    "storage_bucket": "vairoo-4a211.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730465762918:android:42fd5546988e85c45cb7a7",
+        "android_client_info": {
+          "package_name": "com.example.Vairoo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPXHn6fbq4rUiVrZlO6tuQoqg8sk5M5v8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

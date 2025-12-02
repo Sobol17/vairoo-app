@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/home/presentation/widgets/home_header_row.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/home/presentation/widgets/home_header_row.dart';
 import 'package:flutter/material.dart';
 
 class HomeTopHeader extends StatelessWidget {

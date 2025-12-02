@@ -1,6 +1,6 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/practice/domain/entities/practice_game.dart';
-import 'package:ai_note/src/features/practice/presentation/widgets/game_avatar.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/practice/domain/entities/practice_game.dart';
+import 'package:Vairoo/src/features/practice/presentation/widgets/game_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 

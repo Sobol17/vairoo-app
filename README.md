@@ -1,4 +1,4 @@
-# ai_note
+# Vairoo
 
 A new Flutter project.
 # vairoo-app

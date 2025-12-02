@@ -1,6 +1,6 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/home/domain/entities/home_plan.dart';
-import 'package:ai_note/src/features/home/presentation/widgets/routine_card.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/home/domain/entities/home_plan.dart';
+import 'package:Vairoo/src/features/home/presentation/widgets/routine_card.dart';
 import 'package:flutter/material.dart';
 
 class HomeDailyPlanSection extends StatefulWidget {

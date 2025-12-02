@@ -1,4 +1,4 @@
-import 'package:ai_note/src/features/articles/data/models/article_model.dart';
+import 'package:Vairoo/src/features/articles/data/models/article_model.dart';
 
 final List<ArticleModel> mockArticles = _mockArticlesJson
     .map(ArticleModel.fromJson)

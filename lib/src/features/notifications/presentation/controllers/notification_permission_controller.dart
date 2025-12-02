@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:ai_note/src/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:Vairoo/src/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 

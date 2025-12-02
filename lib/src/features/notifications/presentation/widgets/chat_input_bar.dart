@@ -1,8 +1,11 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ChatInputBar extends StatefulWidget {
-  const ChatInputBar({super.key});
+  const ChatInputBar({required this.onSend, this.isSending = false, super.key});
+
+  final Future<void> Function(String text) onSend;
+  final bool isSending;
 
   @override
   State<ChatInputBar> createState() => _ChatInputBarState();
@@ -35,20 +38,35 @@ class _ChatInputBarState extends State<ChatInputBar> {
     }
   }
 
-  void _handleSend() {
-    if (!_canSend) {
+  Future<void> _handleSend() async {
+    if (!_canSend || widget.isSending) {
       return;
     }
-    _controller.clear();
+    final text = _controller.text.trim();
+    if (text.isEmpty) {
+      return;
+    }
+    try {
+      await widget.onSend(text);
+      if (mounted) {
+        _controller.clear();
+      }
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Не удалось отправить сообщение')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final sendBackground = _canSend
+    final canTap = _canSend && !widget.isSending;
+    final sendBackground = canTap
         ? AppColors.secondary
         : AppColors.secondary.withValues(alpha: 0.3);
-    final sendIconColor = Colors.white.withValues(alpha: _canSend ? 1 : 0.7);
+    final sendIconColor = Colors.white.withValues(alpha: canTap ? 1 : 0.5);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -92,7 +110,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: _canSend ? _handleSend : null,
+              onTap: canTap ? _handleSend : null,
               borderRadius: BorderRadius.circular(20),
               child: Container(
                 height: 40,

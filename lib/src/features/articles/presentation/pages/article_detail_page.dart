@@ -1,8 +1,8 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/articles/domain/entities/article.dart';
-import 'package:ai_note/src/features/articles/domain/repositories/articles_repository.dart';
-import 'package:ai_note/src/features/articles/presentation/widgets/article_body.dart';
-import 'package:ai_note/src/features/articles/presentation/widgets/article_detail_header.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/articles/domain/entities/article.dart';
+import 'package:Vairoo/src/features/articles/domain/repositories/articles_repository.dart';
+import 'package:Vairoo/src/features/articles/presentation/widgets/article_body.dart';
+import 'package:Vairoo/src/features/articles/presentation/widgets/article_detail_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -91,10 +91,9 @@ class _ArticleDetailContentState extends State<_ArticleDetailContent> {
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       'Не удалось загрузить статью: $_error',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: Colors.white),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.white),
                     ),
                   ),
               ],

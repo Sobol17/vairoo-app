@@ -1,4 +1,4 @@
-name: ai_note
+name: Vairoo
 description: "A new Flutter project."
 publish_to: 'none'
 version: 0.1.0
@@ -20,6 +20,10 @@ dependencies:
   flutter_html: ^3.0.0
   url_launcher: ^6.3.0
   permission_handler: ^11.3.1
+  intl: ^0.20.2
+  firebase_core: ^3.4.0
+  firebase_messaging: ^15.1.2
+  flutter_local_notifications: ^18.0.1
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/articles/presentation/widgets/back_action.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/articles/presentation/widgets/back_action.dart';
 import 'package:flutter/material.dart';
 
 class ArticlesHeader extends StatelessWidget {

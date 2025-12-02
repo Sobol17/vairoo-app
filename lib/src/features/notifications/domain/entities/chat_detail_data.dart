@@ -1,24 +1,27 @@
 class ChatDetailData {
   const ChatDetailData({
+    required this.chatId,
     required this.consultantName,
     required this.consultantRole,
-    required this.question,
-    required this.answer,
+    this.initialQuestion = '',
+    this.initialAnswer = '',
     this.avatarAsset,
   });
 
+  final String chatId;
   final String consultantName;
   final String consultantRole;
-  final String question;
-  final String answer;
+  final String initialQuestion;
+  final String initialAnswer;
   final String? avatarAsset;
 
   const ChatDetailData.sample()
     : this(
+        chatId: 'sample-chat',
         consultantName: 'Ольга',
         consultantRole: 'Специалист',
-        question: 'Как начать заново после срыва?',
-        answer:
+        initialQuestion: 'Как начать заново после срыва?',
+        initialAnswer:
             'Добрый день ответ на ваш вопрос\n'
             '- После срыва важно принять случившееся без самобичевания,\n'
             'проанализировать триггеры и разработать план поддержки',

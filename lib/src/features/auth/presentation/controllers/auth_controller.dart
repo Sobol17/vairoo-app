@@ -1,7 +1,7 @@
-import 'package:ai_note/src/core/network/api_client.dart';
-import 'package:ai_note/src/features/auth/domain/entities/auth_session.dart';
-import 'package:ai_note/src/features/auth/domain/repositories/auth_repository.dart';
-import 'package:ai_note/src/features/profile/domain/repositories/profile_repository.dart';
+import 'package:Vairoo/src/core/network/api_client.dart';
+import 'package:Vairoo/src/features/auth/domain/entities/auth_session.dart';
+import 'package:Vairoo/src/features/auth/domain/repositories/auth_repository.dart';
+import 'package:Vairoo/src/features/profile/domain/repositories/profile_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -112,6 +112,30 @@ class AuthController extends ChangeNotifier {
       }
       _phoneNumber = normalized;
       _step = AuthStep.otpInput;
+    } catch (error) {
+      _setError(_mapError(error));
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<void> requestSmsCode() async {
+    if (_phoneNumber.isEmpty) {
+      _errorMessage = 'Сначала отправьте номер телефона';
+      _step = AuthStep.phoneInput;
+      notifyListeners();
+      return;
+    }
+
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      if (_useApi) {
+        await _repository.requestSmsOtp(phoneNumber: _phoneNumber);
+      } else {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      }
     } catch (error) {
       _setError(_mapError(error));
     } finally {

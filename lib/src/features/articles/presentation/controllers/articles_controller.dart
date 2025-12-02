@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 
-import 'package:ai_note/src/features/articles/domain/entities/article.dart';
-import 'package:ai_note/src/features/articles/domain/repositories/articles_repository.dart';
+import 'package:Vairoo/src/features/articles/domain/entities/article.dart';
+import 'package:Vairoo/src/features/articles/domain/repositories/articles_repository.dart';
 
 class ArticlesController extends ChangeNotifier {
   ArticlesController({required ArticlesRepository repository})
-      : _repository = repository;
+    : _repository = repository;
 
   final ArticlesRepository _repository;
 

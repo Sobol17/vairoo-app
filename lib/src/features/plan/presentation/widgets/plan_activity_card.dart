@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/plan/domain/entities/daily_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -48,10 +48,10 @@ class PlanActivityCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.secondaryLight,
-                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.secondaryLight),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, color: AppColors.primary),
+                child: icon,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -118,25 +118,67 @@ class PlanActivityCard extends StatelessWidget {
     );
   }
 
-  IconData _iconForActivity(PlanActivityItem activity) {
+  Widget _iconForActivity(PlanActivityItem activity) {
     final type = activity.type?.toLowerCase();
     switch (type) {
       case 'journal':
-        return Icons.edit_note_outlined;
+        return SvgPicture.asset(
+          'assets/icons/journal.svg',
+          colorFilter: const ColorFilter.mode(
+            AppColors.primary,
+            BlendMode.srcIn,
+          ),
+        );
       case 'recipes':
-        return Icons.restaurant_outlined;
+        return SvgPicture.asset(
+          'assets/icons/morning.svg',
+          colorFilter: const ColorFilter.mode(
+            AppColors.primary,
+            BlendMode.srcIn,
+          ),
+        );
       case 'rituals':
-        return Icons.self_improvement_outlined;
+        return SvgPicture.asset(
+          'assets/icons/ritual.svg',
+          colorFilter: const ColorFilter.mode(
+            AppColors.primary,
+            BlendMode.srcIn,
+          ),
+        );
       case 'trainings':
-        return Icons.fitness_center_outlined;
+        return SvgPicture.asset(
+          'assets/icons/training.svg',
+          colorFilter: const ColorFilter.mode(
+            AppColors.primary,
+            BlendMode.srcIn,
+          ),
+        );
       default:
         switch (activity.timeOfDay) {
           case PlanTimeOfDay.morning:
-            return Icons.wb_sunny_outlined;
+            return SvgPicture.asset(
+              'assets/icons/ritual.svg',
+              colorFilter: const ColorFilter.mode(
+                AppColors.primary,
+                BlendMode.srcIn,
+              ),
+            );
           case PlanTimeOfDay.day:
-            return Icons.auto_awesome_outlined;
+            return SvgPicture.asset(
+              'assets/icons/ritual.svg',
+              colorFilter: const ColorFilter.mode(
+                AppColors.primary,
+                BlendMode.srcIn,
+              ),
+            );
           case PlanTimeOfDay.evening:
-            return Icons.nightlight_outlined;
+            return SvgPicture.asset(
+              'assets/icons/ritual.svg',
+              colorFilter: const ColorFilter.mode(
+                AppColors.primary,
+                BlendMode.srcIn,
+              ),
+            );
         }
     }
   }
@@ -162,7 +204,8 @@ class _SecondaryActionButton extends StatelessWidget {
       side: BorderSide(color: AppColors.secondary),
       foregroundColor: AppColors.secondary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-      textStyle: theme.textTheme.labelLarge?.copyWith(
+      textStyle:
+          theme.textTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.w700,
             fontSize: 13,
           ) ??

@@ -1,6 +1,6 @@
-import 'package:ai_note/src/features/articles/data/datasources/articles_remote_data_source.dart';
-import 'package:ai_note/src/features/articles/domain/entities/article.dart';
-import 'package:ai_note/src/features/articles/domain/repositories/articles_repository.dart';
+import 'package:Vairoo/src/features/articles/data/datasources/articles_remote_data_source.dart';
+import 'package:Vairoo/src/features/articles/domain/entities/article.dart';
+import 'package:Vairoo/src/features/articles/domain/repositories/articles_repository.dart';
 
 class ArticlesRepositoryImpl implements ArticlesRepository {
   ArticlesRepositoryImpl({required ArticlesRemoteDataSource remoteDataSource})

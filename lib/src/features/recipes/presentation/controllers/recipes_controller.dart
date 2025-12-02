@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:ai_note/src/features/recipes/domain/entities/recipe.dart';
-import 'package:ai_note/src/features/recipes/domain/repositories/recipes_repository.dart';
+import 'package:Vairoo/src/features/recipes/domain/entities/recipe.dart';
+import 'package:Vairoo/src/features/recipes/domain/repositories/recipes_repository.dart';
 
 class RecipesController extends ChangeNotifier {
   RecipesController({required RecipesRepository repository})

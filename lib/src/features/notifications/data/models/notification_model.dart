@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/user_notification.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/notification_category.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/user_notification.dart';
 
 class NotificationModel extends UserNotification {
   const NotificationModel({

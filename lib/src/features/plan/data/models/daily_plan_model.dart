@@ -1,4 +1,4 @@
-import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
+import 'package:Vairoo/src/features/plan/domain/entities/daily_plan.dart';
 
 class DailyPlanModel extends DailyPlan {
   DailyPlanModel({

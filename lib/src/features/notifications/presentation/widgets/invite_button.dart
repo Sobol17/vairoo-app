@@ -1,4 +1,4 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:share_plus/share_plus.dart';

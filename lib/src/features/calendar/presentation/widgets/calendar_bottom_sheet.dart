@@ -1,6 +1,6 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/shared/helpers/formatter.dart';
-import 'package:ai_note/src/shared/widgets/calendar.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/shared/helpers/formatter.dart';
+import 'package:Vairoo/src/shared/widgets/calendar.dart';
 import 'package:flutter/material.dart';
 
 class PlanCalendarBottomSheet extends StatefulWidget {
@@ -27,7 +27,8 @@ class _PlanCalendarBottomSheetState extends State<PlanCalendarBottomSheet> {
   void initState() {
     super.initState();
     final now = DateTime.now();
-    final initial = widget.initialDate ?? DateTime(now.year, now.month, now.day);
+    final initial =
+        widget.initialDate ?? DateTime(now.year, now.month, now.day);
     _visibleMonth = DateTime(initial.year, initial.month);
     _selectedDate = initial;
     _minDate = DateTime(now.year - 1, 1, 1);

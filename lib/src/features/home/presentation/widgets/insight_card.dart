@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/home/domain/entities/home_insight.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/home/domain/entities/home_insight.dart';
 import 'package:flutter/material.dart';
 
 class InsightCard extends StatefulWidget {

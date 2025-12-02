@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/auth/presentation/widgets/brand_logo.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/auth/presentation/widgets/brand_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 

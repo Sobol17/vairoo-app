@@ -1,9 +1,9 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/calendar/domain/entities/calendar_note.dart';
-import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_bg.dart';
-import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_notes_empty.dart';
-import 'package:ai_note/src/features/calendar/presentation/widgets/create_note_button.dart';
-import 'package:ai_note/src/features/calendar/presentation/widgets/note_card.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/calendar/domain/entities/calendar_note.dart';
+import 'package:Vairoo/src/features/calendar/presentation/widgets/calendar_bg.dart';
+import 'package:Vairoo/src/features/calendar/presentation/widgets/calendar_notes_empty.dart';
+import 'package:Vairoo/src/features/calendar/presentation/widgets/create_note_button.dart';
+import 'package:Vairoo/src/features/calendar/presentation/widgets/note_card.dart';
 import 'package:flutter/material.dart';
 
 class CalendarNotesTab extends StatelessWidget {

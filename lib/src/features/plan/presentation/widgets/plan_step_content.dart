@@ -1,4 +1,4 @@
-import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
+import 'package:Vairoo/src/features/plan/domain/entities/daily_plan.dart';
 
 class PlanStepContent {
   const PlanStepContent({
@@ -54,7 +54,7 @@ const Map<PlanStep, PlanStepContent> _stepContentOverrides = {
     infoTitle: 'Гордимся вами',
     infoDescription:
         'Отметьте в дневнике ключевые открытия и эмоции — это поможет закрепить результат.',
-    ctaLabel: 'На главную',
+    ctaLabel: 'Продолжить путь трезвости',
   ),
 };
 

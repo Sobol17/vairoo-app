@@ -1,6 +1,6 @@
-import 'package:ai_note/src/features/recipes/domain/entities/recipe.dart';
-import 'package:ai_note/src/features/recipes/presentation/widgets/recipe_card.dart';
-import 'package:ai_note/src/features/recipes/presentation/widgets/recipe_detail_sheet.dart';
+import 'package:Vairoo/src/features/recipes/domain/entities/recipe.dart';
+import 'package:Vairoo/src/features/recipes/presentation/widgets/recipe_card.dart';
+import 'package:Vairoo/src/features/recipes/presentation/widgets/recipe_detail_sheet.dart';
 import 'package:flutter/material.dart';
 
 class MealSection extends StatelessWidget {

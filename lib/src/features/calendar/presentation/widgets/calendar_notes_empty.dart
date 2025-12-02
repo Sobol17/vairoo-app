@@ -1,4 +1,4 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CalendarNotesEmptyState extends StatelessWidget {

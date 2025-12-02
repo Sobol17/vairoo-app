@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:ai_note/src/features/profile/domain/entities/profile.dart';
+import 'package:Vairoo/src/features/profile/domain/entities/profile.dart';
 
 class ProfileModel extends Profile {
   const ProfileModel({
@@ -14,6 +14,7 @@ class ProfileModel extends Profile {
     super.dailyCalories,
     super.goal,
     super.habitSpending,
+    super.subscriptionExpiresAt,
     super.pushNotificationsEnabled,
     super.emailNotificationsEnabled,
     super.createdAt,
@@ -34,6 +35,7 @@ class ProfileModel extends Profile {
       dailyCalories: profile.dailyCalories,
       goal: profile.goal,
       habitSpending: profile.habitSpending,
+      subscriptionExpiresAt: profile.subscriptionExpiresAt,
       pushNotificationsEnabled: profile.pushNotificationsEnabled,
       emailNotificationsEnabled: profile.emailNotificationsEnabled,
       createdAt: profile.createdAt,
@@ -58,13 +60,16 @@ class ProfileModel extends Profile {
       phone: json['phone'] as String?,
       email: json['email'] as String?,
       dailyExpenses: _parseDecimal(
-        json['habit_spending'] ?? json['habit_spending'],
+        json['daily_spending'] ?? json['dailySpending'],
       ),
       dailyCalories: _parseDecimal(
         json['daily_calories'] ?? json['dailyCalories'],
       ),
       goal: json['goal'] as String?,
       habitSpending: _parseDecimal(json['habit_spending']),
+      subscriptionExpiresAt: _parseDate(
+        json['subscription_expires_at'] as String?,
+      ),
       pushNotificationsEnabled:
           json['push_notifications_enabled'] as bool? ??
           json['pushNotificationsEnabled'] as bool? ??
@@ -89,6 +94,7 @@ class ProfileModel extends Profile {
       'dailyCalories': dailyCalories,
       'goal': goal,
       'habit_spending': habitSpending,
+      'subscription_expires_at': subscriptionExpiresAt?.toIso8601String(),
       'push_notifications_enabled': pushNotificationsEnabled,
       'email_notifications_enabled': emailNotificationsEnabled,
       'created_at': createdAt?.toIso8601String(),

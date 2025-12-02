@@ -1,10 +1,10 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/auth/presentation/widgets/brand_logo.dart';
-import 'package:ai_note/src/features/profile/domain/entities/profile.dart';
-import 'package:ai_note/src/features/profile/presentation/controllers/profile_controller.dart';
-import 'package:ai_note/src/shared/helpers/formatter.dart';
-import 'package:ai_note/src/shared/helpers/phone_mask.dart';
-import 'package:ai_note/src/shared/widgets/calendar.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/auth/presentation/widgets/brand_logo.dart';
+import 'package:Vairoo/src/features/profile/domain/entities/profile.dart';
+import 'package:Vairoo/src/features/profile/presentation/controllers/profile_controller.dart';
+import 'package:Vairoo/src/shared/helpers/formatter.dart';
+import 'package:Vairoo/src/shared/helpers/phone_mask.dart';
+import 'package:Vairoo/src/shared/widgets/calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -82,11 +82,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       return;
     }
     setState(() {
-    _lastProfile = profile;
-    _nameController.text = profile.name;
-    _emailController.text = profile.email ?? '';
-    _birthDate = profile.birthDate;
-    _initializePhoneController(profile.phone ?? '');
+      _lastProfile = profile;
+      _nameController.text = profile.name;
+      _emailController.text = profile.email ?? '';
+      _birthDate = profile.birthDate;
+      _initializePhoneController(profile.phone ?? '');
     });
   }
 

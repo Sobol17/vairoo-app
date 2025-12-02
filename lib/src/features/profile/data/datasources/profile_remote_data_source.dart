@@ -1,4 +1,4 @@
-import 'package:ai_note/src/core/network/api_client.dart';
+import 'package:Vairoo/src/core/network/api_client.dart';
 import 'package:dio/dio.dart';
 
 class ProfileRemoteDataSource {

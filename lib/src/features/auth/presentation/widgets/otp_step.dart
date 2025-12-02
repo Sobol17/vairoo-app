@@ -1,9 +1,10 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/shared/helpers/formatter.dart';
-import 'package:ai_note/src/shared/widgets/primary_button.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/shared/helpers/formatter.dart';
+import 'package:Vairoo/src/shared/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class OtpStep extends StatefulWidget {
   const OtpStep({
@@ -12,6 +13,7 @@ class OtpStep extends StatefulWidget {
     required this.isLoading,
     required this.errorText,
     required this.onSubmit,
+    required this.onRequestSms,
     required this.onResend,
   });
 
@@ -19,6 +21,7 @@ class OtpStep extends StatefulWidget {
   final bool isLoading;
   final String? errorText;
   final ValueChanged<String> onSubmit;
+  final VoidCallback? onRequestSms;
   final VoidCallback? onResend;
 
   @override
@@ -28,6 +31,7 @@ class OtpStep extends StatefulWidget {
 class _OtpStepState extends State<OtpStep> {
   final formatter = Formatter();
   static const _codeLength = 4;
+  static const _telegramLink = 'https://t.me/VairooAuthBot';
 
   late final List<TextEditingController> _controllers;
   late final List<FocusNode> _focusNodes;
@@ -152,6 +156,18 @@ class _OtpStepState extends State<OtpStep> {
     widget.onSubmit(code);
   }
 
+  Future<void> _openTelegram() async {
+    final success = await launchUrlString(
+      _telegramLink,
+      mode: LaunchMode.externalApplication,
+    );
+    if (!success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Не удалось открыть Telegram')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -236,7 +252,7 @@ class _OtpStepState extends State<OtpStep> {
             ),
           ),
         ],
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         Align(
           alignment: Alignment.center,
           child: TextButton.icon(
@@ -251,12 +267,18 @@ class _OtpStepState extends State<OtpStep> {
             ),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 12),
         SvgPicture.asset('assets/icons/otp_bg.svg', fit: BoxFit.contain),
-        const Spacer(),
+        const SizedBox(height: 12),
         PrimaryButton(
-          label: 'Продолжить',
-          onPressed: widget.isLoading ? null : _handleSubmit,
+          label: 'Получить по sms',
+          onPressed: widget.isLoading ? null : widget.onRequestSms,
+          isLoading: widget.isLoading,
+        ),
+        const SizedBox(height: 12),
+        PrimaryButton(
+          label: 'Получить в Telegram',
+          onPressed: widget.isLoading ? null : _openTelegram,
           isLoading: widget.isLoading,
         ),
       ],

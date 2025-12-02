@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/profile/presentation/controllers/profile_controller.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:flutter/material.dart';
 
 class NotificationsSection extends StatelessWidget {

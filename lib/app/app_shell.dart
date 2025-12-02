@@ -1,4 +1,4 @@
-import 'package:ai_note/src/shared/widgets/bottom_navigation_bar.dart';
+import 'package:Vairoo/src/shared/widgets/bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

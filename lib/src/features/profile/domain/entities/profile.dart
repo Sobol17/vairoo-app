@@ -12,6 +12,7 @@ class Profile extends Equatable {
     this.dailyCalories,
     this.goal,
     this.habitSpending,
+    this.subscriptionExpiresAt,
     this.pushNotificationsEnabled = true,
     this.emailNotificationsEnabled = true,
     this.createdAt,
@@ -28,6 +29,7 @@ class Profile extends Equatable {
   final double? dailyCalories;
   final String? goal;
   final double? habitSpending;
+  final DateTime? subscriptionExpiresAt;
   final bool pushNotificationsEnabled;
   final bool emailNotificationsEnabled;
   final DateTime? createdAt;
@@ -47,6 +49,7 @@ class Profile extends Equatable {
     double? dailyCalories,
     String? goal,
     double? habitSpending,
+    DateTime? subscriptionExpiresAt,
     bool? pushNotificationsEnabled,
     bool? emailNotificationsEnabled,
     DateTime? createdAt,
@@ -63,6 +66,8 @@ class Profile extends Equatable {
       dailyCalories: dailyCalories ?? this.dailyCalories,
       goal: goal ?? this.goal,
       habitSpending: habitSpending ?? this.habitSpending,
+      subscriptionExpiresAt:
+          subscriptionExpiresAt ?? this.subscriptionExpiresAt,
       pushNotificationsEnabled:
           pushNotificationsEnabled ?? this.pushNotificationsEnabled,
       emailNotificationsEnabled:
@@ -84,6 +89,7 @@ class Profile extends Equatable {
     dailyCalories,
     goal,
     habitSpending,
+    subscriptionExpiresAt,
     pushNotificationsEnabled,
     emailNotificationsEnabled,
     createdAt,

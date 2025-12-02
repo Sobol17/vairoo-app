@@ -1,5 +1,5 @@
-import 'package:ai_note/src/features/plan/data/models/daily_plan_model.dart';
-import 'package:ai_note/src/features/plan/domain/entities/plan_completion_result.dart';
+import 'package:Vairoo/src/features/plan/data/models/daily_plan_model.dart';
+import 'package:Vairoo/src/features/plan/domain/entities/plan_completion_result.dart';
 
 class PlanCompletionResultModel extends PlanCompletionResult {
   PlanCompletionResultModel({

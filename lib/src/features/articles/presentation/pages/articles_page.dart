@@ -1,10 +1,10 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/articles/domain/entities/article.dart';
-import 'package:ai_note/src/features/articles/domain/repositories/articles_repository.dart';
-import 'package:ai_note/src/features/articles/presentation/controllers/articles_controller.dart';
-import 'package:ai_note/src/features/articles/presentation/widgets/articles_cart.dart';
-import 'package:ai_note/src/features/articles/presentation/widgets/articles_empty_state.dart';
-import 'package:ai_note/src/features/articles/presentation/widgets/articles_header.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/articles/domain/entities/article.dart';
+import 'package:Vairoo/src/features/articles/domain/repositories/articles_repository.dart';
+import 'package:Vairoo/src/features/articles/presentation/controllers/articles_controller.dart';
+import 'package:Vairoo/src/features/articles/presentation/widgets/articles_cart.dart';
+import 'package:Vairoo/src/features/articles/presentation/widgets/articles_empty_state.dart';
+import 'package:Vairoo/src/features/articles/presentation/widgets/articles_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';

@@ -1,7 +1,7 @@
-import 'package:ai_note/src/features/home/data/datasources/note_local_data_source.dart';
-import 'package:ai_note/src/features/home/data/models/note_model.dart';
-import 'package:ai_note/src/features/home/domain/entities/note.dart';
-import 'package:ai_note/src/features/home/domain/repositories/note_repository.dart';
+import 'package:Vairoo/src/features/home/data/datasources/note_local_data_source.dart';
+import 'package:Vairoo/src/features/home/data/models/note_model.dart';
+import 'package:Vairoo/src/features/home/domain/entities/note.dart';
+import 'package:Vairoo/src/features/home/domain/repositories/note_repository.dart';
 
 class NoteRepositoryImpl implements NoteRepository {
   NoteRepositoryImpl(this._localDataSource);

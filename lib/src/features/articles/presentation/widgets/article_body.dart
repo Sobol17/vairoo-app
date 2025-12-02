@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/theme/html_styles.dart';
-import 'package:ai_note/src/features/articles/domain/entities/article.dart';
+import 'package:Vairoo/src/core/theme/html_styles.dart';
+import 'package:Vairoo/src/features/articles/domain/entities/article.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 

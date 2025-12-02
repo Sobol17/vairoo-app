@@ -1,5 +1,5 @@
-import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
-import 'package:ai_note/src/features/plan/domain/entities/plan_completion_result.dart';
+import 'package:Vairoo/src/features/plan/domain/entities/daily_plan.dart';
+import 'package:Vairoo/src/features/plan/domain/entities/plan_completion_result.dart';
 
 abstract class PlanRepository {
   Future<DailyPlan> startPlan();

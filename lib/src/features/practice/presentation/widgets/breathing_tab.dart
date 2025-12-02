@@ -1,4 +1,4 @@
-import 'package:ai_note/src/features/practice/presentation/widgets/breathing_practice_card.dart';
+import 'package:Vairoo/src/features/practice/presentation/widgets/breathing_practice_card.dart';
 import 'package:flutter/material.dart';
 
 class BreathingTab extends StatelessWidget {

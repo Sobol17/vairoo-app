@@ -1,11 +1,11 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/plan/domain/entities/daily_plan.dart';
-import 'package:ai_note/src/features/plan/presentation/controllers/plan_controller.dart';
-import 'package:ai_note/src/features/plan/presentation/widgets/circular_nav_button.dart';
-import 'package:ai_note/src/features/plan/presentation/widgets/plan_activity_card.dart';
-import 'package:ai_note/src/features/plan/presentation/widgets/plan_info_card.dart';
-import 'package:ai_note/src/features/plan/presentation/widgets/plan_step_content.dart';
-import 'package:ai_note/src/shared/widgets/primary_button.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/plan/domain/entities/daily_plan.dart';
+import 'package:Vairoo/src/features/plan/presentation/controllers/plan_controller.dart';
+import 'package:Vairoo/src/features/plan/presentation/widgets/circular_nav_button.dart';
+import 'package:Vairoo/src/features/plan/presentation/widgets/plan_activity_card.dart';
+import 'package:Vairoo/src/features/plan/presentation/widgets/plan_info_card.dart';
+import 'package:Vairoo/src/features/plan/presentation/widgets/plan_step_content.dart';
+import 'package:Vairoo/src/shared/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -113,34 +113,30 @@ class _PlanPageState extends State<PlanPage> {
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
               sliver: SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    if (activities.isEmpty)
-                      _buildEmptyActivities()
-                    else ...
-                      activities.map(
-                        (activity) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: PlanActivityCard(
-                            activity: activity,
-                            onPrimaryTap: _buildPrimaryAction(activity),
-                            isCompleting:
-                                controller.completingItemId == activity.id,
-                            onMarkComplete: () =>
-                                controller.completeItem(activity.id),
-                          ),
+                delegate: SliverChildListDelegate([
+                  if (activities.isEmpty)
+                    _buildEmptyActivities()
+                  else
+                    ...activities.map(
+                      (activity) => Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: PlanActivityCard(
+                          activity: activity,
+                          onPrimaryTap: _buildPrimaryAction(activity),
+                          isCompleting:
+                              controller.completingItemId == activity.id,
+                          onMarkComplete: () =>
+                              controller.completeItem(activity.id),
                         ),
                       ),
-                    const SizedBox(height: 12),
-                    PlanInfoCard(
-                      title: content.infoTitle,
-                      description: content.infoDescription,
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).padding.bottom + 160,
-                    ),
-                  ],
-                ),
+                  const SizedBox(height: 12),
+                  PlanInfoCard(
+                    title: content.infoTitle,
+                    description: content.infoDescription,
+                  ),
+                  SizedBox(height: MediaQuery.of(context).padding.bottom + 160),
+                ]),
               ),
             ),
           ],
@@ -247,7 +243,7 @@ class _PlanPageState extends State<PlanPage> {
 
     VoidCallback? onPressed;
     if (isFinished) {
-      onPressed = () => Navigator.of(context).maybePop();
+      onPressed = () => context.push('/paywall');
     } else if (isDayCompleted) {
       onPressed = () => Navigator.of(context).maybePop();
     } else if (canGoNext) {

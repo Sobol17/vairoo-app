@@ -30,6 +30,7 @@ class Recipe extends Equatable {
     required this.id,
     required this.title,
     required this.durationMinutes,
+    this.durationLabel,
     required this.tags,
     required this.mealType,
     required this.imageUrl,
@@ -41,6 +42,7 @@ class Recipe extends Equatable {
   final String id;
   final String title;
   final int durationMinutes;
+  final String? durationLabel;
   final List<String> tags;
   final RecipeMealType mealType;
   final String imageUrl;
@@ -48,11 +50,19 @@ class Recipe extends Equatable {
   final String instructions;
   final String? description;
 
+  String get durationDisplay {
+    if (durationLabel != null && durationLabel!.isNotEmpty) {
+      return durationLabel!;
+    }
+    return '$durationMinutes мин.';
+  }
+
   @override
   List<Object?> get props => [
     id,
     title,
     durationMinutes,
+    durationLabel,
     tags,
     mealType,
     imageUrl,

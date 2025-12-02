@@ -2,13 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:ai_note/src/features/disclaimer/domain/entities/disclaimer_type.dart';
-import 'package:ai_note/src/features/disclaimer/domain/repositories/disclaimer_repository.dart';
+import 'package:Vairoo/src/features/disclaimer/domain/entities/disclaimer_type.dart';
+import 'package:Vairoo/src/features/disclaimer/domain/repositories/disclaimer_repository.dart';
 
 class DisclaimerController extends ChangeNotifier {
-  DisclaimerController({
-    required DisclaimerRepository repository,
-  }) : _repository = repository;
+  DisclaimerController({required DisclaimerRepository repository})
+    : _repository = repository;
 
   final DisclaimerRepository _repository;
   final Map<DisclaimerType, bool> _cache = {};

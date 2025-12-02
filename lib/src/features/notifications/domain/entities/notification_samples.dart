@@ -1,5 +1,5 @@
-import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/user_notification.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/notification_category.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/user_notification.dart';
 
 List<UserNotification> defaultNotificationsSeed() {
   final now = DateTime.now();

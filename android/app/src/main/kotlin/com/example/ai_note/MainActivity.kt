@@ -1,4 +1,4 @@
-package com.example.ai_note
+package com.example.Vairoo
 
 import io.flutter.embedding.android.FlutterActivity
 

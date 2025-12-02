@@ -1,5 +1,5 @@
-import 'package:ai_note/src/features/home/presentation/widgets/home_quote_card.dart';
-import 'package:ai_note/src/features/home/presentation/widgets/home_sobriety_card.dart';
+import 'package:Vairoo/src/features/home/presentation/widgets/home_quote_card.dart';
+import 'package:Vairoo/src/features/home/presentation/widgets/home_sobriety_card.dart';
 import 'package:flutter/material.dart';
 
 class HomeMotivationCard extends StatelessWidget {

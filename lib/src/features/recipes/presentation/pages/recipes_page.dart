@@ -1,9 +1,9 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/recipes/domain/entities/recipe.dart';
-import 'package:ai_note/src/features/recipes/domain/repositories/recipes_repository.dart';
-import 'package:ai_note/src/features/recipes/presentation/controllers/recipes_controller.dart';
-import 'package:ai_note/src/features/recipes/presentation/widgets/meal_section.dart';
-import 'package:ai_note/src/features/recipes/presentation/widgets/recipes_header.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/recipes/domain/entities/recipe.dart';
+import 'package:Vairoo/src/features/recipes/domain/repositories/recipes_repository.dart';
+import 'package:Vairoo/src/features/recipes/presentation/controllers/recipes_controller.dart';
+import 'package:Vairoo/src/features/recipes/presentation/widgets/meal_section.dart';
+import 'package:Vairoo/src/features/recipes/presentation/widgets/recipes_header.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';

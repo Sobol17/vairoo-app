@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/notification_category.dart';
 import 'package:flutter/material.dart';
 
 class CategorySwitcher extends StatelessWidget {

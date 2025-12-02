@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
-import 'package:ai_note/src/features/notifications/domain/entities/notification_category.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/user_notification.dart';
-import 'package:ai_note/src/features/notifications/domain/repositories/notification_repository.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/notification_category.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/user_notification.dart';
+import 'package:Vairoo/src/features/notifications/domain/repositories/notification_repository.dart';
 
 class NotificationsController extends ChangeNotifier {
   NotificationsController({

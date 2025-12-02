@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/notifications/domain/entities/chat_detail_data.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/notifications/domain/entities/chat_detail_data.dart';
 import 'package:flutter/material.dart';
 
 class ChatHeader extends StatelessWidget {
@@ -46,7 +46,7 @@ class ChatHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${data.consultantName} (${data.consultantRole})',
+                '${data.consultantName} \n (${data.consultantRole})',
                 style: titleStyle,
               ),
               const SizedBox(height: 4),

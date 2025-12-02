@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:ai_note/src/features/practice/domain/entities/practice_game.dart';
+import 'package:Vairoo/src/features/practice/domain/entities/practice_game.dart';
 
 const practiceGames = [
   PracticeGame(

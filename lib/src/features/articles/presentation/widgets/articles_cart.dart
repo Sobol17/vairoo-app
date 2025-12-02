@@ -1,6 +1,6 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/articles/domain/entities/article.dart';
-import 'package:ai_note/src/features/articles/presentation/widgets/chevron_badge.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/articles/domain/entities/article.dart';
+import 'package:Vairoo/src/features/articles/presentation/widgets/chevron_badge.dart';
 import 'package:flutter/material.dart';
 
 class ArticleCard extends StatelessWidget {

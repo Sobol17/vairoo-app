@@ -1,13 +1,16 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/practice/presentation/widgets/breathing_tab.dart';
-import 'package:ai_note/src/features/practice/presentation/widgets/games_tab.dart';
-import 'package:ai_note/src/features/practice/presentation/widgets/practice_intro_sheet.dart';
-import 'package:ai_note/src/features/practice/presentation/widgets/practice_tab_bar.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/practice/domain/entities/practice_tab.dart';
+import 'package:Vairoo/src/features/practice/presentation/widgets/breathing_tab.dart';
+import 'package:Vairoo/src/features/practice/presentation/widgets/games_tab.dart';
+import 'package:Vairoo/src/features/practice/presentation/widgets/practice_intro_sheet.dart';
+import 'package:Vairoo/src/features/practice/presentation/widgets/practice_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class PracticePage extends StatefulWidget {
-  const PracticePage({super.key});
+  const PracticePage({super.key, this.initialTab = PracticeTab.calming});
+
+  final PracticeTab initialTab;
 
   @override
   State<PracticePage> createState() => _PracticePageState();
@@ -45,6 +48,7 @@ class _PracticePageState extends State<PracticePage> {
 
     return DefaultTabController(
       length: 2,
+      initialIndex: widget.initialTab.index,
       child: Scaffold(
         backgroundColor: AppColors.bgGray,
         body: SafeArea(

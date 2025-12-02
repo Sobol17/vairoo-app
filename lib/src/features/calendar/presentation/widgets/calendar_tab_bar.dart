@@ -1,10 +1,15 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CalendarTabBar extends StatelessWidget {
-  const CalendarTabBar({required this.theme, super.key});
+  const CalendarTabBar({
+    required this.theme,
+    this.todayLabel = 'Сегодня',
+    super.key,
+  });
 
   final ThemeData theme;
+  final String todayLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +39,9 @@ class CalendarTabBar extends StatelessWidget {
           unselectedLabelColor: AppColors.textGray,
           labelStyle: labelStyle,
           unselectedLabelStyle: labelStyle?.copyWith(color: AppColors.textGray),
-          tabs: const [
-            Tab(text: 'Сегодня'),
-            Tab(text: 'Всего'),
+          tabs: [
+            Tab(text: todayLabel),
+            const Tab(text: 'Всего'),
           ],
         ),
       ],

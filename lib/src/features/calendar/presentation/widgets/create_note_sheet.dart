@@ -1,12 +1,12 @@
-import 'package:ai_note/src/core/theme/app_colors.dart';
-import 'package:ai_note/src/features/calendar/domain/entities/calendar_note.dart';
-import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_bottom_sheet.dart';
-import 'package:ai_note/src/features/calendar/presentation/widgets/calendar_toggle_row.dart';
-import 'package:ai_note/src/features/calendar/presentation/widgets/date_pick_field.dart';
-import 'package:ai_note/src/shared/constants/monts.dart';
-import 'package:ai_note/src/shared/widgets/primary_button.dart';
-import 'package:ai_note/src/shared/widgets/secondary_button.dart';
-import 'package:ai_note/src/shared/widgets/sheet_header.dart';
+import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/calendar/domain/entities/calendar_note.dart';
+import 'package:Vairoo/src/features/calendar/presentation/widgets/calendar_bottom_sheet.dart';
+import 'package:Vairoo/src/features/calendar/presentation/widgets/calendar_toggle_row.dart';
+import 'package:Vairoo/src/features/calendar/presentation/widgets/date_pick_field.dart';
+import 'package:Vairoo/src/shared/constants/monts.dart';
+import 'package:Vairoo/src/shared/widgets/primary_button.dart';
+import 'package:Vairoo/src/shared/widgets/secondary_button.dart';
+import 'package:Vairoo/src/shared/widgets/sheet_header.dart';
 import 'package:flutter/material.dart';
 
 class CreateCalendarNoteSheet extends StatefulWidget {
@@ -127,7 +127,8 @@ class _CreateCalendarNoteSheetState extends State<CreateCalendarNoteSheet> {
   void _submit() {
     final title = _buildTitle();
     final preview = _buildPreview();
-    final id = widget.initialNote?.id ??
+    final id =
+        widget.initialNote?.id ??
         DateTime.now().microsecondsSinceEpoch.toString();
     final note = CalendarNote(
       id: id,

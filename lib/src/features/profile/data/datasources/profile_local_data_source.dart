@@ -1,5 +1,5 @@
-import 'package:ai_note/src/core/storage/preferences_storage.dart';
-import 'package:ai_note/src/features/profile/data/models/profile_model.dart';
+import 'package:Vairoo/src/core/storage/preferences_storage.dart';
+import 'package:Vairoo/src/features/profile/data/models/profile_model.dart';
 
 class ProfileLocalDataSource {
   ProfileLocalDataSource(this._storage);
