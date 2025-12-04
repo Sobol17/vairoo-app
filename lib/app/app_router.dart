@@ -28,9 +28,11 @@ import 'package:Vairoo/src/features/paywall/presentation/pages/paywall_page.dart
 import 'package:Vairoo/src/features/practice/domain/entities/practice_tab.dart';
 import 'package:Vairoo/src/features/practice/presentation/pages/breathing_practice_page.dart';
 import 'package:Vairoo/src/features/practice/presentation/pages/practice_page.dart';
+import 'package:Vairoo/src/features/profile/domain/entities/profile.dart';
 import 'package:Vairoo/src/features/profile/domain/repositories/profile_repository.dart';
 import 'package:Vairoo/src/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:Vairoo/src/features/profile/presentation/pages/profile_edit_page.dart';
+import 'package:Vairoo/src/features/profile/presentation/pages/achievement_page.dart';
 import 'package:Vairoo/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:Vairoo/src/features/recipes/presentation/pages/recipes_page.dart';
 import 'package:flutter/material.dart';
@@ -225,6 +227,19 @@ GoRouter createAppRouter({
           ),
         ],
       ),
+      GoRoute(
+        path: '/achievement',
+        pageBuilder: (context, state) {
+          final type = state.extra;
+          if (type is ProfileAchievementType) {
+            return _buildTransitionPage(
+              state,
+              AchievementPage(type: type),
+            );
+          }
+          return _buildTransitionPage(state, const _AchievementMissingPage());
+        },
+      ),
     ],
     redirect: (context, state) {
       final isAuthenticated = authController.isAuthenticated;
@@ -319,6 +334,31 @@ class _ArticleMissingPage extends StatelessWidget {
               SizedBox(height: 12),
               Text(
                 'Статья недоступна',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AchievementMissingPage extends StatelessWidget {
+  const _AchievementMissingPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Icon(Icons.error_outline, size: 48),
+              SizedBox(height: 12),
+              Text(
+                'Достижение недоступно',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
             ],

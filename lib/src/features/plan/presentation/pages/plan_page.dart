@@ -1,4 +1,5 @@
 import 'package:Vairoo/src/core/theme/app_colors.dart';
+import 'package:Vairoo/src/features/home/presentation/controllers/home_controller.dart';
 import 'package:Vairoo/src/features/paywall/presentation/controllers/subscription_controller.dart';
 import 'package:Vairoo/src/features/plan/domain/entities/daily_plan.dart';
 import 'package:Vairoo/src/features/plan/presentation/controllers/plan_controller.dart';
@@ -20,6 +21,7 @@ class PlanPage extends StatefulWidget {
 
 class _PlanPageState extends State<PlanPage> {
   final ScrollController _scrollController = ScrollController();
+  bool _isReturningHome = false;
 
   @override
   void dispose() {
@@ -263,14 +265,15 @@ class _PlanPageState extends State<PlanPage> {
 
     VoidCallback? onPressed;
     if (isFinished) {
-      onPressed = subscriptionExpired
-          ? () => context.push('/paywall')
-          : () => context.go('/home');
+      onPressed = () => _handlePlanCompletion(subscriptionExpired);
     } else if (isDayCompleted) {
       onPressed = () => Navigator.of(context).maybePop();
     } else if (canGoNext) {
       onPressed = controller.showCurrentStep;
     }
+
+    final isFinishingPlan =
+        _isReturningHome && isFinished && !subscriptionExpired;
 
     return Positioned(
       left: 0,
@@ -297,14 +300,44 @@ class _PlanPageState extends State<PlanPage> {
               ],
               PrimaryButton(
                 label: label,
-                onPressed: onPressed,
-                isLoading: false,
+                onPressed:
+                    isFinishingPlan ? null : onPressed,
+                isLoading: isFinishingPlan,
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _handlePlanCompletion(bool subscriptionExpired) async {
+    if (subscriptionExpired) {
+      if (mounted) {
+        context.push('/paywall');
+      }
+      return;
+    }
+    if (_isReturningHome) {
+      return;
+    }
+    setState(() {
+      _isReturningHome = true;
+    });
+    try {
+      await context.read<HomeController>().loadHome();
+    } catch (_) {
+      // ignore errors, we'll still navigate back home
+    }
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _isReturningHome = false;
+    });
+    if (mounted) {
+      context.go('/home');
+    }
   }
 
   VoidCallback? _buildPrimaryAction(PlanActivityItem activity) {

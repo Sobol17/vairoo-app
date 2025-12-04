@@ -14,7 +14,10 @@ class RecipeModel extends Recipe {
     super.description,
   });
 
-  factory RecipeModel.fromJson(Map<String, dynamic> json) {
+  factory RecipeModel.fromJson(
+    Map<String, dynamic> json, {
+    String? baseUrl,
+  }) {
     final tags = _parseTags(json['tags']);
     final ingredients = _parseIngredients(json['ingredients']);
     final mealType = _parseMealType(
@@ -29,8 +32,13 @@ class RecipeModel extends Recipe {
       durationLabel: _parseDurationLabel(json),
       tags: tags,
       mealType: mealType,
-      imageUrl:
-          json['imageUrl'] as String? ?? json['image_url'] as String? ?? '',
+      imageUrl: _resolveImageUrl(
+        json['imageUrl'] as String? ??
+            json['image_url'] as String? ??
+            json['image'] as String? ??
+            '',
+        baseUrl,
+      ),
       ingredients: ingredients,
       instructions: json['instructions'] as String? ?? '',
       description: json['description'] as String?,
@@ -113,5 +121,28 @@ class RecipeModel extends Recipe {
       default:
         return RecipeMealType.breakfast;
     }
+  }
+
+  static String _resolveImageUrl(String raw, String? baseUrl) {
+    final sanitized = raw.trim();
+    if (sanitized.isEmpty) {
+      return '';
+    }
+    final current = Uri.tryParse(sanitized);
+    if (current == null) {
+      return sanitized;
+    }
+    if (current.hasScheme) {
+      return current.toString();
+    }
+    final base = baseUrl;
+    if (base == null || base.isEmpty) {
+      return sanitized;
+    }
+    final baseUri = Uri.tryParse(base);
+    if (baseUri == null) {
+      return sanitized;
+    }
+    return baseUri.resolveUri(current).toString();
   }
 }

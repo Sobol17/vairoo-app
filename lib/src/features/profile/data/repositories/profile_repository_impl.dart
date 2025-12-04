@@ -98,6 +98,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
     return _localDataSource.clear();
   }
 
+  @override
+  Future<void> acknowledgeAchievement(ProfileAchievementType type) async {
+    await _remoteDataSource.acknowledgeAchievement(type.rawValue);
+    final stored = await _localDataSource.readProfile();
+    final updated = stored.copyWith(clearAchievementType: true);
+    await saveProfile(updated);
+  }
+
   String _formatDate(DateTime date) {
     return date.toIso8601String().split('T').first;
   }

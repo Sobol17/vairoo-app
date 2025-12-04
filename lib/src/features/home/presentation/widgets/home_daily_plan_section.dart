@@ -70,7 +70,7 @@ class _HomeDailyPlanSectionState extends State<HomeDailyPlanSection> {
         ),
         const SizedBox(height: 16),
         SizedBox(
-          height: 320,
+          height: 340,
           child: PageView.builder(
             controller: _controller,
             itemCount: widget.routines.length,

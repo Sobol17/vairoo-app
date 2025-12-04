@@ -17,6 +17,7 @@ class ProfileModel extends Profile {
     super.subscriptionExpiresAt,
     super.pushNotificationsEnabled,
     super.emailNotificationsEnabled,
+    super.achievementType,
     super.createdAt,
     super.updatedAt,
   });
@@ -38,6 +39,7 @@ class ProfileModel extends Profile {
       subscriptionExpiresAt: profile.subscriptionExpiresAt,
       pushNotificationsEnabled: profile.pushNotificationsEnabled,
       emailNotificationsEnabled: profile.emailNotificationsEnabled,
+      achievementType: profile.achievementType,
       createdAt: profile.createdAt,
       updatedAt: profile.updatedAt,
     );
@@ -78,6 +80,10 @@ class ProfileModel extends Profile {
           json['email_notifications_enabled'] as bool? ??
           json['emailNotificationsEnabled'] as bool? ??
           true,
+      achievementType: ProfileAchievementType.fromRaw(
+        json['achievment_type'] as String? ??
+            json['achievement_type'] as String?,
+      ),
       createdAt: _parseDate(json['created_at'] as String?),
       updatedAt: _parseDate(json['updated_at'] as String?),
     );
@@ -97,6 +103,7 @@ class ProfileModel extends Profile {
       'subscription_expires_at': subscriptionExpiresAt?.toIso8601String(),
       'push_notifications_enabled': pushNotificationsEnabled,
       'email_notifications_enabled': emailNotificationsEnabled,
+      'achievment_type': achievementType?.rawValue,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };

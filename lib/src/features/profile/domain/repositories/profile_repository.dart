@@ -13,4 +13,5 @@ abstract class ProfileRepository {
   Future<void> clearProfile();
 
   Future<Profile> updateProfileInfo(Profile profile);
+  Future<void> acknowledgeAchievement(ProfileAchievementType type);
 }

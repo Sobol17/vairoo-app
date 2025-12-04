@@ -14,9 +14,12 @@ class RecipesRemoteDataSource {
     if (payload == null) {
       return const [];
     }
+    final baseUrl = _client.client.options.baseUrl;
     return payload
         .whereType<Map<String, dynamic>>()
-        .map(RecipeModel.fromJson)
+        .map(
+          (json) => RecipeModel.fromJson(json, baseUrl: baseUrl),
+        )
         .toList(growable: false);
   }
 
@@ -33,6 +36,7 @@ class RecipesRemoteDataSource {
         type: DioExceptionType.badResponse,
       );
     }
-    return RecipeModel.fromJson(data);
+    final baseUrl = _client.client.options.baseUrl;
+    return RecipeModel.fromJson(data, baseUrl: baseUrl);
   }
 }

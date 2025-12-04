@@ -26,13 +26,41 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-class _ProfileView extends StatelessWidget {
+class _ProfileView extends StatefulWidget {
   const _ProfileView();
+
+  @override
+  State<_ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<_ProfileView> {
+  bool _isAchievementOpen = false;
+
+  void _maybeShowAchievement(ProfileController controller) {
+    final type = controller.consumePendingAchievement();
+    if (type == null || _isAchievementOpen) {
+      return;
+    }
+    _isAchievementOpen = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) {
+        return;
+      }
+      await context.push('/achievement', extra: type);
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _isAchievementOpen = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ProfileController>(
       builder: (context, controller, _) {
+        _maybeShowAchievement(controller);
         final theme = Theme.of(context);
 
         return Scaffold(
@@ -53,7 +81,7 @@ class _ProfileView extends StatelessWidget {
                                 'assets/icons/chat.svg',
                                 width: 20,
                               ),
-                              onTap: () => context.push('/home/chat'),
+                              onTap: () => context.push('/home/chats'),
                             ),
                             Expanded(
                               child: Column(
@@ -146,7 +174,8 @@ class _ProfileView extends StatelessWidget {
                               showChevron: true,
                               onTap: controller.isLoading
                                   ? null
-                                  : () => _editDailyExpenses(context, controller),
+                                  : () =>
+                                        _editDailyExpenses(context, controller),
                             ),
                             ProfileInfoRow(
                               label: 'Ккал в день, в сред.',
@@ -155,7 +184,8 @@ class _ProfileView extends StatelessWidget {
                               showChevron: true,
                               onTap: controller.isLoading
                                   ? null
-                                  : () => _editDailyCalories(context, controller),
+                                  : () =>
+                                        _editDailyCalories(context, controller),
                             ),
                           ],
                         ),
@@ -354,8 +384,9 @@ class _MetricInputBottomSheetState extends State<_MetricInputBottomSheet> {
                 controller: _controller,
                 autofocus: true,
                 textInputAction: TextInputAction.done,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
                 ],
@@ -395,8 +426,9 @@ class _MetricInputBottomSheetState extends State<_MetricInputBottomSheet> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : const Text('Сохранить'),

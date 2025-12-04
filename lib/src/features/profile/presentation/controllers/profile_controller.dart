@@ -17,9 +17,11 @@ class ProfileController extends ChangeNotifier {
     sobrietyStartDate: null,
   );
   bool _isLoading = false;
+  ProfileAchievementType? _pendingAchievementType;
 
   Profile get profile => _profile;
   bool get isLoading => _isLoading;
+  ProfileAchievementType? get pendingAchievementType => _pendingAchievementType;
 
   String get displayName => _profile.name.isEmpty ? 'Имя' : _profile.name;
 
@@ -78,6 +80,7 @@ class ProfileController extends ChangeNotifier {
     try {
       final profile = await _repository.loadProfile();
       _profile = profile;
+      _pendingAchievementType = profile.achievementType;
     } finally {
       _setLoading(false);
     }
@@ -137,6 +140,12 @@ class ProfileController extends ChangeNotifier {
     } catch (error) {
       throw Exception(_mapError(error));
     }
+  }
+
+  ProfileAchievementType? consumePendingAchievement() {
+    final type = _pendingAchievementType;
+    _pendingAchievementType = null;
+    return type;
   }
 
   void _setLoading(bool value) {

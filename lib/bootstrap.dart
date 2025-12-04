@@ -16,7 +16,8 @@ Future<void> bootstrap() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   const apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://127.0.0.1:8000',
+    defaultValue: 'http://217.198.12.129',
+    // defaultValue: 'http://127.0.0.1:8000',
   );
 
   final dio = Dio(

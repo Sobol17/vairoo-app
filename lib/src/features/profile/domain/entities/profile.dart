@@ -15,6 +15,7 @@ class Profile extends Equatable {
     this.subscriptionExpiresAt,
     this.pushNotificationsEnabled = true,
     this.emailNotificationsEnabled = true,
+    this.achievementType,
     this.createdAt,
     this.updatedAt,
   });
@@ -32,11 +33,14 @@ class Profile extends Equatable {
   final DateTime? subscriptionExpiresAt;
   final bool pushNotificationsEnabled;
   final bool emailNotificationsEnabled;
+  final ProfileAchievementType? achievementType;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
   bool get isComplete =>
       name.isNotEmpty && sobrietyStartDate != null && phone?.isNotEmpty == true;
+
+  bool get hasPendingAchievement => achievementType != null;
 
   Profile copyWith({
     String? id,
@@ -52,6 +56,8 @@ class Profile extends Equatable {
     DateTime? subscriptionExpiresAt,
     bool? pushNotificationsEnabled,
     bool? emailNotificationsEnabled,
+    ProfileAchievementType? achievementType,
+    bool clearAchievementType = false,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -72,6 +78,9 @@ class Profile extends Equatable {
           pushNotificationsEnabled ?? this.pushNotificationsEnabled,
       emailNotificationsEnabled:
           emailNotificationsEnabled ?? this.emailNotificationsEnabled,
+      achievementType: clearAchievementType
+          ? null
+          : achievementType ?? this.achievementType,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -92,7 +101,31 @@ class Profile extends Equatable {
     subscriptionExpiresAt,
     pushNotificationsEnabled,
     emailNotificationsEnabled,
+    achievementType,
     createdAt,
     updatedAt,
   ];
+}
+
+enum ProfileAchievementType {
+  firstDay('first_day'),
+  sevenDays('seven_days'),
+  twentyDays('twenty_days'),
+  planCompleted('plan_completed');
+
+  const ProfileAchievementType(this.rawValue);
+
+  final String rawValue;
+
+  static ProfileAchievementType? fromRaw(String? raw) {
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+    for (final type in ProfileAchievementType.values) {
+      if (type.rawValue == raw) {
+        return type;
+      }
+    }
+    return null;
+  }
 }
